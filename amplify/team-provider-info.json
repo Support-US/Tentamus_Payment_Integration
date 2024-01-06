@@ -1,4 +1,17 @@
 {
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-tentamuspaymentinteg-dev-55243-authRole",
+      "UnauthRoleArn": "arn:aws:iam::988839728996:role/amplify-tentamuspaymentinteg-dev-55243-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::988839728996:role/amplify-tentamuspaymentinteg-dev-55243-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-tentamuspaymentinteg-dev-55243-deployment",
+      "UnauthRoleName": "amplify-tentamuspaymentinteg-dev-55243-unauthRole",
+      "StackName": "amplify-tentamuspaymentinteg-dev-55243",
+      "StackId": "arn:aws:cloudformation:us-east-2:988839728996:stack/amplify-tentamuspaymentinteg-dev-55243/cf733430-ac57-11ee-931e-06c52a41d651",
+      "AmplifyAppId": "d389b8rydflvtl"
+    }
+  },
   "master": {
     "awscloudformation": {
       "AuthRoleName": "amplify-tentamuspaymentinteg-master-53736-authRole",
