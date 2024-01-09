@@ -14,3 +14,4 @@ amplify pull --appId d389b8rydflvtl --envName dev
 
   # Backend Pull commands
     amplify pull --appId d389b8rydflvtl --envName dev
+    amplify codegen 

@@ -1,0 +1,22 @@
+# This "input" configures a global authorization rule to enable public access to
+# all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
+
+
+type PaymentDetails
+ @model  @auth(rules: [{ allow: public }]) {
+FirstName: String!
+LastName : String!
+Address : String!
+Email : String!
+PhoneNumber :String!
+InvoiceNumbers :[String]!
+Status : String!
+TransactionID :String!
+MerchantID :String!
+ReferenceNo: String!
+Amount : String!
+Currency: String!
+BankPaymentAdviceId: String!
+}
+
+
