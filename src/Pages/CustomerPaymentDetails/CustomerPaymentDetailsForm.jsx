@@ -1,10 +1,13 @@
 import React from 'react';
-import { Grid, TextField, FormControl, Typography,Button } from '@mui/material';
+import { Grid, TextField, FormControl, Typography,Button,Autocomplete } from '@mui/material';
 import { Field, Formik } from 'formik';
 import './CustomerPaymentDetailsForm.css';
 import { createPaymentDetails } from '../../graphql/mutations';
 import { API } from 'aws-amplify';
+import cc from 'currency-codes';
 
+const countries = cc.countries();
+const currency = cc.codes();
 
 const initialValues ={
   FirstName:"",
@@ -96,10 +99,36 @@ const CustomerPaymentDetailsForm = () => {
               <FormControl fullWidth>
                 <Field
                   size="small"
-                  name="Address"
+                  name="AddressLine1"
                   type="text"
                   as={TextField}
-                  label="Address"
+                  label="Address Line 1"
+                />
+              </FormControl>
+            </div>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <div className='field-container'>
+              <FormControl fullWidth>
+                <Field
+                  size="small"
+                  name="AddressLine2"
+                  type="text"
+                  as={TextField}
+                  label="Address Line 2"
+                />
+              </FormControl>
+            </div>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <div className='field-container'>
+              <FormControl fullWidth>
+                <Field
+                  size="small"
+                  name="City"
+                  type="text"
+                  as={TextField}
+                  label="City"
                 />
               </FormControl>
             </div>
@@ -110,10 +139,52 @@ const CustomerPaymentDetailsForm = () => {
               <FormControl fullWidth>
                 <Field
                   size="small"
-                  name="Amount"
+                  name="State"
                   type="text"
                   as={TextField}
-                  label="Amount"
+                  label="State"
+                />
+              </FormControl>
+            </div>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <div className='field-container'>
+        <FormControl fullWidth>
+          <Field name="Country" >
+            {({ field, form }) => (
+              <Autocomplete
+                size="small"
+                disableClearable
+                
+                fullWidth
+            
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Country*"
+                    variant="outlined"
+                    error={form.touched.Country && Boolean(form.errors.Country)}
+                    helperText={form.touched.Country && form.errors.Country}
+                  />
+                )}
+              />
+            )}
+          </Field>
+        </FormControl>
+
+            </div>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <div className='field-container'>
+              <FormControl fullWidth>
+                <Field
+                  size="small"
+                  name="PostalCode"
+                  type="text"
+                  as={TextField}
+                  label="Postal Code"
                 />
               </FormControl>
             </div>

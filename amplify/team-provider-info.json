@@ -1,27 +1,14 @@
 {
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-tentamuspaymentinteg-dev-55243-authRole",
-      "UnauthRoleArn": "arn:aws:iam::988839728996:role/amplify-tentamuspaymentinteg-dev-55243-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::988839728996:role/amplify-tentamuspaymentinteg-dev-55243-authRole",
+      "AuthRoleName": "amplify-tentamuspaymentinteg-dev-51521-authRole",
+      "UnauthRoleArn": "arn:aws:iam::988839728996:role/amplify-tentamuspaymentinteg-dev-51521-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::988839728996:role/amplify-tentamuspaymentinteg-dev-51521-authRole",
       "Region": "us-east-2",
-      "DeploymentBucketName": "amplify-tentamuspaymentinteg-dev-55243-deployment",
-      "UnauthRoleName": "amplify-tentamuspaymentinteg-dev-55243-unauthRole",
-      "StackName": "amplify-tentamuspaymentinteg-dev-55243",
-      "StackId": "arn:aws:cloudformation:us-east-2:988839728996:stack/amplify-tentamuspaymentinteg-dev-55243/cf733430-ac57-11ee-931e-06c52a41d651",
-      "AmplifyAppId": "d389b8rydflvtl"
-    }
-  },
-  "master": {
-    "awscloudformation": {
-      "AuthRoleName": "amplify-tentamuspaymentinteg-master-53736-authRole",
-      "UnauthRoleArn": "arn:aws:iam::988839728996:role/amplify-tentamuspaymentinteg-master-53736-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::988839728996:role/amplify-tentamuspaymentinteg-master-53736-authRole",
-      "Region": "us-east-2",
-      "DeploymentBucketName": "amplify-tentamuspaymentinteg-master-53736-deployment",
-      "UnauthRoleName": "amplify-tentamuspaymentinteg-master-53736-unauthRole",
-      "StackName": "amplify-tentamuspaymentinteg-master-53736",
-      "StackId": "arn:aws:cloudformation:us-east-2:988839728996:stack/amplify-tentamuspaymentinteg-master-53736/b2934e60-ac55-11ee-9e54-067f28535f99",
+      "DeploymentBucketName": "amplify-tentamuspaymentinteg-dev-51521-deployment",
+      "UnauthRoleName": "amplify-tentamuspaymentinteg-dev-51521-unauthRole",
+      "StackName": "amplify-tentamuspaymentinteg-dev-51521",
+      "StackId": "arn:aws:cloudformation:us-east-2:988839728996:stack/amplify-tentamuspaymentinteg-dev-51521/40c845e0-af77-11ee-99b5-063c07539dbb",
       "AmplifyAppId": "d389b8rydflvtl"
     }
   }
