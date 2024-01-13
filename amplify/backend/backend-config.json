@@ -1,1 +1,55 @@
-{}
+{
+  "api": {
+    "TentamusPaymentIntegration": {
+      "dependsOn": [],
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [],
+          "defaultAuthentication": {
+            "apiKeyConfig": {
+              "apiKeyExpirationDays": 7
+            },
+            "authenticationType": "API_KEY"
+          }
+        }
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync"
+    }
+  },
+  "function": {
+    "CreateBankpaymentAdvice": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "TentamusPaymentIntegration"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_CreateBankpaymentAdvice_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "CreateBankpaymentAdvice"
+        }
+      ]
+    },
+    "AMPLIFY_function_CreateBankpaymentAdvice_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "CreateBankpaymentAdvice"
+        }
+      ]
+    }
+  }
+}

@@ -7,22 +7,30 @@ export const createPaymentDetails = /* GraphQL */ `
     $condition: ModelPaymentDetailsConditionInput
   ) {
     createPaymentDetails(input: $input, condition: $condition) {
+      id
       FirstName
       LastName
-      Address
       Email
+      AddressLine1
+      AddressLine2
+      Country
+      State
+      City
+      PostalCode
       PhoneNumber
-      InvoiceNumbers
-      Status
-      TransactionID
-      MerchantID
-      ReferenceNo
       Amount
       Currency
-      BankPaymentAdviceId
-      id
+      InvoiceNumbers
+      TransactionID
+      MerchantID
+      PaymentId
+      SAPBankPaymentAdviceId
       createdAt
       updatedAt
+      SecretValue1
+      SecretValue2
+      OdataUsername
+      OdataPassword
       __typename
     }
   }
@@ -33,22 +41,30 @@ export const updatePaymentDetails = /* GraphQL */ `
     $condition: ModelPaymentDetailsConditionInput
   ) {
     updatePaymentDetails(input: $input, condition: $condition) {
+      id
       FirstName
       LastName
-      Address
       Email
+      AddressLine1
+      AddressLine2
+      Country
+      State
+      City
+      PostalCode
       PhoneNumber
-      InvoiceNumbers
-      Status
-      TransactionID
-      MerchantID
-      ReferenceNo
       Amount
       Currency
-      BankPaymentAdviceId
-      id
+      InvoiceNumbers
+      TransactionID
+      MerchantID
+      PaymentId
+      SAPBankPaymentAdviceId
       createdAt
       updatedAt
+      SecretValue1
+      SecretValue2
+      OdataUsername
+      OdataPassword
       __typename
     }
   }
@@ -59,22 +75,30 @@ export const deletePaymentDetails = /* GraphQL */ `
     $condition: ModelPaymentDetailsConditionInput
   ) {
     deletePaymentDetails(input: $input, condition: $condition) {
+      id
       FirstName
       LastName
-      Address
       Email
+      AddressLine1
+      AddressLine2
+      Country
+      State
+      City
+      PostalCode
       PhoneNumber
-      InvoiceNumbers
-      Status
-      TransactionID
-      MerchantID
-      ReferenceNo
       Amount
       Currency
-      BankPaymentAdviceId
-      id
+      InvoiceNumbers
+      TransactionID
+      MerchantID
+      PaymentId
+      SAPBankPaymentAdviceId
       createdAt
       updatedAt
+      SecretValue1
+      SecretValue2
+      OdataUsername
+      OdataPassword
       __typename
     }
   }

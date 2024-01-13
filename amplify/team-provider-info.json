@@ -10,6 +10,14 @@
       "StackName": "amplify-tentamuspaymentinteg-dev-51521",
       "StackId": "arn:aws:cloudformation:us-east-2:988839728996:stack/amplify-tentamuspaymentinteg-dev-51521/40c845e0-af77-11ee-99b5-063c07539dbb",
       "AmplifyAppId": "d389b8rydflvtl"
+    },
+    "categories": {
+      "function": {
+        "CreateBankpaymentAdvice": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-51521-deployment",
+          "s3Key": "amplify-builds/CreateBankpaymentAdvice-47444569304c51304668-build.zip"
+        }
+      }
     }
   }
 }

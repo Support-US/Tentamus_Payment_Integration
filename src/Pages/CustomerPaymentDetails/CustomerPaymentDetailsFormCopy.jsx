@@ -1,80 +1,109 @@
-import React, { useState} from 'react';
-import { Grid, TextField, FormControl, Typography, Button, Autocomplete } from '@mui/material';
+import React, { useState } from 'react';
+import { Grid, TextField, FormControl, Typography, Button, Autocomplete} from '@mui/material';
 import { Field, Formik } from 'formik';
 import './CustomerPaymentDetailsForm.css';
 import { API } from 'aws-amplify';
-import cc from 'currency-codes'
 import { createPaymentDetails } from '../../graphql/mutations';
+import { countries } from 'countries-list';
+import {states} from 'us-states';
 
-const countries = cc.countries();
-const currency = cc.codes();
+
+// import cc from 'currency-codes'
+
+// const countries = cc.countries();
+// const currency = cc.codes();
 
 
-const dropdowncountries = countries.map(country => {
-  return {
-    label: country,
-    value: country
-  };
-});
+// const dropdowncountries = countries.map(country => {
+//   return {
+//     label: country,
+//     value: country
+//   };
+// });
 
-const dropdownCurrencies = currency.map(code => {
-  return {
-    label: code,
-    value: code
-  };
-});
+// const dropdownCurrencies = currency.map(code=>{
+//   return{
+//     label:code,
+//     value:code
+//   };
+// });
 
-// console.log("currency", dropdownCurrencies);
+// console.log("currency",dropdownCurrencies);
+
+
+
 
 
 
 const initialValues = {
+  TranscationId:"",
+  MerchantId:"",
+  ReferenceNumber:"",
+  MAC:"",
   FirstName: "",
   LastName: "",
-  Email: "",
+  Address: "",
   AddressLine1: "",
   AddressLine2: "",
-  Country: "",
-  State: "",
   City: "",
+  State: "",
+  Country: "",
   PostalCode: "",
+  Amount:"",
+  Currency:"",
+  InvoiceNumbers:"",
+  Email: "",
   PhoneNumber: "",
-  Amount: "",
-  Currency: "",
-  InvoiceNumbers: "",
- }
+}
 
-console.log("initial", initialValues);
+console.log("initial",initialValues);
 
 
 
 const CustomerPaymentDetailsForm = () => {
+  
+const[selectedCountry,setSelectedCountry]= useState(null);
+const[selectedState, setSelectedState]= useState(null);
 
-  const [clickCount, setClickCount] = useState(0);
+const handleCountryChange = (event,newValue)=>{
+  setSelectedCountry(newValue)
 
-  // console.log("c", clickCount);
+  const countryInfo = countries[newValue];
+  const countryCurrency = countryInfo ? countryInfo.currency : null;
+}
+const handleStateChange =(event,newValue)=>{
+  setSelectedState(newValue)
+}
+
+console.log("countries", countries);
+console.log("states", states);
+
+
+  const [clickCount,setClickCount] = useState(0);
+
+  console.log("c",clickCount);
 
   const [invoiceNumbers, setInvoiceNumbers] = useState([]);
-
-  // console.log("invoice", invoiceNumbers);
-
-
-  const handlePlusButtonClick = () => {
-    setClickCount(prevCount => prevCount + 1);
-  }
-
-  const handleInvoiceNumberChange = (index, value) => {
-    const updatedInvoiceNumbers = [...invoiceNumbers];
-    updatedInvoiceNumbers[index] = value;
-    setInvoiceNumbers(updatedInvoiceNumbers);
-  };
+  
+  console.log("invoice",invoiceNumbers);
 
 
+ const handlePlusButtonClick = () => {
+  setClickCount(prevCount => prevCount + 1);
+}
 
-  const handleFormSubmit = async (values, { resetForm }) => {
-   
+const handleInvoiceNumberChange = (index, value) => {
+  const updatedInvoiceNumbers = [...invoiceNumbers];
+  updatedInvoiceNumbers[index] = value;
+  setInvoiceNumbers(updatedInvoiceNumbers);
+};
+
+
+
+const handleFormSubmit = async (values,{resetForm,...formikProps}) => {
+    console.log("Formik State:", { values, ...formikProps });
+    
     console.log("values", values);
-
     const { AddressLine1, AddressLine2, City, State, Country, PostalCode, ...NewValues } = values;
     const AddressLine1confirm = values.AddressLine1 ? values.AddressLine1.trim() + "," : "";
     const AddressLine2confirm = values.AddressLine2 ? values.AddressLine2.trim() + "," : "";
@@ -85,8 +114,8 @@ const CustomerPaymentDetailsForm = () => {
       ...NewValues,
       Address: AddressLine1confirm + AddressLine2confirm + Cityconfirm + Stateconfirm + values.Country + "-" + values.PostalCode,
       InvoiceNumbers: invoiceNumbers,
-    }
-
+     }
+    
     console.log("NewValues", NewValues)
     console.log("confimed", confirmedValues)
 
@@ -102,11 +131,11 @@ const CustomerPaymentDetailsForm = () => {
       //   }
       // )
       // console.log("GraphQL Response:", response);
-
+      
       resetForm();
       setInvoiceNumbers([]);
-      setClickCount(0)
-    
+       setClickCount(0)
+      console.log("reset",resetForm)
 
       // return response.data.createPaymentDetails;
 
@@ -120,17 +149,16 @@ const CustomerPaymentDetailsForm = () => {
   }
 
   const handleTotalResetForm = (handleReset) => {
-     
+    // Reset the form using Formik
     handleReset();
-
+    // Reset the invoiceNumbers state
     setInvoiceNumbers([]);
     setClickCount(0)
   };
-
-
-
+  
 
   return (
+
 
     <Formik onSubmit={handleFormSubmit} initialValues={initialValues}>
       {({ handleSubmit, handleReset, handleChange }) => (
@@ -142,7 +170,8 @@ const CustomerPaymentDetailsForm = () => {
               </Typography>
             </Grid>
 
-              <Grid item xs={12} sm={6}>
+
+            <Grid item xs={12} sm={6}>
               <div className='field-container'>
                 <FormControl fullWidth>
                   <Field
@@ -197,7 +226,6 @@ const CustomerPaymentDetailsForm = () => {
                 </FormControl>
               </div>
             </Grid>
-            
             <Grid item xs={12} sm={6}>
               <div className='field-container'>
                 <FormControl fullWidth>
@@ -211,6 +239,7 @@ const CustomerPaymentDetailsForm = () => {
                 </FormControl>
               </div>
             </Grid>
+           
 
             <Grid item xs={12} sm={6}>
               <div className='field-container'>
@@ -218,19 +247,11 @@ const CustomerPaymentDetailsForm = () => {
                   <Field name="Country" onChange={handleChange}>
                     {({ field, form }) => (
                       <Autocomplete
-                        size="small" options={dropdowncountries}
-                        getOptionLabel={(option) => option.label}
-                        value={dropdowncountries.find(
-                          (option) => option.value === field.value
-                        ) || null
-                        }
-                        onChange={(event, value) => {
-                          form.setFieldValue(
-                            "Country",
-                            value?.value || ""
-                          );
-
-                        }}
+                        size="small" 
+                        options={Object.values(countries)}
+                        getOptionLabel={(option) => option.name}
+                        value={selectedCountry}
+                        onChange={handleCountryChange}
                         renderInput={(params) => (
                           <TextField
                             {...params}
@@ -245,21 +266,26 @@ const CustomerPaymentDetailsForm = () => {
               </div>
             </Grid>
 
-           
+            <Field name="state" onChange={handleChange}>
+  {({ field, form }) => (
+    <Autocomplete
+      size="small"
+      options={Object.values(states)}  // Assuming states is an object with values as options
+      getOptionLabel={(option) => option.name}
+      value={selectedState}
+      onChange={handleStateChange}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label="State/Region"
+          variant="outlined"
+        />
+      )}
+    />
+  )}
+</Field>
 
-            <Grid item xs={12} sm={6}>
-              <div className='field-container'>
-                <FormControl fullWidth>
-                  <Field
-                    size="small"
-                    name="State"
-                    type="text"
-                    as={TextField}
-                    label="State"
-                  />
-                </FormControl>
-              </div>
-            </Grid>
+
 
             <Grid item xs={12} sm={6}>
               <div className='field-container'>
@@ -275,8 +301,6 @@ const CustomerPaymentDetailsForm = () => {
               </div>
             </Grid>
 
-
-           
 
 
             <Grid item xs={12} sm={6}>
@@ -323,7 +347,7 @@ const CustomerPaymentDetailsForm = () => {
             </Grid>
 
 
-            <Grid item xs={12} sm={6}>
+            {/* <Grid item xs={12} sm={6}>
               <div className='field-container'>
                 <FormControl fullWidth>
                   <Field name="Currency" onChange={handleChange}>
@@ -354,7 +378,7 @@ const CustomerPaymentDetailsForm = () => {
                   </Field>
                 </FormControl>
               </div>
-            </Grid>
+            </Grid> */}
 
 
             <Grid item xs={12} sm={12}>
@@ -410,6 +434,8 @@ const CustomerPaymentDetailsForm = () => {
     </Formik>
 
   )
+
+ 
 }
 
 export default CustomerPaymentDetailsForm;

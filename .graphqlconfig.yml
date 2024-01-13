@@ -1,6 +1,6 @@
 projects:
-  tentamuspaymentinteg:
-    schemaPath: amplify/backend/api/tentamuspaymentinteg/build/schema.graphql
+  TentamusPaymentIntegration:
+    schemaPath: amplify/backend/api/TentamusPaymentIntegration/build/schema.graphql
     includes:
       - src/graphql/**/*.js
     excludes:
@@ -13,3 +13,6 @@ projects:
         region: us-east-2
         apiId: null
         maxDepth: 4
+extensions:
+  amplify:
+    version: 3

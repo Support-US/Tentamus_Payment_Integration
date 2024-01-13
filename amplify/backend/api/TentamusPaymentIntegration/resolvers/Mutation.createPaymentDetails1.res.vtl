@@ -1,0 +1,10 @@
+## Add secret values to the response
+$util.qr($ctx.result.put("SecretValue1", $SecretValue1))
+$util.qr($ctx.result.put("SecretValue2", $SecretValue2))
+
+$util.qr($ctx.result.put("__operation", "Mutation"))
+#if( $ctx.error )
+  $util.error($ctx.error.message, $ctx.error.type)
+#else
+  $util.toJson($ctx.result)
+#end
