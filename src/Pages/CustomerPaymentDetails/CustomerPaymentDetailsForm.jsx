@@ -1,10 +1,11 @@
-import React, { useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import { Grid, TextField, FormControl, Typography, Button, Autocomplete } from '@mui/material';
 import { Field, Formik } from 'formik';
 import './CustomerPaymentDetailsForm.css';
 import { API } from 'aws-amplify';
 import cc from 'currency-codes'
 import { createPaymentDetails } from '../../graphql/mutations';
+import { BlowfishEncryption } from '../../Components/BlowfishEncryption';
 
 const countries = cc.countries();
 const currency = cc.codes();
@@ -42,13 +43,15 @@ const initialValues = {
   Amount: "",
   Currency: "",
   InvoiceNumbers: "",
- }
+}
 
 console.log("initial", initialValues);
 
 
 
 const CustomerPaymentDetailsForm = () => {
+
+  const [paygateURL, setPaygateURL] = useState("");
 
   const [clickCount, setClickCount] = useState(0);
 
@@ -69,10 +72,8 @@ const CustomerPaymentDetailsForm = () => {
     setInvoiceNumbers(updatedInvoiceNumbers);
   };
 
-
-
   const handleFormSubmit = async (values, { resetForm }) => {
-   
+
     console.log("values", values);
 
     const { AddressLine1, AddressLine2, City, State, Country, PostalCode, ...NewValues } = values;
@@ -90,7 +91,24 @@ const CustomerPaymentDetailsForm = () => {
     console.log("NewValues", NewValues)
     console.log("confimed", confirmedValues)
 
+    // Blowfish encryption
+    let data = {
+      currency: confirmedValues.Currency,
+      amount: confirmedValues.Amount
+    };
 
+    // Blowfish encryption
+    const computopDataParameter = BlowfishEncryption(JSON.stringify(data));
+
+    const merchantID = 'Generic3DSTest';
+
+    const backgroundURL = 'https://www.tentamus.com/wp-content/uploads/2021/03/about_us_tentamus_fahnen_IMG_0722-2799x1679.jpg';
+
+    console.log("Body", JSON.stringify(data), "merchantID", merchantID, "len", computopDataParameter.length, "data", computopDataParameter);
+
+    setPaygateURL(`https://www.computop-paygate.com/payssl.aspx?MerchantID=${merchantID}&Len=${computopDataParameter.length}&Data=${computopDataParameter}&Background=${backgroundURL}`);
+
+    // window.open(paygateURL, '_blank', 'noopener,noreferrer');
 
     try {
       // const response = await API.graphql(
@@ -106,7 +124,7 @@ const CustomerPaymentDetailsForm = () => {
       resetForm();
       setInvoiceNumbers([]);
       setClickCount(0)
-    
+
 
       // return response.data.createPaymentDetails;
 
@@ -120,7 +138,7 @@ const CustomerPaymentDetailsForm = () => {
   }
 
   const handleTotalResetForm = (handleReset) => {
-     
+
     handleReset();
 
     setInvoiceNumbers([]);
@@ -142,7 +160,7 @@ const CustomerPaymentDetailsForm = () => {
               </Typography>
             </Grid>
 
-              <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6}>
               <div className='field-container'>
                 <FormControl fullWidth>
                   <Field
@@ -197,7 +215,7 @@ const CustomerPaymentDetailsForm = () => {
                 </FormControl>
               </div>
             </Grid>
-            
+
             <Grid item xs={12} sm={6}>
               <div className='field-container'>
                 <FormControl fullWidth>
@@ -245,7 +263,7 @@ const CustomerPaymentDetailsForm = () => {
               </div>
             </Grid>
 
-           
+
 
             <Grid item xs={12} sm={6}>
               <div className='field-container'>
@@ -276,7 +294,7 @@ const CustomerPaymentDetailsForm = () => {
             </Grid>
 
 
-           
+
 
 
             <Grid item xs={12} sm={6}>
@@ -359,7 +377,7 @@ const CustomerPaymentDetailsForm = () => {
 
             <Grid item xs={12} sm={12}>
               <div className='field-container'>
-                <FormControl style={{ width:"50%"}} >
+                <FormControl style={{ width: "50%" }} >
                   <div style={{ display: 'flex', alignItems: 'Center' }}>
                     <span>Invoice Details</span>
                     <Button onClick={handlePlusButtonClick}>+</Button>
