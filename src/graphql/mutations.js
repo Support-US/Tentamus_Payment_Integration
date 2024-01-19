@@ -19,6 +19,7 @@ export const createPaymentDetails = /* GraphQL */ `
       PostalCode
       PhoneNumber
       Amount
+      Status
       Currency
       InvoiceNumbers
       TransactionID
@@ -27,8 +28,8 @@ export const createPaymentDetails = /* GraphQL */ `
       SAPBankPaymentAdviceId
       createdAt
       updatedAt
-      SecretValue1
-      SecretValue2
+      SecretKey
+      SecretValue
       OdataUsername
       OdataPassword
       __typename
@@ -53,6 +54,7 @@ export const updatePaymentDetails = /* GraphQL */ `
       PostalCode
       PhoneNumber
       Amount
+      Status
       Currency
       InvoiceNumbers
       TransactionID
@@ -61,8 +63,8 @@ export const updatePaymentDetails = /* GraphQL */ `
       SAPBankPaymentAdviceId
       createdAt
       updatedAt
-      SecretValue1
-      SecretValue2
+      SecretKey
+      SecretValue
       OdataUsername
       OdataPassword
       __typename
@@ -87,6 +89,7 @@ export const deletePaymentDetails = /* GraphQL */ `
       PostalCode
       PhoneNumber
       Amount
+      Status
       Currency
       InvoiceNumbers
       TransactionID
@@ -95,8 +98,8 @@ export const deletePaymentDetails = /* GraphQL */ `
       SAPBankPaymentAdviceId
       createdAt
       updatedAt
-      SecretValue1
-      SecretValue2
+      SecretKey
+      SecretValue
       OdataUsername
       OdataPassword
       __typename

@@ -5,7 +5,7 @@
  **************************************************************************/
 
 import * as React from "react";
-import { GridProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { GridProps, TextAreaFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
 export declare type EscapeHatchProps = {
     [elementHierarchy: string]: Record<string, unknown>;
 } | null;
@@ -33,16 +33,17 @@ export declare type PaymentDetailsCreateFormInputValues = {
     PostalCode?: string;
     PhoneNumber?: string;
     Amount?: string;
+    Status?: string;
     Currency?: string;
-    InvoiceNumbers?: string[];
+    InvoiceNumbers?: string;
     TransactionID?: string;
     MerchantID?: string;
     PaymentId?: string;
     SAPBankPaymentAdviceId?: string;
     createdAt?: string;
     updatedAt?: string;
-    SecretValue1?: string;
-    SecretValue2?: string;
+    SecretKey?: string;
+    SecretValue?: string;
     OdataUsername?: string;
     OdataPassword?: string;
 };
@@ -58,6 +59,7 @@ export declare type PaymentDetailsCreateFormValidationValues = {
     PostalCode?: ValidationFunction<string>;
     PhoneNumber?: ValidationFunction<string>;
     Amount?: ValidationFunction<string>;
+    Status?: ValidationFunction<string>;
     Currency?: ValidationFunction<string>;
     InvoiceNumbers?: ValidationFunction<string>;
     TransactionID?: ValidationFunction<string>;
@@ -66,8 +68,8 @@ export declare type PaymentDetailsCreateFormValidationValues = {
     SAPBankPaymentAdviceId?: ValidationFunction<string>;
     createdAt?: ValidationFunction<string>;
     updatedAt?: ValidationFunction<string>;
-    SecretValue1?: ValidationFunction<string>;
-    SecretValue2?: ValidationFunction<string>;
+    SecretKey?: ValidationFunction<string>;
+    SecretValue?: ValidationFunction<string>;
     OdataUsername?: ValidationFunction<string>;
     OdataPassword?: ValidationFunction<string>;
 };
@@ -85,16 +87,17 @@ export declare type PaymentDetailsCreateFormOverridesProps = {
     PostalCode?: PrimitiveOverrideProps<TextFieldProps>;
     PhoneNumber?: PrimitiveOverrideProps<TextFieldProps>;
     Amount?: PrimitiveOverrideProps<TextFieldProps>;
+    Status?: PrimitiveOverrideProps<TextFieldProps>;
     Currency?: PrimitiveOverrideProps<TextFieldProps>;
-    InvoiceNumbers?: PrimitiveOverrideProps<TextFieldProps>;
+    InvoiceNumbers?: PrimitiveOverrideProps<TextAreaFieldProps>;
     TransactionID?: PrimitiveOverrideProps<TextFieldProps>;
     MerchantID?: PrimitiveOverrideProps<TextFieldProps>;
     PaymentId?: PrimitiveOverrideProps<TextFieldProps>;
     SAPBankPaymentAdviceId?: PrimitiveOverrideProps<TextFieldProps>;
     createdAt?: PrimitiveOverrideProps<TextFieldProps>;
     updatedAt?: PrimitiveOverrideProps<TextFieldProps>;
-    SecretValue1?: PrimitiveOverrideProps<TextFieldProps>;
-    SecretValue2?: PrimitiveOverrideProps<TextFieldProps>;
+    SecretKey?: PrimitiveOverrideProps<TextFieldProps>;
+    SecretValue?: PrimitiveOverrideProps<TextFieldProps>;
     OdataUsername?: PrimitiveOverrideProps<TextFieldProps>;
     OdataPassword?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;

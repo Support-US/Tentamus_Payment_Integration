@@ -14,16 +14,17 @@ City:String
 PostalCode:String!
 PhoneNumber :String!
 Amount : String!
+Status : String!
 Currency: String!
-InvoiceNumbers :[String]!
+InvoiceNumbers :AWSJSON!
 TransactionID :String!
 MerchantID :String
 PaymentId: String
 SAPBankPaymentAdviceId: String
 createdAt: AWSDateTime
 updatedAt: AWSDateTime
-SecretValue1: String
-SecretValue2: String
+SecretKey: String
+SecretValue: String
 OdataUsername: String
 OdataPassword: String
  }

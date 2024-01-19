@@ -16,6 +16,7 @@ export const getPaymentDetails = /* GraphQL */ `
       PostalCode
       PhoneNumber
       Amount
+      Status
       Currency
       InvoiceNumbers
       TransactionID
@@ -24,8 +25,8 @@ export const getPaymentDetails = /* GraphQL */ `
       SAPBankPaymentAdviceId
       createdAt
       updatedAt
-      SecretValue1
-      SecretValue2
+      SecretKey
+      SecretValue
       OdataUsername
       OdataPassword
       __typename
@@ -52,6 +53,7 @@ export const listPaymentDetails = /* GraphQL */ `
         PostalCode
         PhoneNumber
         Amount
+        Status
         Currency
         InvoiceNumbers
         TransactionID
@@ -60,8 +62,8 @@ export const listPaymentDetails = /* GraphQL */ `
         SAPBankPaymentAdviceId
         createdAt
         updatedAt
-        SecretValue1
-        SecretValue2
+        SecretKey
+        SecretValue
         OdataUsername
         OdataPassword
         __typename

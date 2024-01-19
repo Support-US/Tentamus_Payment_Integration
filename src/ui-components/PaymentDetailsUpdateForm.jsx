@@ -7,176 +7,16 @@
 /* eslint-disable */
 import * as React from "react";
 import {
-  Badge,
   Button,
-  Divider,
   Flex,
   Grid,
-  Icon,
-  ScrollView,
-  Text,
+  TextAreaField,
   TextField,
-  useTheme,
 } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { API } from "aws-amplify";
 import { getPaymentDetails } from "../graphql/queries";
 import { updatePaymentDetails } from "../graphql/mutations";
-function ArrayField({
-  items = [],
-  onChange,
-  label,
-  inputFieldRef,
-  children,
-  hasError,
-  setFieldValue,
-  currentFieldValue,
-  defaultFieldValue,
-  lengthLimit,
-  getBadgeText,
-  runValidationTasks,
-  errorMessage,
-}) {
-  const labelElement = <Text>{label}</Text>;
-  const {
-    tokens: {
-      components: {
-        fieldmessages: { error: errorStyles },
-      },
-    },
-  } = useTheme();
-  const [selectedBadgeIndex, setSelectedBadgeIndex] = React.useState();
-  const [isEditing, setIsEditing] = React.useState();
-  React.useEffect(() => {
-    if (isEditing) {
-      inputFieldRef?.current?.focus();
-    }
-  }, [isEditing]);
-  const removeItem = async (removeIndex) => {
-    const newItems = items.filter((value, index) => index !== removeIndex);
-    await onChange(newItems);
-    setSelectedBadgeIndex(undefined);
-  };
-  const addItem = async () => {
-    const { hasError } = runValidationTasks();
-    if (
-      currentFieldValue !== undefined &&
-      currentFieldValue !== null &&
-      currentFieldValue !== "" &&
-      !hasError
-    ) {
-      const newItems = [...items];
-      if (selectedBadgeIndex !== undefined) {
-        newItems[selectedBadgeIndex] = currentFieldValue;
-        setSelectedBadgeIndex(undefined);
-      } else {
-        newItems.push(currentFieldValue);
-      }
-      await onChange(newItems);
-      setIsEditing(false);
-    }
-  };
-  const arraySection = (
-    <React.Fragment>
-      {!!items?.length && (
-        <ScrollView height="inherit" width="inherit" maxHeight={"7rem"}>
-          {items.map((value, index) => {
-            return (
-              <Badge
-                key={index}
-                style={{
-                  cursor: "pointer",
-                  alignItems: "center",
-                  marginRight: 3,
-                  marginTop: 3,
-                  backgroundColor:
-                    index === selectedBadgeIndex ? "#B8CEF9" : "",
-                }}
-                onClick={() => {
-                  setSelectedBadgeIndex(index);
-                  setFieldValue(items[index]);
-                  setIsEditing(true);
-                }}
-              >
-                {getBadgeText ? getBadgeText(value) : value.toString()}
-                <Icon
-                  style={{
-                    cursor: "pointer",
-                    paddingLeft: 3,
-                    width: 20,
-                    height: 20,
-                  }}
-                  viewBox={{ width: 20, height: 20 }}
-                  paths={[
-                    {
-                      d: "M10 10l5.09-5.09L10 10l5.09 5.09L10 10zm0 0L4.91 4.91 10 10l-5.09 5.09L10 10z",
-                      stroke: "black",
-                    },
-                  ]}
-                  ariaLabel="button"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    removeItem(index);
-                  }}
-                />
-              </Badge>
-            );
-          })}
-        </ScrollView>
-      )}
-      <Divider orientation="horizontal" marginTop={5} />
-    </React.Fragment>
-  );
-  if (lengthLimit !== undefined && items.length >= lengthLimit && !isEditing) {
-    return (
-      <React.Fragment>
-        {labelElement}
-        {arraySection}
-      </React.Fragment>
-    );
-  }
-  return (
-    <React.Fragment>
-      {labelElement}
-      {isEditing && children}
-      {!isEditing ? (
-        <>
-          <Button
-            onClick={() => {
-              setIsEditing(true);
-            }}
-          >
-            Add item
-          </Button>
-          {errorMessage && hasError && (
-            <Text color={errorStyles.color} fontSize={errorStyles.fontSize}>
-              {errorMessage}
-            </Text>
-          )}
-        </>
-      ) : (
-        <Flex justifyContent="flex-end">
-          {(currentFieldValue || isEditing) && (
-            <Button
-              children="Cancel"
-              type="button"
-              size="small"
-              onClick={() => {
-                setFieldValue(defaultFieldValue);
-                setIsEditing(false);
-                setSelectedBadgeIndex(undefined);
-              }}
-            ></Button>
-          )}
-          <Button size="small" variation="link" onClick={addItem}>
-            {selectedBadgeIndex !== undefined ? "Save" : "Add"}
-          </Button>
-        </Flex>
-      )}
-      {arraySection}
-    </React.Fragment>
-  );
-}
 export default function PaymentDetailsUpdateForm(props) {
   const {
     id: idProp,
@@ -201,16 +41,17 @@ export default function PaymentDetailsUpdateForm(props) {
     PostalCode: "",
     PhoneNumber: "",
     Amount: "",
+    Status: "",
     Currency: "",
-    InvoiceNumbers: [],
+    InvoiceNumbers: "",
     TransactionID: "",
     MerchantID: "",
     PaymentId: "",
     SAPBankPaymentAdviceId: "",
     createdAt: "",
     updatedAt: "",
-    SecretValue1: "",
-    SecretValue2: "",
+    SecretKey: "",
+    SecretValue: "",
     OdataUsername: "",
     OdataPassword: "",
   };
@@ -231,6 +72,7 @@ export default function PaymentDetailsUpdateForm(props) {
     initialValues.PhoneNumber
   );
   const [Amount, setAmount] = React.useState(initialValues.Amount);
+  const [Status, setStatus] = React.useState(initialValues.Status);
   const [Currency, setCurrency] = React.useState(initialValues.Currency);
   const [InvoiceNumbers, setInvoiceNumbers] = React.useState(
     initialValues.InvoiceNumbers
@@ -245,11 +87,9 @@ export default function PaymentDetailsUpdateForm(props) {
   );
   const [createdAt, setCreatedAt] = React.useState(initialValues.createdAt);
   const [updatedAt, setUpdatedAt] = React.useState(initialValues.updatedAt);
-  const [SecretValue1, setSecretValue1] = React.useState(
-    initialValues.SecretValue1
-  );
-  const [SecretValue2, setSecretValue2] = React.useState(
-    initialValues.SecretValue2
+  const [SecretKey, setSecretKey] = React.useState(initialValues.SecretKey);
+  const [SecretValue, setSecretValue] = React.useState(
+    initialValues.SecretValue
   );
   const [OdataUsername, setOdataUsername] = React.useState(
     initialValues.OdataUsername
@@ -273,17 +113,22 @@ export default function PaymentDetailsUpdateForm(props) {
     setPostalCode(cleanValues.PostalCode);
     setPhoneNumber(cleanValues.PhoneNumber);
     setAmount(cleanValues.Amount);
+    setStatus(cleanValues.Status);
     setCurrency(cleanValues.Currency);
-    setInvoiceNumbers(cleanValues.InvoiceNumbers ?? []);
-    setCurrentInvoiceNumbersValue("");
+    setInvoiceNumbers(
+      typeof cleanValues.InvoiceNumbers === "string" ||
+        cleanValues.InvoiceNumbers === null
+        ? cleanValues.InvoiceNumbers
+        : JSON.stringify(cleanValues.InvoiceNumbers)
+    );
     setTransactionID(cleanValues.TransactionID);
     setMerchantID(cleanValues.MerchantID);
     setPaymentId(cleanValues.PaymentId);
     setSAPBankPaymentAdviceId(cleanValues.SAPBankPaymentAdviceId);
     setCreatedAt(cleanValues.createdAt);
     setUpdatedAt(cleanValues.updatedAt);
-    setSecretValue1(cleanValues.SecretValue1);
-    setSecretValue2(cleanValues.SecretValue2);
+    setSecretKey(cleanValues.SecretKey);
+    setSecretValue(cleanValues.SecretValue);
     setOdataUsername(cleanValues.OdataUsername);
     setOdataPassword(cleanValues.OdataPassword);
     setErrors({});
@@ -306,9 +151,6 @@ export default function PaymentDetailsUpdateForm(props) {
     queryData();
   }, [idProp, paymentDetailsModelProp]);
   React.useEffect(resetStateValues, [paymentDetailsRecord]);
-  const [currentInvoiceNumbersValue, setCurrentInvoiceNumbersValue] =
-    React.useState("");
-  const InvoiceNumbersRef = React.createRef();
   const validations = {
     FirstName: [{ type: "Required" }],
     LastName: [{ type: "Required" }],
@@ -321,16 +163,17 @@ export default function PaymentDetailsUpdateForm(props) {
     PostalCode: [{ type: "Required" }],
     PhoneNumber: [{ type: "Required" }],
     Amount: [{ type: "Required" }],
+    Status: [{ type: "Required" }],
     Currency: [{ type: "Required" }],
-    InvoiceNumbers: [],
+    InvoiceNumbers: [{ type: "Required" }, { type: "JSON" }],
     TransactionID: [{ type: "Required" }],
     MerchantID: [],
     PaymentId: [],
     SAPBankPaymentAdviceId: [],
     createdAt: [],
     updatedAt: [],
-    SecretValue1: [],
-    SecretValue2: [],
+    SecretKey: [],
+    SecretValue: [],
     OdataUsername: [],
     OdataPassword: [],
   };
@@ -388,16 +231,17 @@ export default function PaymentDetailsUpdateForm(props) {
           PostalCode,
           PhoneNumber,
           Amount,
+          Status,
           Currency,
-          InvoiceNumbers: InvoiceNumbers ?? null,
+          InvoiceNumbers,
           TransactionID,
           MerchantID: MerchantID ?? null,
           PaymentId: PaymentId ?? null,
           SAPBankPaymentAdviceId: SAPBankPaymentAdviceId ?? null,
           createdAt: createdAt ?? null,
           updatedAt: updatedAt ?? null,
-          SecretValue1: SecretValue1 ?? null,
-          SecretValue2: SecretValue2 ?? null,
+          SecretKey: SecretKey ?? null,
+          SecretValue: SecretValue ?? null,
           OdataUsername: OdataUsername ?? null,
           OdataPassword: OdataPassword ?? null,
         };
@@ -471,6 +315,7 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode,
               PhoneNumber,
               Amount,
+              Status,
               Currency,
               InvoiceNumbers,
               TransactionID,
@@ -479,8 +324,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPBankPaymentAdviceId,
               createdAt,
               updatedAt,
-              SecretValue1,
-              SecretValue2,
+              SecretKey,
+              SecretValue,
               OdataUsername,
               OdataPassword,
             };
@@ -517,6 +362,7 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode,
               PhoneNumber,
               Amount,
+              Status,
               Currency,
               InvoiceNumbers,
               TransactionID,
@@ -525,8 +371,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPBankPaymentAdviceId,
               createdAt,
               updatedAt,
-              SecretValue1,
-              SecretValue2,
+              SecretKey,
+              SecretValue,
               OdataUsername,
               OdataPassword,
             };
@@ -563,6 +409,7 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode,
               PhoneNumber,
               Amount,
+              Status,
               Currency,
               InvoiceNumbers,
               TransactionID,
@@ -571,8 +418,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPBankPaymentAdviceId,
               createdAt,
               updatedAt,
-              SecretValue1,
-              SecretValue2,
+              SecretKey,
+              SecretValue,
               OdataUsername,
               OdataPassword,
             };
@@ -609,6 +456,7 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode,
               PhoneNumber,
               Amount,
+              Status,
               Currency,
               InvoiceNumbers,
               TransactionID,
@@ -617,8 +465,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPBankPaymentAdviceId,
               createdAt,
               updatedAt,
-              SecretValue1,
-              SecretValue2,
+              SecretKey,
+              SecretValue,
               OdataUsername,
               OdataPassword,
             };
@@ -655,6 +503,7 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode,
               PhoneNumber,
               Amount,
+              Status,
               Currency,
               InvoiceNumbers,
               TransactionID,
@@ -663,8 +512,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPBankPaymentAdviceId,
               createdAt,
               updatedAt,
-              SecretValue1,
-              SecretValue2,
+              SecretKey,
+              SecretValue,
               OdataUsername,
               OdataPassword,
             };
@@ -701,6 +550,7 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode,
               PhoneNumber,
               Amount,
+              Status,
               Currency,
               InvoiceNumbers,
               TransactionID,
@@ -709,8 +559,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPBankPaymentAdviceId,
               createdAt,
               updatedAt,
-              SecretValue1,
-              SecretValue2,
+              SecretKey,
+              SecretValue,
               OdataUsername,
               OdataPassword,
             };
@@ -747,6 +597,7 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode,
               PhoneNumber,
               Amount,
+              Status,
               Currency,
               InvoiceNumbers,
               TransactionID,
@@ -755,8 +606,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPBankPaymentAdviceId,
               createdAt,
               updatedAt,
-              SecretValue1,
-              SecretValue2,
+              SecretKey,
+              SecretValue,
               OdataUsername,
               OdataPassword,
             };
@@ -793,6 +644,7 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode,
               PhoneNumber,
               Amount,
+              Status,
               Currency,
               InvoiceNumbers,
               TransactionID,
@@ -801,8 +653,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPBankPaymentAdviceId,
               createdAt,
               updatedAt,
-              SecretValue1,
-              SecretValue2,
+              SecretKey,
+              SecretValue,
               OdataUsername,
               OdataPassword,
             };
@@ -839,6 +691,7 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode: value,
               PhoneNumber,
               Amount,
+              Status,
               Currency,
               InvoiceNumbers,
               TransactionID,
@@ -847,8 +700,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPBankPaymentAdviceId,
               createdAt,
               updatedAt,
-              SecretValue1,
-              SecretValue2,
+              SecretKey,
+              SecretValue,
               OdataUsername,
               OdataPassword,
             };
@@ -885,6 +738,7 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode,
               PhoneNumber: value,
               Amount,
+              Status,
               Currency,
               InvoiceNumbers,
               TransactionID,
@@ -893,8 +747,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPBankPaymentAdviceId,
               createdAt,
               updatedAt,
-              SecretValue1,
-              SecretValue2,
+              SecretKey,
+              SecretValue,
               OdataUsername,
               OdataPassword,
             };
@@ -931,6 +785,7 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode,
               PhoneNumber,
               Amount: value,
+              Status,
               Currency,
               InvoiceNumbers,
               TransactionID,
@@ -939,8 +794,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPBankPaymentAdviceId,
               createdAt,
               updatedAt,
-              SecretValue1,
-              SecretValue2,
+              SecretKey,
+              SecretValue,
               OdataUsername,
               OdataPassword,
             };
@@ -956,6 +811,53 @@ export default function PaymentDetailsUpdateForm(props) {
         errorMessage={errors.Amount?.errorMessage}
         hasError={errors.Amount?.hasError}
         {...getOverrideProps(overrides, "Amount")}
+      ></TextField>
+      <TextField
+        label="Status"
+        isRequired={true}
+        isReadOnly={false}
+        value={Status}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              FirstName,
+              LastName,
+              Email,
+              AddressLine1,
+              AddressLine2,
+              Country,
+              State,
+              City,
+              PostalCode,
+              PhoneNumber,
+              Amount,
+              Status: value,
+              Currency,
+              InvoiceNumbers,
+              TransactionID,
+              MerchantID,
+              PaymentId,
+              SAPBankPaymentAdviceId,
+              createdAt,
+              updatedAt,
+              SecretKey,
+              SecretValue,
+              OdataUsername,
+              OdataPassword,
+            };
+            const result = onChange(modelFields);
+            value = result?.Status ?? value;
+          }
+          if (errors.Status?.hasError) {
+            runValidationTasks("Status", value);
+          }
+          setStatus(value);
+        }}
+        onBlur={() => runValidationTasks("Status", Status)}
+        errorMessage={errors.Status?.errorMessage}
+        hasError={errors.Status?.hasError}
+        {...getOverrideProps(overrides, "Status")}
       ></TextField>
       <TextField
         label="Currency"
@@ -977,6 +879,7 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode,
               PhoneNumber,
               Amount,
+              Status,
               Currency: value,
               InvoiceNumbers,
               TransactionID,
@@ -985,8 +888,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPBankPaymentAdviceId,
               createdAt,
               updatedAt,
-              SecretValue1,
-              SecretValue2,
+              SecretKey,
+              SecretValue,
               OdataUsername,
               OdataPassword,
             };
@@ -1003,9 +906,13 @@ export default function PaymentDetailsUpdateForm(props) {
         hasError={errors.Currency?.hasError}
         {...getOverrideProps(overrides, "Currency")}
       ></TextField>
-      <ArrayField
-        onChange={async (items) => {
-          let values = items;
+      <TextAreaField
+        label="Invoice numbers"
+        isRequired={true}
+        isReadOnly={false}
+        value={InvoiceNumbers}
+        onChange={(e) => {
+          let { value } = e.target;
           if (onChange) {
             const modelFields = {
               FirstName,
@@ -1019,59 +926,33 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode,
               PhoneNumber,
               Amount,
+              Status,
               Currency,
-              InvoiceNumbers: values,
+              InvoiceNumbers: value,
               TransactionID,
               MerchantID,
               PaymentId,
               SAPBankPaymentAdviceId,
               createdAt,
               updatedAt,
-              SecretValue1,
-              SecretValue2,
+              SecretKey,
+              SecretValue,
               OdataUsername,
               OdataPassword,
             };
             const result = onChange(modelFields);
-            values = result?.InvoiceNumbers ?? values;
+            value = result?.InvoiceNumbers ?? value;
           }
-          setInvoiceNumbers(values);
-          setCurrentInvoiceNumbersValue("");
+          if (errors.InvoiceNumbers?.hasError) {
+            runValidationTasks("InvoiceNumbers", value);
+          }
+          setInvoiceNumbers(value);
         }}
-        currentFieldValue={currentInvoiceNumbersValue}
-        label={"Invoice numbers"}
-        items={InvoiceNumbers}
-        hasError={errors?.InvoiceNumbers?.hasError}
-        runValidationTasks={async () =>
-          await runValidationTasks("InvoiceNumbers", currentInvoiceNumbersValue)
-        }
-        errorMessage={errors?.InvoiceNumbers?.errorMessage}
-        setFieldValue={setCurrentInvoiceNumbersValue}
-        inputFieldRef={InvoiceNumbersRef}
-        defaultFieldValue={""}
-      >
-        <TextField
-          label="Invoice numbers"
-          isRequired={false}
-          isReadOnly={false}
-          value={currentInvoiceNumbersValue}
-          onChange={(e) => {
-            let { value } = e.target;
-            if (errors.InvoiceNumbers?.hasError) {
-              runValidationTasks("InvoiceNumbers", value);
-            }
-            setCurrentInvoiceNumbersValue(value);
-          }}
-          onBlur={() =>
-            runValidationTasks("InvoiceNumbers", currentInvoiceNumbersValue)
-          }
-          errorMessage={errors.InvoiceNumbers?.errorMessage}
-          hasError={errors.InvoiceNumbers?.hasError}
-          ref={InvoiceNumbersRef}
-          labelHidden={true}
-          {...getOverrideProps(overrides, "InvoiceNumbers")}
-        ></TextField>
-      </ArrayField>
+        onBlur={() => runValidationTasks("InvoiceNumbers", InvoiceNumbers)}
+        errorMessage={errors.InvoiceNumbers?.errorMessage}
+        hasError={errors.InvoiceNumbers?.hasError}
+        {...getOverrideProps(overrides, "InvoiceNumbers")}
+      ></TextAreaField>
       <TextField
         label="Transaction id"
         isRequired={true}
@@ -1092,6 +973,7 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode,
               PhoneNumber,
               Amount,
+              Status,
               Currency,
               InvoiceNumbers,
               TransactionID: value,
@@ -1100,8 +982,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPBankPaymentAdviceId,
               createdAt,
               updatedAt,
-              SecretValue1,
-              SecretValue2,
+              SecretKey,
+              SecretValue,
               OdataUsername,
               OdataPassword,
             };
@@ -1138,6 +1020,7 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode,
               PhoneNumber,
               Amount,
+              Status,
               Currency,
               InvoiceNumbers,
               TransactionID,
@@ -1146,8 +1029,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPBankPaymentAdviceId,
               createdAt,
               updatedAt,
-              SecretValue1,
-              SecretValue2,
+              SecretKey,
+              SecretValue,
               OdataUsername,
               OdataPassword,
             };
@@ -1184,6 +1067,7 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode,
               PhoneNumber,
               Amount,
+              Status,
               Currency,
               InvoiceNumbers,
               TransactionID,
@@ -1192,8 +1076,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPBankPaymentAdviceId,
               createdAt,
               updatedAt,
-              SecretValue1,
-              SecretValue2,
+              SecretKey,
+              SecretValue,
               OdataUsername,
               OdataPassword,
             };
@@ -1230,6 +1114,7 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode,
               PhoneNumber,
               Amount,
+              Status,
               Currency,
               InvoiceNumbers,
               TransactionID,
@@ -1238,8 +1123,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPBankPaymentAdviceId: value,
               createdAt,
               updatedAt,
-              SecretValue1,
-              SecretValue2,
+              SecretKey,
+              SecretValue,
               OdataUsername,
               OdataPassword,
             };
@@ -1280,6 +1165,7 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode,
               PhoneNumber,
               Amount,
+              Status,
               Currency,
               InvoiceNumbers,
               TransactionID,
@@ -1288,8 +1174,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPBankPaymentAdviceId,
               createdAt: value,
               updatedAt,
-              SecretValue1,
-              SecretValue2,
+              SecretKey,
+              SecretValue,
               OdataUsername,
               OdataPassword,
             };
@@ -1328,6 +1214,7 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode,
               PhoneNumber,
               Amount,
+              Status,
               Currency,
               InvoiceNumbers,
               TransactionID,
@@ -1336,8 +1223,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPBankPaymentAdviceId,
               createdAt,
               updatedAt: value,
-              SecretValue1,
-              SecretValue2,
+              SecretKey,
+              SecretValue,
               OdataUsername,
               OdataPassword,
             };
@@ -1355,10 +1242,10 @@ export default function PaymentDetailsUpdateForm(props) {
         {...getOverrideProps(overrides, "updatedAt")}
       ></TextField>
       <TextField
-        label="Secret value1"
+        label="Secret key"
         isRequired={false}
         isReadOnly={false}
-        value={SecretValue1}
+        value={SecretKey}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
@@ -1374,6 +1261,7 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode,
               PhoneNumber,
               Amount,
+              Status,
               Currency,
               InvoiceNumbers,
               TransactionID,
@@ -1382,29 +1270,29 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPBankPaymentAdviceId,
               createdAt,
               updatedAt,
-              SecretValue1: value,
-              SecretValue2,
+              SecretKey: value,
+              SecretValue,
               OdataUsername,
               OdataPassword,
             };
             const result = onChange(modelFields);
-            value = result?.SecretValue1 ?? value;
+            value = result?.SecretKey ?? value;
           }
-          if (errors.SecretValue1?.hasError) {
-            runValidationTasks("SecretValue1", value);
+          if (errors.SecretKey?.hasError) {
+            runValidationTasks("SecretKey", value);
           }
-          setSecretValue1(value);
+          setSecretKey(value);
         }}
-        onBlur={() => runValidationTasks("SecretValue1", SecretValue1)}
-        errorMessage={errors.SecretValue1?.errorMessage}
-        hasError={errors.SecretValue1?.hasError}
-        {...getOverrideProps(overrides, "SecretValue1")}
+        onBlur={() => runValidationTasks("SecretKey", SecretKey)}
+        errorMessage={errors.SecretKey?.errorMessage}
+        hasError={errors.SecretKey?.hasError}
+        {...getOverrideProps(overrides, "SecretKey")}
       ></TextField>
       <TextField
-        label="Secret value2"
+        label="Secret value"
         isRequired={false}
         isReadOnly={false}
-        value={SecretValue2}
+        value={SecretValue}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
@@ -1420,6 +1308,7 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode,
               PhoneNumber,
               Amount,
+              Status,
               Currency,
               InvoiceNumbers,
               TransactionID,
@@ -1428,23 +1317,23 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPBankPaymentAdviceId,
               createdAt,
               updatedAt,
-              SecretValue1,
-              SecretValue2: value,
+              SecretKey,
+              SecretValue: value,
               OdataUsername,
               OdataPassword,
             };
             const result = onChange(modelFields);
-            value = result?.SecretValue2 ?? value;
+            value = result?.SecretValue ?? value;
           }
-          if (errors.SecretValue2?.hasError) {
-            runValidationTasks("SecretValue2", value);
+          if (errors.SecretValue?.hasError) {
+            runValidationTasks("SecretValue", value);
           }
-          setSecretValue2(value);
+          setSecretValue(value);
         }}
-        onBlur={() => runValidationTasks("SecretValue2", SecretValue2)}
-        errorMessage={errors.SecretValue2?.errorMessage}
-        hasError={errors.SecretValue2?.hasError}
-        {...getOverrideProps(overrides, "SecretValue2")}
+        onBlur={() => runValidationTasks("SecretValue", SecretValue)}
+        errorMessage={errors.SecretValue?.errorMessage}
+        hasError={errors.SecretValue?.hasError}
+        {...getOverrideProps(overrides, "SecretValue")}
       ></TextField>
       <TextField
         label="Odata username"
@@ -1466,6 +1355,7 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode,
               PhoneNumber,
               Amount,
+              Status,
               Currency,
               InvoiceNumbers,
               TransactionID,
@@ -1474,8 +1364,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPBankPaymentAdviceId,
               createdAt,
               updatedAt,
-              SecretValue1,
-              SecretValue2,
+              SecretKey,
+              SecretValue,
               OdataUsername: value,
               OdataPassword,
             };
@@ -1512,6 +1402,7 @@ export default function PaymentDetailsUpdateForm(props) {
               PostalCode,
               PhoneNumber,
               Amount,
+              Status,
               Currency,
               InvoiceNumbers,
               TransactionID,
@@ -1520,8 +1411,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPBankPaymentAdviceId,
               createdAt,
               updatedAt,
-              SecretValue1,
-              SecretValue2,
+              SecretKey,
+              SecretValue,
               OdataUsername,
               OdataPassword: value,
             };

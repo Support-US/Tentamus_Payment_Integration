@@ -9,8 +9,10 @@ import cc from 'currency-codes'
 import { createPaymentDetails } from '../../graphql/mutations';
 import { BlowfishEncryption } from '../../Components/BlowfishEncryption';
 import { Country, State, City } from 'country-state-city';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectFormData, updateFormData } from '../../Store/Slice/formSlice';
+import Nipurna from '../../images/nipurna.png';
 
-const countries = cc.countries();
 const newcountries = Country.getAllCountries();
 const currency = cc.codes();
 
@@ -38,34 +40,31 @@ const dropdownCurrencies = currency.map(code => {
 // console.log("currency", dropdownCurrencies);
 
 
-const initialValues = {
-  FirstName: "",
-  LastName: "",
-  Email: "",
-  AddressLine1: "",
-  AddressLine2: "",
-  Country: "",
-  State: "",
-  City: "",
-  PostalCode: "",
-  PhoneNumber: "",
-  Amount: "",
-  Currency: "",
-  InvoiceNumbers: "",
-}
+// const initialValues = {
+//   FirstName: "",
+//   LastName: "",
+//   Email: "",
+//   AddressLine1: "",
+//   AddressLine2: "",
+//   Country: "",
+//   State: "",
+//   City: "",
+//   PostalCode: "",
+//   PhoneNumber: "",
+//   Amount: "",
+//   Currency: "",
+//   InvoiceNumbers: "",
+// }
 
 const CustomerPaymentDetailsForm = () => {
 
   const [states, setStates] = useState([]);
   const [paygateURL, setPaygateURL] = useState("");
-
   const [clickCount, setClickCount] = useState(0);
-
-  // console.log("c", clickCount);
-
   const [invoiceNumbers, setInvoiceNumbers] = useState([]);
+  const dispatch = useDispatch();
+  const initialValues = useSelector(selectFormData);
 
-  // console.log("invoice", invoiceNumbers);
   const handleComputopRedirection = (Currency, Amount) => {
 
     let data = `Currency=${Currency}&Amount=${Amount}&MAC=e55761ccb8be287c7c3ed14dbea1060fb4d1fc47f9c73c3b63d0c6215102f2ac`;
@@ -90,16 +89,17 @@ const CustomerPaymentDetailsForm = () => {
     const Cityconfirm = values.City ? values.City.trim() + "," : "";
     const Stateconfirm = values.State ? values.State.trim() + "," : "";
 
-    const confirmedValues = {
+    const formData = {
       ...NewValues,
       Address: AddressLine1confirm + AddressLine2confirm + Cityconfirm + Stateconfirm + values.Country + "-" + values.PostalCode,
-      InvoiceNumbers: invoiceNumbers,
     }
 
     // Computop redirection
-    handleComputopRedirection(confirmedValues.Currency, confirmedValues.Amount);
+    handleComputopRedirection(formData.Currency, formData.Amount);
 
     try {
+      dispatch(updateFormData(formData));
+      console.log("formDataaa", formData);
       // const response = await API.graphql(
       //   {
       //     query: createPaymentDetails,
@@ -134,7 +134,7 @@ const CustomerPaymentDetailsForm = () => {
     setClickCount(0)
   };
 
-  const [textFields, setTextFields] = useState([]);
+  const [textFields, setTextFields] = useState(['']); // Initialize with one empty string
 
   const handleAddTextField = () => {
     setTextFields([...textFields, '']);
@@ -154,301 +154,309 @@ const CustomerPaymentDetailsForm = () => {
 
 
   return (
+    <div>
+      <div className='card-container'>
+        <div>
+          <Formik onSubmit={handleFormSubmit} initialValues={initialValues}>
+            {({ values, handleSubmit, handleReset, handleChange }) => (
+              
+              <form className='form-container'>
+                <Grid>
+                  {/* Heading */}
+                  <div style={{ textAlign: 'center' }}>
+                    <span className='header'>
+                      Payment Details
+                    </span>
+                  </div>
 
-    <Card className='cardContainer'>
-      <CardContent>
-        <Formik onSubmit={handleFormSubmit} initialValues={initialValues}>
-          {({ values, handleSubmit, handleReset, handleChange }) => (
-            <form className='container'>
-              <Grid container spacing={1}>
-                <Grid item xs={12} style={{ textAlign: 'center' }}>
-                  <Typography variant='h5'>
-                    Payment Details
-                  </Typography>
-                </Grid>
-                <Grid container spacing={2} style={{ marginTop: "10px" }}>
-
-                  {/* First Name */}
-                  <Grid item xs={6}>
-                    <FormControl fullWidth >
-                      <Field
-                        size="small"
-                        name="FirstName"
-                        type="text"
-                        as={TextField}
-                        label="First Name"
-                      />
-                    </FormControl>
-                  </Grid>
-
-                  {/* last Name */}
-                  <Grid item xs={6}>
-                    <FormControl fullWidth>
-                      <Field
-                        size="small"
-                        name="LastName"
-                        type="text"
-                        as={TextField}
-                        label="Last Name"
-                      />
-                    </FormControl>
-                  </Grid>
-
-                  {/* Email */}
-                  <Grid item xs={12}>
-                    <FormControl fullWidth>
-                      <Field
-                        size="small"
-                        name="Email"
-                        type="text"
-                        as={TextField}
-                        label="Email ID"
-                      />
-                    </FormControl>
-                  </Grid>
-
-                  {/* address Line 1 */}
-                  <Grid item xs={12}>
-                    <FormControl fullWidth>
-                      <Field
-                        size="small"
-                        name="AddressLine1"
-                        type="text"
-                        as={TextField}
-                        label="Address Line 1"
-                      />
-                    </FormControl>
-                  </Grid>
-
-                  {/* address Line 2 */}
-                  <Grid item xs={12}>
-                    <FormControl fullWidth>
-                      <Field
-                        size="small"
-                        name="AddressLine2"
-                        type="text"
-                        as={TextField}
-                        label="Address Line 2"
-                      />
-                    </FormControl>
-                  </Grid>
-
-                  {/* Country */}
-                  <Grid item xs={4}>
-                    <div className='field-container'>
+                  <Grid container spacing={2} style={{ marginTop: "10px" }}>
+                    {/* First Name */}
+                    <Grid item xs={6}>
                       <FormControl fullWidth>
-                        <Field name="Country" onChange={handleChange}>
+                        <Field
+                          size="small"
+                          name="FirstName"
+                          type="text"
+                          as={TextField}
+                          label="First Name"
+                        />
+                      </FormControl>
+                    </Grid>
+
+                    {/* last Name */}
+                    <Grid item xs={6}>
+                      <FormControl fullWidth>
+                        <Field
+                          size="small"
+                          name="LastName"
+                          type="text"
+                          as={TextField}
+                          label="Last Name"
+                        />
+                      </FormControl>
+                    </Grid>
+
+                    {/* Email */}
+                    <Grid item xs={12}>
+                      <FormControl fullWidth>
+                        <Field
+                          size="small"
+                          name="Email"
+                          type="text"
+                          as={TextField}
+                          label="Email ID"
+                        />
+                      </FormControl>
+                    </Grid>
+
+                    {/* address Line 1 */}
+                    <Grid item xs={12}>
+                      <FormControl fullWidth>
+                        <Field
+                          size="small"
+                          name="AddressLine1"
+                          type="text"
+                          as={TextField}
+                          label="Address Line 1"
+                        />
+                      </FormControl>
+                    </Grid>
+
+                    {/* address Line 2 */}
+                    <Grid item xs={12}>
+                      <FormControl fullWidth>
+                        <Field
+                          size="small"
+                          name="AddressLine2"
+                          type="text"
+                          as={TextField}
+                          label="Address Line 2"
+                        />
+                      </FormControl>
+                    </Grid>
+
+                    {/* Country */}
+                    <Grid item xs={4}>
+                      <div className='field-container'>
+                        <FormControl fullWidth>
+                          <Field name="Country" onChange={handleChange}>
+                            {({ field, form }) => (
+                              <Autocomplete
+                                size="small"
+                                options={dropdowncountries}
+                                getOptionLabel={(option) => option.countryName}
+                                value={dropdowncountries.find(
+                                  (option) => option.countryCode === field.value
+                                ) || null
+                                }
+                                onChange={(event, value) => {
+                                  if (value !== null) {
+                                    setStates(State.getStatesOfCountry(value.countryCode));
+                                  }
+                                  form.setFieldValue(
+                                    "Country",
+                                    value?.countryCode || ""
+                                  );
+
+                                }}
+                                renderInput={(params) => (
+                                  <TextField
+                                    {...params}
+                                    label="Country"
+                                    variant="outlined" />
+                                )}
+                              >
+                              </Autocomplete>
+                            )}
+                          </Field>
+                        </FormControl>
+                      </div>
+                    </Grid>
+
+                    {/* State */}
+                    <Grid item xs={4}>
+                      <div className='field-container'>
+                        <FormControl fullWidth>
+                          <Field name="state">
+                            {({ field, form }) => (
+                              <Autocomplete
+                                size="small"
+                                options={states}
+                                getOptionLabel={(option) => option.name}
+                                renderInput={(params) => (
+                                  <TextField
+                                    {...params}
+                                    label="State"
+                                    variant="outlined" />
+                                )}
+                              >
+                              </Autocomplete>
+                            )}
+                          </Field>
+                        </FormControl>
+                      </div>
+                    </Grid>
+
+                    {/* City */}
+                    <Grid item xs={4}>
+                      <FormControl fullWidth>
+                        <Field
+                          size="small"
+                          name="City"
+                          type="text"
+                          as={TextField}
+                          label="City"
+                        />
+                      </FormControl>
+                    </Grid>
+
+                    {/* Postal Code */}
+                    <Grid item xs={6}>
+                      <FormControl fullWidth>
+                        <Field
+                          size="small"
+                          name="PostalCode"
+                          type="text"
+                          as={TextField}
+                          label="Postal Code"
+                        />
+                      </FormControl>
+                    </Grid>
+
+                    {/* Phone Number */}
+                    <Grid item xs={6}>
+                      <FormControl fullWidth>
+                        <Field
+                          size="small"
+                          name="PhoneNumber"
+                          type="text"
+                          as={TextField}
+                          label="Phone Number"
+                        />
+                      </FormControl>
+                    </Grid>
+
+                    {/* Amount */}
+                    <Grid item xs={6}>
+                      <FormControl fullWidth>
+                        <Field
+                          size="small"
+                          name="Amount"
+                          type="text"
+                          as={TextField}
+                          label="Amount"
+                        />
+                      </FormControl>
+                    </Grid>
+
+                    {/* Currency */}
+                    <Grid item xs={6}>
+                      <FormControl fullWidth>
+                        <Field name="Currency" onChange={handleChange}>
                           {({ field, form }) => (
                             <Autocomplete
-                              size="small"
-                              options={dropdowncountries}
-                              getOptionLabel={(option) => option.countryName}
-                              value={dropdowncountries.find(
-                                (option) => option.countryCode === field.value
+                              size="small" options={dropdownCurrencies}
+                              getOptionLabel={(option) => option.label}
+                              value={dropdownCurrencies.find(
+                                (option) => option.value === field.value
                               ) || null
                               }
                               onChange={(event, value) => {
-                                if (value !== null) {
-                                  setStates(State.getStatesOfCountry(value.countryCode));
-                                }
                                 form.setFieldValue(
-                                  "Country",
-                                  value?.countryCode || ""
+                                  "Currency",
+                                  value?.value || ""
                                 );
-
                               }}
                               renderInput={(params) => (
                                 <TextField
                                   {...params}
-                                  label="Country"
-                                  variant="outlined" />
+                                  label="Currency"
+                                  variant='outlined'
+                                />
                               )}
                             >
                             </Autocomplete>
                           )}
                         </Field>
                       </FormControl>
-                    </div>
-                  </Grid>
+                    </Grid>
 
-                  {/* State */}
-                  <Grid item xs={4}>
-                    <div className='field-container'>
-                      <FormControl fullWidth>
-                        {/* <Field
-                    size="small"
-                    name="State"
-                    type="text"
-                    as={TextField}
-                    label="State"
-                  /> */}
-                        <Field name="state">
-                          {({ field, form }) => (
-                            <Autocomplete
-                              size="small"
-                              options={states}
-                              getOptionLabel={(option) => option.name}
-                              // value={dropdowncountries.find(
-                              //   (option) => option.isoCode === field.isoCode
-                              // ) || null
-                              // }
-                              // onChange={(event, value) => {
-
-                              //   form.setFieldValue(
-                              //     "Country",
-                              //     value?.value || ""
-                              //   );
-
-                              // }}
-                              renderInput={(params) => (
-                                <TextField
-                                  {...params}
-                                  label="State"
-                                  variant="outlined" />
-                              )}
-                            >
-                            </Autocomplete>
+                    {/* Invoice */}
+                    <Grid item xs={6}>
+                      <div className='invoice-container'>
+                        <div className='invoiceDetails'>
+                          Invoice Details
+                        </div>
+                        <div>
+                          <IconButton
+                            size='small'
+                            onClick={handleAddTextField}>
+                            <AddIcon />
+                          </IconButton>
+                        </div>
+                      </div>
+                      {textFields.map((value, index) => (
+                        <div key={index} className='textFieldContainer'>
+                          <TextField
+                            style={{ marginBottom: '10px' }}
+                            size="small"
+                            value={value}
+                            onChange={(e) => handleTextFieldChange(index, e.target.value)}
+                          />
+                          {textFields.length > 1 && ( // Check if there is more than one text field
+                            <IconButton size='small' onClick={() => handleRemoveTextField(index)}>
+                              <RemoveIcon />
+                            </IconButton>
                           )}
-                        </Field>
-                      </FormControl>
-                    </div>
-                  </Grid>
+                        </div>
+                      ))}
+                    </Grid>
 
-                  {/* City */}
-                  <Grid item xs={4}>
-                    <FormControl fullWidth>
-                      <Field
-                        size="small"
-                        name="City"
-                        type="text"
-                        as={TextField}
-                        label="City"
-                      />
-                    </FormControl>
-                  </Grid>
-
-                  {/* Postal Code */}
-                  <Grid item xs={6}>
-                    <FormControl fullWidth>
-                      <Field
-                        size="small"
-                        name="PostalCode"
-                        type="text"
-                        as={TextField}
-                        label="Postal Code"
-                      />
-                    </FormControl>
-                  </Grid>
-
-                  {/* Phone Number */}
-                  <Grid item xs={6}>
-                    <FormControl fullWidth>
-                      <Field
-                        size="small"
-                        name="PhoneNumber"
-                        type="text"
-                        as={TextField}
-                        label="Phone Number"
-                      />
-                    </FormControl>
-                  </Grid>
-
-                  {/* Amount */}
-                  <Grid item xs={6}>
-                    <FormControl fullWidth>
-                      <Field
-                        size="small"
-                        name="Amount"
-                        type="text"
-                        as={TextField}
-                        label="Amount"
-                      />
-                    </FormControl>
-                  </Grid>
-
-                  {/* Currency */}
-                  <Grid item xs={6}>
-                    <FormControl fullWidth>
-                      <Field name="Currency" onChange={handleChange}>
-                        {({ field, form }) => (
-                          <Autocomplete
-                            size="small" options={dropdownCurrencies}
-                            getOptionLabel={(option) => option.label}
-                            value={dropdownCurrencies.find(
-                              (option) => option.value === field.value
-                            ) || null
-                            }
-                            onChange={(event, value) => {
-                              form.setFieldValue(
-                                "Currency",
-                                value?.value || ""
-                              );
-                            }}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                label="Currency"
-                                variant='outlined'
-                              />
-                            )}
+                    {/* Button */}
+                    <Grid item xs={12} sm={12} container justifyContent="flex-end">
+                      <div className='field-container' style={{ display: 'flex', gap: '10px' }}>
+                        <FormControl>
+                          <Button
+                            variant="outlined"
+                            color="success"
+                            size='small'
+                            onClick={() => handleTotalResetForm(handleReset)}
+                            style={{ textTransform: "capitalize", fontWeight: 600 }}
                           >
-                          </Autocomplete>
-                        )}
-                      </Field>
-                    </FormControl>
+                            Cancel
+                          </Button>
+                        </FormControl>
+                        <FormControl>
+                          <Button
+                            variant="contained"
+                            color="success"
+                            size='small'
+                            disableElevation
+                            onClick={handleSubmit}
+                            style={{ textTransform: "capitalize", fontWeight: 600 }}
+                          >
+                            Submit
+                          </Button>
+                        </FormControl>
+                      </div>
+                    </Grid>
                   </Grid>
 
-                  {/* Invoice */}
-                  <Grid item xs={6}>
-                    <div className='invoice-container'>
-                      <div className='invoiceDetails'>
-                        Invoice Details
-                      </div>
-                      <div>
-                        <IconButton onClick={handleAddTextField}>
-                          <AddIcon />
-                        </IconButton>
-                      </div>
-                    </div>
-                    {textFields.map((value, index) => (
-                      <div key={index} className='textFieldContainer'>
-                        <TextField
-                          size="small"
-                          value={value}
-                          onChange={(e) => handleTextFieldChange(index, e.target.value)}
-                        />
-                        <IconButton onClick={() => handleRemoveTextField(index)}>
-                          <RemoveIcon />
-                        </IconButton>
-                      </div>
-                    ))}
-                  </Grid>
-
-                  <Grid item xs={12} sm={12} container justifyContent="flex-end">
-                    <div className='field-container' style={{ display: 'flex', gap: '10px' }}>
-                      <FormControl>
-                        <Button variant="outlined" color="error"
-                          onClick={() => handleTotalResetForm(handleReset)}>
-                          Cancel
-                        </Button>
-                      </FormControl>
-                      <FormControl>
-                        <Button variant="contained" color="success"
-                          onClick={handleSubmit}
-                        >
-                          Submit
-                        </Button>
-                      </FormControl>
-                    </div>
-                  </Grid>
                 </Grid>
-
-              </Grid>
-            </form>
-          )}
-        </Formik>
-      </CardContent>
-    </Card>
+              </form>
+            )}
+          </Formik>
+        </div>
+      </div>
+      <div>
+        <footer className="footer gap-1">
+          <div style={{ fontSize: '12px' }}>
+            Powered by
+          </div>
+          <img height={"20px"} width={"80px"} src={Nipurna} />
+        </footer>
+      </div>
+    </div>
   );
 };
 
