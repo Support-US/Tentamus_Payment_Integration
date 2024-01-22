@@ -9,6 +9,10 @@ amplify pull --appId d389b8rydflvtl --envName dev
   git commit -m "changes done msg"
   git push
 
+# to merge changes from another after their push
+git pull
+npm install
+
   # hosted URL
   https://development.d389b8rydflvtl.amplifyapp.com/
 

@@ -15,14 +15,6 @@
     },
     "s3Key": {
       "Type": "String"
-    },
-    "apiTentamusPaymentIntegrationGraphQLAPIIdOutput": {
-      "Type": "String",
-      "Default": "apiTentamusPaymentIntegrationGraphQLAPIIdOutput"
-    },
-    "apiTentamusPaymentIntegrationGraphQLAPIEndpointOutput": {
-      "Type": "String",
-      "Default": "apiTentamusPaymentIntegrationGraphQLAPIEndpointOutput"
     }
   },
   "Conditions": {
@@ -55,12 +47,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "CreateBankpaymentAdvice",
+            "ComputopWebhook",
             {
               "Fn::Join": [
                 "",
                 [
-                  "CreateBankpaymentAdvice",
+                  "ComputopWebhook",
                   "-",
                   {
                     "Ref": "env"
@@ -87,7 +79,9 @@
           ]
         },
         "Runtime": "nodejs20.x",
-        "Layers": [],
+        "Layers": [
+          "arn:aws:lambda:us-east-2:988839728996:layer:TentamusPaymentIntegration:1"
+        ],
         "Timeout": 900
       }
     },
@@ -97,12 +91,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "tentamuspaymentintegLambdaRole01598f9e",
+            "tentamuspaymentintegLambdaRolebd646e7e",
             {
               "Fn::Join": [
                 "",
                 [
-                  "tentamuspaymentintegLambdaRole01598f9e",
+                  "tentamuspaymentintegLambdaRolebd646e7e",
                   "-",
                   {
                     "Ref": "env"
@@ -172,97 +166,6 @@
           ]
         }
       }
-    },
-    "LambdaTriggerPolicyPaymentDetails": {
-      "DependsOn": [
-        "LambdaExecutionRole"
-      ],
-      "Type": "AWS::IAM::Policy",
-      "Properties": {
-        "PolicyName": "amplify-lambda-execution-policy-PaymentDetails",
-        "Roles": [
-          {
-            "Ref": "LambdaExecutionRole"
-          }
-        ],
-        "PolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Action": [
-                "dynamodb:DescribeStream",
-                "dynamodb:GetRecords",
-                "dynamodb:GetShardIterator",
-                "dynamodb:ListStreams"
-              ],
-              "Resource": {
-                "Fn::ImportValue": {
-                  "Fn::Sub": "${apiTentamusPaymentIntegrationGraphQLAPIIdOutput}:GetAtt:PaymentDetailsTable:StreamArn"
-                }
-              }
-            }
-          ]
-        }
-      }
-    },
-    "LambdaEventSourceMappingPaymentDetails": {
-      "Type": "AWS::Lambda::EventSourceMapping",
-      "DependsOn": [
-        "LambdaTriggerPolicyPaymentDetails",
-        "LambdaExecutionRole"
-      ],
-      "Properties": {
-        "BatchSize": 100,
-        "Enabled": true,
-        "EventSourceArn": {
-          "Fn::ImportValue": {
-            "Fn::Sub": "${apiTentamusPaymentIntegrationGraphQLAPIIdOutput}:GetAtt:PaymentDetailsTable:StreamArn"
-          }
-        },
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "LambdaFunction",
-            "Arn"
-          ]
-        },
-        "StartingPosition": "LATEST"
-      }
-    },
-    "CustomLambdaExecutionPolicy": {
-      "Type": "AWS::IAM::Policy",
-      "Properties": {
-        "PolicyName": "custom-lambda-execution-policy",
-        "PolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Action": [
-                "secretsmanager:*"
-              ],
-              "Resource": [
-                "arn:aws:secretsmanager:us-east-2:988839728996:secret:*"
-              ]
-            },
-            {
-              "Effect": "Allow",
-              "Action": [
-                "dynamodb:*"
-              ],
-              "Resource": [
-                "arn:aws:dynamodb:us-east-2:988839728996:table/*"
-              ]
-            }
-          ]
-        },
-        "Roles": [
-          {
-            "Ref": "LambdaExecutionRole"
-          }
-        ]
-      },
-      "DependsOn": "LambdaExecutionRole"
     }
   },
   "Outputs": {

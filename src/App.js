@@ -3,6 +3,9 @@ import './App.css';
 import awsExports from './aws-exports'
 import CustomerPaymentDetailsForm from './Pages/CustomerPaymentDetails/CustomerPaymentDetailsForm';
 import { Amplify } from 'aws-amplify';
+import SucessPage from './Pages/ResultPages/SucessPage';
+import FailurePage from './Pages/ResultPages/FailurePage';
+
 Amplify.configure(awsExports)
 
 function App() {
@@ -25,6 +28,8 @@ function App() {
     // </div>
     <div>
       <CustomerPaymentDetailsForm/>
+      {/* <SucessPage/> */}
+      {/* <FailurePage/> */}
     </div>
   );
 }

@@ -16,6 +16,14 @@
         "CreateBankpaymentAdvice": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-51521-deployment",
           "s3Key": "amplify-builds/CreateBankpaymentAdvice-61414d2b4e336433544f-build.zip"
+        },
+        "PaymentDetailsResponse": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-51521-deployment",
+          "s3Key": "amplify-builds/PaymentDetailsResponse-76633768365637436777-build.zip"
+        },
+        "ComputopWebhook": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-51521-deployment",
+          "s3Key": "amplify-builds/ComputopWebhook-773842654a6c58334d38-build.zip"
         }
       }
     }

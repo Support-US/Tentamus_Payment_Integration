@@ -5,6 +5,7 @@ type PaymentDetails
 id: ID!
 FirstName: String!
 LastName : String!
+CompanyName :String!
 Email : String!
 AddressLine1: String!
 AddressLine2: String
@@ -14,17 +15,14 @@ City:String
 PostalCode:String!
 PhoneNumber :String!
 Amount : String!
-Status : String!
 Currency: String!
+Status : String!
 InvoiceNumbers :AWSJSON!
-TransactionID :String!
+TransactionID :String
 MerchantID :String
 PaymentId: String
-SAPBankPaymentAdviceId: String
 createdAt: AWSDateTime
 updatedAt: AWSDateTime
-SecretKey: String
-SecretValue: String
-OdataUsername: String
-OdataPassword: String
- }
+HMacPassword: String
+EncryptionPassword: String
+}

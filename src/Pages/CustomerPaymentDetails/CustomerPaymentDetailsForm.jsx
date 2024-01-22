@@ -11,19 +11,12 @@ import { BlowfishEncryption } from '../../Components/BlowfishEncryption';
 import { Country, State, City } from 'country-state-city';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectFormData, updateFormData } from '../../Store/Slice/formSlice';
-import Nipurna from '../../images/nipurna.png';
 
 const newcountries = Country.getAllCountries();
 const currency = cc.codes();
 
-// const dropdowncountries = countries.map(country => {
-//   return {
-//     label: country,
-//     value: country
-//   };
-// });
-
 const dropdowncountries = newcountries.map(country => {
+  // console.log("country",country);
   return {
     countryName: country.name,
     countryCode: country.isoCode
@@ -31,37 +24,17 @@ const dropdowncountries = newcountries.map(country => {
 });
 
 const dropdownCurrencies = currency.map(code => {
+  // console.log("Currency",currency);
   return {
     label: code,
     value: code
   };
 });
 
-// console.log("currency", dropdownCurrencies);
-
-
-// const initialValues = {
-//   FirstName: "",
-//   LastName: "",
-//   Email: "",
-//   AddressLine1: "",
-//   AddressLine2: "",
-//   Country: "",
-//   State: "",
-//   City: "",
-//   PostalCode: "",
-//   PhoneNumber: "",
-//   Amount: "",
-//   Currency: "",
-//   InvoiceNumbers: "",
-// }
-
 const CustomerPaymentDetailsForm = () => {
 
   const [states, setStates] = useState([]);
   const [paygateURL, setPaygateURL] = useState("");
-  const [clickCount, setClickCount] = useState(0);
-  const [invoiceNumbers, setInvoiceNumbers] = useState([]);
   const dispatch = useDispatch();
   const initialValues = useSelector(selectFormData);
 
@@ -80,6 +53,146 @@ const CustomerPaymentDetailsForm = () => {
 
     window.open(`https://www.computop-paygate.com/payssl.aspx?MerchantID=${merchantID}&Len=${data.length}&Data=${computopDataParameter}`, '_blank', 'noopener,noreferrer');
   }
+
+  const validateFirstName = (value) => {
+
+    let error;
+    const lettersOnlyRegex = /^[a-zA-Z]+$/;
+
+    if (!value || value.trim().length === 0) {
+      error = "Field is required";
+      return error;
+    } else if (!lettersOnlyRegex.test(value)) {
+      error = " Enter a valid name with only letters"
+      return error;
+    }
+    return error;
+  }
+
+  const validateLastName = (value) => {
+
+    let error;
+    const lettersOnlyRegex = /^[a-zA-Z]+$/;
+
+    if (!value || value.trim().length === 0) {
+      error = "Field is required";
+    } else if (!lettersOnlyRegex.test(value)) {
+      error = " Enter a valid name with only letters"
+    }
+    return error;
+  }
+
+  const validateCompanyName = (value) => {
+
+    let error;
+    const lettersOnlyRegex = /^[a-zA-Z]+$/;
+
+    if (!value || value.trim().length === 0) {
+      error = "Field is required";
+    } else if (!lettersOnlyRegex.test(value)) {
+      error = " Enter a valid name with only letters"
+    }
+
+    return error;
+
+  }
+
+  const validateEmail = (value) => {
+
+    let error;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!value || value.trim().length === 0) {
+      error = "Field is required";
+    } else if (!emailRegex.test(value)) {
+      error = "Enter a valid email address";
+    }
+
+    return error;
+
+  }
+
+  const validateAddressLine1 = (value) => {
+
+    let error;
+    if (!value || value.trim().length === 0) {
+      error = "Field is required";
+    }
+    return error;
+  }
+
+  const validateCountry = (value) => {
+
+    let error;
+    if (!value) {
+      error = "Field is required";
+    }
+    return error
+  }
+
+  const validateState = (value) => {
+
+    let error;
+    if (!value) {
+      error = "Field is required";
+    }
+    return error
+  }
+
+  const validatePostalCode = (value) => {
+    let error;
+    if (!value) {
+      error = "Field is required. For example:542105";
+    } else if (!/^\d+$/.test(value)) {
+      error = "Please enter a valid postal code.For example:542105";
+    }
+    return error;
+  };
+
+  const validatePhoneNumber = (value) => {
+
+    let error;
+    if (!value) {
+      error = "Field is required";
+    } else if (!/^\+\d+$/.test(value)) {
+      error = "Please enter a valid phone number with your country code";
+    }
+    return error
+  }
+
+  const validateAmount = (value) => {
+
+    let error;
+    if (!value) {
+      error = "Field is required";
+    } else if (!/^\d+(\.\d{1,2})?$/.test(value)) {
+      error = "Please enter a valid amount. For example:1456.23";
+    }
+    else if (/\D/.test(value)) {
+      error = "Please enter only digits";
+    }
+    return error
+  }
+
+  const validateCurrency = (value) => {
+
+    let error;
+    if (!value) {
+      error = "Field is required.For example USD ";
+    }
+    return error
+  }
+
+  const validateInvoiceNo = (value) => {
+
+    let error;
+    if (!value) {
+      error = "Field is required";
+    }
+    return error
+  }
+
+
 
   const handleFormSubmit = async (values, { resetForm }) => {
 
@@ -111,8 +224,8 @@ const CustomerPaymentDetailsForm = () => {
       // console.log("GraphQL Response:", response);
 
       resetForm();
-      setInvoiceNumbers([]);
-      setClickCount(0)
+
+
 
 
       // return response.data.createPaymentDetails;
@@ -130,8 +243,8 @@ const CustomerPaymentDetailsForm = () => {
 
     handleReset();
 
-    setInvoiceNumbers([]);
-    setClickCount(0)
+
+
   };
 
   const [textFields, setTextFields] = useState(['']); // Initialize with one empty string
@@ -158,8 +271,8 @@ const CustomerPaymentDetailsForm = () => {
       <div className='card-container'>
         <div>
           <Formik onSubmit={handleFormSubmit} initialValues={initialValues}>
-            {({ values, handleSubmit, handleReset, handleChange }) => (
-              
+            {({ values, handleSubmit, handleReset, handleChange, errors, touched }) => (
+
               <form className='form-container'>
                 <Grid>
                   {/* Heading */}
@@ -178,7 +291,11 @@ const CustomerPaymentDetailsForm = () => {
                           name="FirstName"
                           type="text"
                           as={TextField}
-                          label="First Name"
+                          label="First Name*"
+                          helperText={(touched.FirstName && errors.FirstName)}
+                          error={touched.FirstName && Boolean(errors.FirstName)}
+                          value={values.FirstName}
+                          validate={validateFirstName}
                         />
                       </FormControl>
                     </Grid>
@@ -191,20 +308,45 @@ const CustomerPaymentDetailsForm = () => {
                           name="LastName"
                           type="text"
                           as={TextField}
-                          label="Last Name"
+                          label="Last Name*"
+                          helperText={(touched.LastName && errors.LastName)}
+                          error={touched.LastName && Boolean(errors.LastName)}
+                          value={values.LastName}
+                          validate={validateLastName}
+                        />
+                      </FormControl>
+                    </Grid>
+
+                    {/* Company Name*/}
+                    <Grid item xs={6}>
+                      <FormControl fullWidth>
+                        <Field
+                          size="small"
+                          name="CompanyName"
+                          type="text"
+                          as={TextField}
+                          label="Company Name*"
+                          helperText={(touched.CompanyName && errors.CompanyName)}
+                          error={touched.CompanyName && Boolean(errors.CompanyName)}
+                          value={values.CompanyName}
+                          validate={validateCompanyName}
                         />
                       </FormControl>
                     </Grid>
 
                     {/* Email */}
-                    <Grid item xs={12}>
+                    <Grid item xs={6}>
                       <FormControl fullWidth>
                         <Field
                           size="small"
                           name="Email"
                           type="text"
                           as={TextField}
-                          label="Email ID"
+                          label="Email ID*"
+                          helperText={(touched.Email && errors.Email)}
+                          error={touched.Email && Boolean(errors.Email)}
+                          value={values.Email}
+                          validate={validateEmail}
                         />
                       </FormControl>
                     </Grid>
@@ -217,7 +359,11 @@ const CustomerPaymentDetailsForm = () => {
                           name="AddressLine1"
                           type="text"
                           as={TextField}
-                          label="Address Line 1"
+                          label="Address Line 1*"
+                          helperText={(touched.AddressLine1 && errors.AddressLine1)}
+                          error={touched.AddressLine1 && Boolean(errors.AddressLine1)}
+                          value={values.AddressLine1}
+                          validate={validateAddressLine1}
                         />
                       </FormControl>
                     </Grid>
@@ -239,7 +385,7 @@ const CustomerPaymentDetailsForm = () => {
                     <Grid item xs={4}>
                       <div className='field-container'>
                         <FormControl fullWidth>
-                          <Field name="Country" onChange={handleChange}>
+                          <Field name="Country" validate={validateCountry} onChange={handleChange}>
                             {({ field, form }) => (
                               <Autocomplete
                                 size="small"
@@ -262,8 +408,10 @@ const CustomerPaymentDetailsForm = () => {
                                 renderInput={(params) => (
                                   <TextField
                                     {...params}
-                                    label="Country"
-                                    variant="outlined" />
+                                    label="Country*"
+                                    variant="outlined"
+                                    helperText={(touched.Country && errors.Country)}
+                                    error={touched.Country && Boolean(errors.Country)} />
                                 )}
                               >
                               </Autocomplete>
@@ -277,7 +425,7 @@ const CustomerPaymentDetailsForm = () => {
                     <Grid item xs={4}>
                       <div className='field-container'>
                         <FormControl fullWidth>
-                          <Field name="state">
+                          <Field name="state" validate={validateState}>
                             {({ field, form }) => (
                               <Autocomplete
                                 size="small"
@@ -286,8 +434,10 @@ const CustomerPaymentDetailsForm = () => {
                                 renderInput={(params) => (
                                   <TextField
                                     {...params}
-                                    label="State"
-                                    variant="outlined" />
+                                    label="State*"
+                                    variant="outlined"
+                                    helperText={(touched.state && errors.state)}
+                                    error={touched.state && Boolean(errors.state)} />
                                 )}
                               >
                               </Autocomplete>
@@ -318,7 +468,11 @@ const CustomerPaymentDetailsForm = () => {
                           name="PostalCode"
                           type="text"
                           as={TextField}
-                          label="Postal Code"
+                          label="Postal Code*"
+                          helperText={(touched.PostalCode && errors.PostalCode)}
+                          error={touched.PostalCode && Boolean(errors.PostalCode)}
+                          value={values.PostalCode}
+                          validate={validatePostalCode}
                         />
                       </FormControl>
                     </Grid>
@@ -331,7 +485,11 @@ const CustomerPaymentDetailsForm = () => {
                           name="PhoneNumber"
                           type="text"
                           as={TextField}
-                          label="Phone Number"
+                          label="Phone Number*"
+                          helperText={(touched.PhoneNumber && errors.PhoneNumber)}
+                          error={touched.PhoneNumber && Boolean(errors.PhoneNumber)}
+                          value={values.PhoneNumber}
+                          validate={validatePhoneNumber}
                         />
                       </FormControl>
                     </Grid>
@@ -342,9 +500,13 @@ const CustomerPaymentDetailsForm = () => {
                         <Field
                           size="small"
                           name="Amount"
-                          type="text"
+                          type="number"
                           as={TextField}
-                          label="Amount"
+                          label="Amount*"
+                          helperText={(touched.Amount && errors.Amount)}
+                          error={touched.Amount && Boolean(errors.Amount)}
+                          value={values.Amount}
+                          validate={validateAmount}
                         />
                       </FormControl>
                     </Grid>
@@ -352,7 +514,7 @@ const CustomerPaymentDetailsForm = () => {
                     {/* Currency */}
                     <Grid item xs={6}>
                       <FormControl fullWidth>
-                        <Field name="Currency" onChange={handleChange}>
+                        <Field name="Currency" validate={validateCurrency} onChange={handleChange}>
                           {({ field, form }) => (
                             <Autocomplete
                               size="small" options={dropdownCurrencies}
@@ -370,8 +532,10 @@ const CustomerPaymentDetailsForm = () => {
                               renderInput={(params) => (
                                 <TextField
                                   {...params}
-                                  label="Currency"
+                                  label="Currency*"
                                   variant='outlined'
+                                  helperText={(touched.Currency && errors.Currency)}
+                                  error={touched.Currency && Boolean(errors.Currency)}
                                 />
                               )}
                             >
@@ -401,7 +565,9 @@ const CustomerPaymentDetailsForm = () => {
                             style={{ marginBottom: '10px' }}
                             size="small"
                             value={value}
+                            label="Invoice No*"
                             onChange={(e) => handleTextFieldChange(index, e.target.value)}
+
                           />
                           {textFields.length > 1 && ( // Check if there is more than one text field
                             <IconButton size='small' onClick={() => handleRemoveTextField(index)}>
@@ -448,14 +614,14 @@ const CustomerPaymentDetailsForm = () => {
           </Formik>
         </div>
       </div>
-      <div>
+      {/* <div>
         <footer className="footer gap-1">
           <div style={{ fontSize: '12px' }}>
             Powered by
           </div>
-          <img height={"20px"} width={"80px"} src={Nipurna} />
+          <img height={"20px"} width={"80px"} src={Nipurna}  alt="NipurnaImage" />
         </footer>
-      </div>
+      </div> */}
     </div>
   );
 };

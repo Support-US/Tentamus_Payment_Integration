@@ -10,6 +10,7 @@ export const createPaymentDetails = /* GraphQL */ `
       id
       FirstName
       LastName
+      CompanyName
       Email
       AddressLine1
       AddressLine2
@@ -19,19 +20,16 @@ export const createPaymentDetails = /* GraphQL */ `
       PostalCode
       PhoneNumber
       Amount
-      Status
       Currency
+      Status
       InvoiceNumbers
       TransactionID
       MerchantID
       PaymentId
-      SAPBankPaymentAdviceId
       createdAt
       updatedAt
-      SecretKey
-      SecretValue
-      OdataUsername
-      OdataPassword
+      HMacPassword
+      EncryptionPassword
       __typename
     }
   }
@@ -45,6 +43,7 @@ export const updatePaymentDetails = /* GraphQL */ `
       id
       FirstName
       LastName
+      CompanyName
       Email
       AddressLine1
       AddressLine2
@@ -54,19 +53,16 @@ export const updatePaymentDetails = /* GraphQL */ `
       PostalCode
       PhoneNumber
       Amount
-      Status
       Currency
+      Status
       InvoiceNumbers
       TransactionID
       MerchantID
       PaymentId
-      SAPBankPaymentAdviceId
       createdAt
       updatedAt
-      SecretKey
-      SecretValue
-      OdataUsername
-      OdataPassword
+      HMacPassword
+      EncryptionPassword
       __typename
     }
   }
@@ -80,6 +76,7 @@ export const deletePaymentDetails = /* GraphQL */ `
       id
       FirstName
       LastName
+      CompanyName
       Email
       AddressLine1
       AddressLine2
@@ -89,19 +86,16 @@ export const deletePaymentDetails = /* GraphQL */ `
       PostalCode
       PhoneNumber
       Amount
-      Status
       Currency
+      Status
       InvoiceNumbers
       TransactionID
       MerchantID
       PaymentId
-      SAPBankPaymentAdviceId
       createdAt
       updatedAt
-      SecretKey
-      SecretValue
-      OdataUsername
-      OdataPassword
+      HMacPassword
+      EncryptionPassword
       __typename
     }
   }
