@@ -16,8 +16,12 @@ const initialState = {
         PhoneNumber: "",
         Amount: "",
         Currency: "USD",
-        InvoiceNumbers: "",
-        Address: ""
+        EncryptionPassword: "", 
+        HMacPassword: "",
+        MerchantID: "",
+        PaymentId: "",
+        Status: "inprogress", 
+        TransactionID: "",
     },
 };
 

@@ -1,3 +1,32 @@
+.text-center {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  margin-top: 1rem;
+  color: blueviolet;
+  font-weight: 600;
+}
+
+.payment-success-text {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  margin-top: 1rem;
+  font-weight: 600;
+  color: green;
+  font-size: 25px;
+}
+
+.payment-failure-text {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  margin-top: 1rem;
+  font-weight: 600;
+  color: red;
+  font-size: 25px;
+}
+
 .header {
   font-size: 23px;
   font-weight: 600;
@@ -9,14 +38,14 @@
 
 .card-container {
   position: absolute;
-  top: 45%;
+  top: 51%;
   left: 50%;
   transform: translate(-50%, -50%);
   padding-left: 1.5rem;
   padding-right: 1.5rem;
   height: 87vh;
   overflow: auto;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
   border-radius: 10px;
 }
 
