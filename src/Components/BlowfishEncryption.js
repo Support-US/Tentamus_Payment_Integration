@@ -1,11 +1,11 @@
 import { Blowfish } from 'egoroof-blowfish';
 const Buffer = require('buffer').Buffer;
 
-export const BlowfishEncryption = (data) => {
+export const BlowfishEncryption = (data, password) => {
     let plainString = data;
-    console.log("INSIDE BLOWFISH", plainString);
+    console.log("INSIDE BLOWFISH", plainString, "password", password);
 
-    const bf = new Blowfish("pass", 0, 3);
+    const bf = new Blowfish(password, 0, 3);
     // bf.setIv('00000000');
     // Encryption
     const encoded = bf.encode(plainString);

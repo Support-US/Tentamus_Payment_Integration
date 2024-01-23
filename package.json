@@ -17,6 +17,7 @@
     "computop-node-client": "^0.2.7",
     "countries-list": "^3.0.6",
     "country-state-city": "^3.2.1",
+    "crypto-js": "^4.2.0",
     "currency-codes": "^2.1.0",
     "egoroof-blowfish": "^4.0.1",
     "formik": "^2.4.5",
