@@ -2,9 +2,11 @@
   display: flex;
   justify-content: center;
   align-items: baseline;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   font-weight: 600;
-  color: blueviolet;
+  color: #007640;
+  font-size: 24px;
+  margin-bottom: 1.5rem;
 }
 
 .payment-success-text {
@@ -28,8 +30,8 @@
 }
 
 .header {
-  font-size: 23px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 400;
 }
 
 .form-container {
@@ -38,16 +40,22 @@
 
 .card-container {
   position: absolute;
-  top: 51%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   padding-left: 1.5rem;
   padding-right: 1.5rem;
-  height: 87vh;
+  height: 94vh;
   overflow: auto;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
   border-radius: 10px;
   background-color: white;
+} 
+
+@media (max-width: 1024px) {
+  .card-container {
+    width: 80%; 
+  }
 }
 
 .invoice-container {
@@ -58,7 +66,7 @@
 }
 
 .invoiceDetails {
-  font-weight: 600;
+  font-weight: 400;
   font-size: 18px;
 }
 
@@ -71,4 +79,14 @@
   bottom: 1%;
   left: 48%;
   /* width: 100%; */
+}
+
+.gradient-badge {
+  display: inline-block;
+  padding: 5px;
+  /* padding-left: 5px; */
+  border-radius: 8px;
+  /* padding-right: 40px; */
+  background: linear-gradient(to right, #b7f1d7, #ffffff);
+  color: #153243;
 }

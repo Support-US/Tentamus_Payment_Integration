@@ -1,8 +1,8 @@
 ## [Start] ResponseTemplate. **
 
-#set($MerchantID = "1236548")
-#set($HMacPassword = "hmac")
-#set($EncryptionPassword = "encrypt")
+#set($MerchantID = "Tentamus_Adamson_test")
+#set($HMacPassword = "K=p25W[iX_t6)7BrcR?8N!9dx3L(Ho*4")
+#set($EncryptionPassword = "Jd8=[Dt9s2A(3H?q")
 $util.qr($ctx.result.put("__operation", "Mutation"))
 #if( $ctx.error )
   $util.error($ctx.error.message, $ctx.error.type)

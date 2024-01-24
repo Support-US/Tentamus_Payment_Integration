@@ -87,7 +87,9 @@
           ]
         },
         "Runtime": "nodejs20.x",
-        "Layers": [],
+        "Layers": [
+          "arn:aws:lambda:us-east-2:988839728996:layer:TentamusPaymentIntegration:1"
+        ],
         "Timeout": 900
       }
     },

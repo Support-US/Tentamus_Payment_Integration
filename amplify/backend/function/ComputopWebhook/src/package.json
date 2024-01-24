@@ -9,6 +9,8 @@
     "@types/aws-lambda": "^8.10.92"
   },
   "dependencies": {
-    "crypto": "^1.0.1"
+    "blowfish": "^1.0.1",
+    "crypto": "^1.0.1",
+    "egoroof-blowfish": "^4.0.1"
   }
 }

@@ -1,12 +1,12 @@
-// import { DynamoDBClient, UpdateItemCommand  } from "@aws-sdk/client-dynamodb";
+import AWS from 'aws-sdk';
 import axios from 'axios';
 import { unmarshall } from '@aws-sdk/util-dynamodb';
-
-// const client = new DynamoDBClient({ region: process.env.REGION });
-// const PaymentDetailsTableName = `PaymentDetails-hhy6rqmttfa5xp6e4jv5ctvjsi-dev`;
+const secretsManager = new AWS.SecretsManager();
 
 export const handler = async (event) => {
-    console.log(`EVENT: ${JSON.stringify(event)}`);
+        console.log(`EVENT: ${JSON.stringify(event)}`);
+        const data = await secretsManager.getSecretValue({ SecretId:`Tentamus_Payment_Integration`}).promise();
+        const secretValue = data.SecretString;
 
     try {
         if (event.Records && event.Records.length > 0) {
@@ -18,7 +18,7 @@ export const handler = async (event) => {
                     console.log(`EVENT Marshal : ${JSON.stringify(JsonDBData)}`);
                                     
                     let postData = {
-                    // ID: JsonDBData.id,
+                    // PaymentID: "",
                     Email: JsonDBData.Email,
                     FirstName: JsonDBData.FirstName,
                     LastName: JsonDBData.LastName,
@@ -32,32 +32,23 @@ export const handler = async (event) => {
                     Status: JsonDBData.Status,
                     currencyCode: JsonDBData.Currency,
                     Amount: JsonDBData.Amount,
-                    TransactionID: JsonDBData.TransactionID,
+                    TransactionID: JsonDBData.id,
                     Zip_PostalCode: JsonDBData.PostalCode,
-                    PaymentAdviceItem:JsonDBData.InvoiceNumbers
+                    ZPaymentAdviceItem:JsonDBData.InvoiceNumbers
                 };
-    
                 console.log("Postdata:", JSON.stringify(postData));
                 const postdata = JSON.stringify(postData);
-                const response = await axios.post(`https://my351609.sapbydesign.com/sap/byd/odata/cust/v1/payment_advice/PaymentAdviceRootCollection`, postdata, {
+                const response = await axios.post(`https://my351609.sapbydesign.com/sap/byd/odata/cust/v1/payment_advice/ZPaymentAdviceRootCollection`, postdata, {
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Basic X1BBWU1FTlRfQURWOldlbGNvbWUx'
+                            
+                            'Content-Type': 'application/json', 
+                             Authorization: "Basic " + new Buffer.from(`${JSON.parse(secretValue).OdataUsername}` + ":" + `${JSON.parse(secretValue).OdataPassword}`).toString("base64")
+ 
                     },
                 });
-    
+                
                 console.log("API RESPONSE For CREATE PaymentDetails ---->", response.status);
                 console.log("Response :", JSON.stringify(response.data.d.results));
-                // const responseData = response.data.d.results;
-                
-                    // if (response.status === 201) {
-                    //     // const updatedResponse = await UpdatePaymentDetailsID(responseData, JsonDBData.id);
-                    //     // console.log("updatedResponse :", updatedResponse);
-                        
-                    //     return {
-                    //         statusCode: 200,  
-                    //         body: updatedResponse,
-                    //     };
                 
                 } else {
                     console.error("NewImage is undefined or empty in DynamoDB event.");
@@ -90,25 +81,6 @@ export const handler = async (event) => {
         statusCode: 200,
         body: JSON.stringify('Hello from Lambda!'), 
     };
-    //  async function UpdatePaymentDetailsID(response, id) {
-    //     const params = {
-    //         TableName: PaymentDetailsTableName,
-    //         Key: {
-    //             id: { S: id },
-    //         },
-    //         UpdateExpression: "SET PaymentId = :newPaymentId",
-    //         ExpressionAttributeValues: {
-    //             ":newPaymentId": { S: response.ObjectID },
-    //         },
-    //         ReturnValues: "ALL_NEW",
-    //     };
-
-    //     const command = new UpdateItemCommand(params);
-
-    //     const DBResponse = await client.send(command);  
-    //     console.log("DBResponse :", DBResponse);
-    //     return DBResponse;
-    // }
 
 };
 

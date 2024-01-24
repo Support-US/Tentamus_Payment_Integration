@@ -5,7 +5,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* background-color: #007640; */
+  /* background-color: #378b29; */
+  /* background: linear-gradient(to right, #005331, #007640); */
 }
 
 code {
@@ -17,6 +18,6 @@ code {
   border-color: #007640 !important;
 }
 
-.MuiInputLabel-shrink  {
+.MuiInputLabel-shrink {
   color: #007640 !important;
 }

@@ -1,77 +1,125 @@
 import AWS from 'aws-sdk';
-import crypto from 'crypto';
-import { DynamoDBClient, UpdateItemCommand  } from "@aws-sdk/client-dynamodb";
+import { Blowfish } from 'egoroof-blowfish';
+import { Buffer } from 'buffer';
+import { DynamoDBClient, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 import axios from 'axios';
-import { unmarshall } from '@aws-sdk/util-dynamodb';
+import crypto from 'crypto';
 
 const secretsManager = new AWS.SecretsManager();
-    const Secretdata = await secretsManager.getSecretValue({ SecretId: hmacPassword }).promise();
-    const secretData = JSON.parse(Secretdata.SecretString);
-     console.log('Secret value:', secretData.SAPHostName);   
-    
 const client = new DynamoDBClient({ region: process.env.REGION });
 const PaymentDetailsTableName = `PaymentDetails-hhy6rqmttfa5xp6e4jv5ctvjsi-dev`;
-const hmacPassword = 'YOUR_HMAC_PASSWORD';
 
 export const handler = async (event) => {
+            console.log(`Request EVENT: ${JSON.stringify(event)}`);
+            const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration`}).promise(); 
+            const secretValue = JSON.parse(data.SecretString);
+            const HMacPassword = secretValue.HMacPassword;  
+        // console.log('Secret value:', HMacPassword);  
+    
     try {
-        const { body } = event;
-        const { payID, transID, merchantID, status, code, receivedMAC } = JSON.parse(body);
-        const expectedMAC = calculateHMAC({ payID, transID, merchantID, status, code }, hmacPassword);
-       
-        let Responsedata = event;
-        if (receivedMAC === expectedMAC) {
-            let JsonData = unmarshall(Responsedata);
-                    console.log(`EVENT Marshal : ${JSON.stringify(JsonData)}`);
+        
+        const { encryptedString, hmac, additionalEventData } = event; // Replace with actual event structure
+
+        // Replace 'encrypt' with your actual secret key
+        const blowfishKey = secretValue.blowfishKey;
+
+        // Perform HMAC authentication
+        const expectedHMAC = calculateHMAC(encryptedString, HMacPassword);
+
+        if (hmac !== expectedHMAC) {
+            
+            // Decrypt the string
+            const decryptedString = BlowfishDecryption(encryptedString, blowfishKey);
+    
+            // Parse the URL-encoded string into an object
+            const parsedObject = parseUrlEncodedString(decryptedString);
+    
             let postData ={
-                PaymentId: JsonData.PaymentId,
-                Status: JsonData.Status,
-            };
-            console.log("Postdata:", JSON.stringify(postData));
-                const postdata = JSON.stringify(postData);
-                const response = await axios.post(`https://my351609.sapbydesign.com/sap/byd/odata/cust/v1/payment_advice/PaymentAdviceRootCollection`, postdata, {
+                    PaymentId: parsedObject.PaymentId,
+                    Status: parsedObject.Status,
+                };
+                 console.log("Postdata:", JSON.stringify(postData));
+                 const postdata = JSON.stringify(postData);
+                
+                const response = await axios.post(`https://my351609.sapbydesign.com/sap/byd/odata/cust/v1/payment_advice/PaymentAdviceRootCollection`,postdata, {
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Basic X1BBWU1FTlRfQURWOldlbGNvbWUx'
+                        'Content-Type': 'application/json', 
+                        Authorization: "Basic " + new Buffer.from(`${JSON.parse(secretValue).OdataUsername}` + ":" + `${JSON.parse(secretValue).OdataPassword}`).toString("base64")
+ 
                     },
                 });
     
                 console.log("API RESPONSE For CREATE PaymentDetails ---->", response.status);
                 console.log("Response :", JSON.stringify(response.data.d.results));
                 const responseData = response.data.d.results;
-                  if (response.status === 201) {
-                        const updatedResponse = await UpdatePaymentDetailsID(responseData, JsonData.PaymentId);
+                   if (response.status === 201) {
+                        const updatedResponse = await UpdatePaymentDetailsID(responseData, parsedObject.PaymentId);
                         console.log("updatedResponse :", updatedResponse);
-                        
                         return {
                             statusCode: 200,  
                             body: updatedResponse,
                         };
-            }
-            
-            return {
-                statusCode: 200,
-                body: JSON.stringify({ success: true, message: 'HMAC validation successful' }),
-            };
-        } else {
-            console.error('HMAC validation failed');
+                   }
+                   console.error('HMAC validation failed');
             return {
                 statusCode: 403,
                 body: JSON.stringify({ success: false, message: 'HMAC validation failed' }),
             };
         }
     } catch (error) {
-        console.error('Error processing response:', error);
+        console.error('Error:', error);
+
         return {
             statusCode: 500,
-            body: JSON.stringify({ success: false, message: 'Internal server error' }),
+            body: JSON.stringify({ error: 'Internal Server Error' }),
         };
     }
 
-function calculateHMAC(responseData, hmacPassword) {
+// Blowfish decryption function
+module.exports.BlowfishDecryption = (base64EncodedText, key) => {
+    const bf = new Blowfish(key, 0, 3);
+
+    // Convert the Base64-encoded string to a Buffer
+    const encodedBuffer = Buffer.from(base64EncodedText, 'base64');
+
+    // Convert the hex string to a Buffer
+    const hexString = encodedBuffer.toString('hex');
+    const decodedBuffer = Buffer.from(hexString, 'hex');
+
+    // Decryption
+    const decodedText = bf.decode(decodedBuffer).toString('utf-8');
+
+    return decodedText;
+};
+
+// Function to parse URL-encoded string into an object
+function parseUrlEncodedString(urlEncodedString) {
+    if (urlEncodedString === undefined) {
+        return 'undefined';
+    }
+
+    try {
+        // Decoding the URL-encoded string with proper error handling
+        const decodedString = decodeURIComponent(urlEncodedString.replace(/%(?![0-9][0-9a-fA-F]+)/g, '%25'));
+
+        const pairs = decodedString.split('&');
+        const result = {};
+
+        for (const pair of pairs) {
+            const [key, value] = pair.split('=');
+            result[key] = value;
+        }
+
+        return result;
+    } catch (error) {
+        console.error('Error decoding URL-encoded string:', error);
+        return 'error';
+    }
+}
+
+function calculateHMAC(data, hmacPassword) {
     const hmac = crypto.createHmac('sha256', hmacPassword);
-    const responseDataContent = `${responseData.payID || ''}*${responseData.transID}*${responseData.merchantID}*${responseData.status || ''}*${responseData.code || ''}`;
-    hmac.update(responseDataContent);
+    hmac.update(data);
     return hmac.digest('hex');
 }
 
@@ -97,4 +145,5 @@ async function UpdatePaymentDetailsID(response, id) {
     console.log("DBResponse :", DBResponse);
     return DBResponse;
 }
+
 };
