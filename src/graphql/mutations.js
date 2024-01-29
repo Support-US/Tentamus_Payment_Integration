@@ -23,11 +23,10 @@ export const createPaymentDetails = /* GraphQL */ `
       Currency
       Status
       InvoiceNumbers
-      TransactionID
-      MerchantID
       PaymentId
       createdAt
       updatedAt
+      MerchantID
       HMacPassword
       EncryptionPassword
       __typename
@@ -56,11 +55,10 @@ export const updatePaymentDetails = /* GraphQL */ `
       Currency
       Status
       InvoiceNumbers
-      TransactionID
-      MerchantID
       PaymentId
       createdAt
       updatedAt
+      MerchantID
       HMacPassword
       EncryptionPassword
       __typename
@@ -89,11 +87,10 @@ export const deletePaymentDetails = /* GraphQL */ `
       Currency
       Status
       InvoiceNumbers
-      TransactionID
-      MerchantID
       PaymentId
       createdAt
       updatedAt
+      MerchantID
       HMacPassword
       EncryptionPassword
       __typename

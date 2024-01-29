@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectFormData, updateFormData } from '../../Store/Slice/formSlice';
 import { HmacSHA256, enc } from 'crypto-js';
 import MuiPhoneNumber from 'mui-phone-number';
+import AFLLogo from "../../images/AFL_Logo.png";
 
 const newcountries = Country.getAllCountries();
 const currency = cc.codes();
@@ -217,8 +218,15 @@ const CustomerPaymentDetailsForm = () => {
 
   const handleComputopRedirection = (paymentDetails) => {
     console.log("handleComputopRedirection", paymentDetails);
-    const { Currency, Amount, MerchantID = "Tentamus_Adamson_test", id, EncryptionPassword } = paymentDetails;
-    let data = `Currency=${Currency}&Amount=${Amount}&MAC=${hmacKey}`;
+    const { Currency, Amount, MerchantID, id, EncryptionPassword } = paymentDetails;
+    const successURL = `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}/success`;
+    const failureURL = `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}/error`;
+    const notifyURL = 'https://8j54xrirvb.execute-api.us-east-2.amazonaws.com/dev/webhook';
+
+    // console.log("PAYMENT DETAILS", Currency, Amount, MerchantID, id, EncryptionPassword );
+    let data = 'MerchantID=' + MerchantID + '&TransID=' + id + '&Currency=' + Currency + '&Amount=' + Amount + '&MAC=' + hmacKey + '&URLNotify=' + notifyURL + '&URLSuccess=' + successURL + '&URLFailure=' + failureURL;
+    ;
+    // let data = `MerchantID=${MerchantID}&TransID=${id}&Currency=${Currency}&Amount=${Amount}&MAC=${hmacKey}&URLNotify=${notifyURL}&URLSuccess=${successURL}&URLFailure=${failureURL}`;
     const computopDataParameter = BlowfishEncryption(data, EncryptionPassword);
 
     // const merchantID = 'Generic3DSTest';
@@ -226,13 +234,9 @@ const CustomerPaymentDetailsForm = () => {
 
     console.log(`Currency=${Currency}&Amount=${Amount}`, "merchantID", MerchantID, "hmacKey", hmacKey, "len", data.length, "data", computopDataParameter);
 
-    let successURL = `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}/success`;
-    let failureURL = `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}/error`;
-    let notifyURL = 'https://8j54xrirvb.execute-api.us-east-2.amazonaws.com/dev/webhook';
-    console.log("success", successURL, "failure", failureURL);
-    window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=Tentamus_Adamson_test&MsgVer=2.0&Len=${data.length}&Data=${computopDataParameter}&TransID=${id}&URLSuccess=${successURL}&URLFailure=${failureURL}&URLNotify=${notifyURL}&MAC=${hmacKey}&Language=en`;
+    window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${data.length}&Data=${computopDataParameter}&TransID=${id}&URLSuccess=${successURL}&URLFailure=${failureURL}&URLNotify=${notifyURL}&MAC=${hmacKey}&Language=en`;
     // window.open(`https://www.computop-paygate.com/payssl.aspx?MerchantID=Tentamus_Adamson_test&MsgVer=2.0&Len=${data.length}&Data=${computopDataParameter}&TransID=${id}&URLSuccess=${successURL}&URLFailure=${failureURL}&URLNotify=${notifyURL}&MAC=${hmacKey}&Language=en`, '_blank', 'noopener,noreferrer');
-    // window.open(`https://www.computop-paygate.com/paymentPage.aspx?MerchantID=Tentamus_Adamson_test&MsgVer=2.0&Len=${data.length}&Data=${computopDataParameter}&TransID=${id}&URLSuccess=https://nipurnait.com/&URLFailure=https://www.google.co.in/&URLNotify=${notifyURL}&MAC=${hmacKey}&Language=en`, '_blank', 'noopener,noreferrer');
+    // window.open(`https://www.computop-paygate.com/payssl.aspx?MerchantID=Tentamus_Adamson_test&MsgVer=2.0&Len=${data.length}&Data=${computopDataParameter}&TransID=${id}&URLSuccess=https://nipurnait.com/&URLFailure=https://www.google.co.in/&URLNotify=${notifyURL}&MAC=${hmacKey}&Language=en`, '_blank', 'noopener,noreferrer');
   }
 
   const generateHMAC = (data) => {
@@ -332,7 +336,7 @@ const CustomerPaymentDetailsForm = () => {
   return (
     <>
       <div>
-        <div className='card-container'>
+        <div className='card-container' style={{border:"1px solid #007640"}}>
           <div>
             <Formik onSubmit={handleFormSubmit} initialValues={initialValues}>
               {({ values, handleSubmit, handleReset, handleChange, errors, touched, setFieldValue }) => (
@@ -340,13 +344,14 @@ const CustomerPaymentDetailsForm = () => {
                 <form className='form-container'>
                   <Grid>
                     {/* Heading */}
-                    <div style={{ textAlign: 'center' }}>
+                    <div className='flex justify-content-center align-items-center gap-3 sm:gap-5' style={{ textAlign: 'center' }}>
+                      <img src={AFLLogo} style={{ width: '50px', height: 'auto' }} />
                       <span className='text-center'>
-                        Analytical Food Laboratories 
+                        Analytical Food Laboratories
                       </span>
                     </div>
                     <div>
-                      <span className='text-lg font-semibold'>
+                      <span className='text-xs sm:text-lg font-semibold'>
                         Payment Details
                       </span>
                     </div>
@@ -514,7 +519,7 @@ const CustomerPaymentDetailsForm = () => {
                                   renderInput={(params) => (
                                     <TextField
                                       {...params}
-                                      label="State *"
+                                      label="State"
                                       variant="outlined"
                                       helperText={(touched.state && errors.state)}
                                       error={touched.state && Boolean(errors.state)}
@@ -557,25 +562,25 @@ const CustomerPaymentDetailsForm = () => {
                         </FormControl>
                       </Grid>
 
-                    {/* Phone Number */}
-                    <Grid item xs={6}>
-                      <FormControl fullWidth>
-                        <Field
-                          size="small"
-                          name="PhoneNumber"
-                          type="text"
-                          as={MuiPhoneNumber}
-                          variant="outlined"
-                          label="Phone Number *"
-                          onChange={(value) => setFieldValue("PhoneNumber", value)}
-                          helperText={(touched.PhoneNumber && errors.PhoneNumber)}
-                          error={touched.PhoneNumber && Boolean(errors.PhoneNumber)}
-                          validate={validatePhoneNumber}
+                      {/* Phone Number */}
+                      <Grid item xs={6}>
+                        <FormControl fullWidth>
+                          <Field
+                            size="small"
+                            name="PhoneNumber"
+                            type="text"
+                            as={MuiPhoneNumber}
+                            variant="outlined"
+                            label="Phone Number *"
+                            onChange={(value) => setFieldValue("PhoneNumber", value)}
+                            helperText={(touched.PhoneNumber && errors.PhoneNumber)}
+                            error={touched.PhoneNumber && Boolean(errors.PhoneNumber)}
+                            validate={validatePhoneNumber}
 
 
-                        />
-                      </FormControl>
-                    </Grid>
+                          />
+                        </FormControl>
+                      </Grid>
 
                       {/* Amount */}
                       <Grid item xs={6}>
@@ -680,7 +685,7 @@ const CustomerPaymentDetailsForm = () => {
                       {/* Invoice */}
                       <Grid item xs={6}>
                         <div className='invoice-container'>
-                          <div className='text-lg font-semibold'>
+                          <div className='text-xs sm:text-lg font-semibold'>
                             Invoice Details
                           </div>
                           <div>

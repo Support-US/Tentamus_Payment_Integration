@@ -21,7 +21,6 @@ const initialState = {
         MerchantID: "",
         PaymentId: "",
         Status: "inprogress", 
-        TransactionID: "",
     },
 };
 

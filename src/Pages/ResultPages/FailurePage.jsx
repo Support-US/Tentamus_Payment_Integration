@@ -1,12 +1,12 @@
-import React, { useEffect }from 'react'
+import React, { useEffect } from 'react'
 import FailureImage from './FailureImage.png'
 // import FailureImage from './FailureImage2.jpg'
-import { ToastContainer, toast ,Slide} from 'react-toastify';
+import { ToastContainer, toast, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const FailurePage = () => {
   useEffect(() => {
-    const Tid =localStorage.getItem("Tid")
+    const Tid = localStorage.getItem("Tid")
     toast.error(`Your payment was Failed for Transcation Id: ${Tid}`, {
       position: "top-center",
       autoClose: 3000,
@@ -15,12 +15,14 @@ const FailurePage = () => {
       pauseOnHover: true,
       draggable: true,
       theme: "light",
-      transition: Slide})
-    }, [])
+      transition: Slide
+    })
+    console.log("ID-- ", Tid);
+  }, [])
   return (
 
     <>
-    <ToastContainer />
+      <ToastContainer />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '50vh', marginTop: '8rem' }}>
         <img
           src={FailureImage}

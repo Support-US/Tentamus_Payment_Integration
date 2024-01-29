@@ -18,11 +18,10 @@ Amount : String!
 Currency: String!
 Status : String!
 InvoiceNumbers :AWSJSON!
-TransactionID :String
-MerchantID :String
 PaymentId: String
 createdAt: AWSDateTime
 updatedAt: AWSDateTime
+MerchantID :String
 HMacPassword: String
 EncryptionPassword: String
 }

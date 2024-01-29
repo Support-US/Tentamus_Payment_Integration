@@ -43,11 +43,10 @@ export default function PaymentDetailsCreateForm(props) {
     Currency: "",
     Status: "",
     InvoiceNumbers: "",
-    TransactionID: "",
-    MerchantID: "",
     PaymentId: "",
     createdAt: "",
     updatedAt: "",
+    MerchantID: "",
     HMacPassword: "",
     EncryptionPassword: "",
   };
@@ -76,13 +75,10 @@ export default function PaymentDetailsCreateForm(props) {
   const [InvoiceNumbers, setInvoiceNumbers] = React.useState(
     initialValues.InvoiceNumbers
   );
-  const [TransactionID, setTransactionID] = React.useState(
-    initialValues.TransactionID
-  );
-  const [MerchantID, setMerchantID] = React.useState(initialValues.MerchantID);
   const [PaymentId, setPaymentId] = React.useState(initialValues.PaymentId);
   const [createdAt, setCreatedAt] = React.useState(initialValues.createdAt);
   const [updatedAt, setUpdatedAt] = React.useState(initialValues.updatedAt);
+  const [MerchantID, setMerchantID] = React.useState(initialValues.MerchantID);
   const [HMacPassword, setHMacPassword] = React.useState(
     initialValues.HMacPassword
   );
@@ -106,11 +102,10 @@ export default function PaymentDetailsCreateForm(props) {
     setCurrency(initialValues.Currency);
     setStatus(initialValues.Status);
     setInvoiceNumbers(initialValues.InvoiceNumbers);
-    setTransactionID(initialValues.TransactionID);
-    setMerchantID(initialValues.MerchantID);
     setPaymentId(initialValues.PaymentId);
     setCreatedAt(initialValues.createdAt);
     setUpdatedAt(initialValues.updatedAt);
+    setMerchantID(initialValues.MerchantID);
     setHMacPassword(initialValues.HMacPassword);
     setEncryptionPassword(initialValues.EncryptionPassword);
     setErrors({});
@@ -131,11 +126,10 @@ export default function PaymentDetailsCreateForm(props) {
     Currency: [{ type: "Required" }],
     Status: [{ type: "Required" }],
     InvoiceNumbers: [{ type: "Required" }, { type: "JSON" }],
-    TransactionID: [],
-    MerchantID: [],
     PaymentId: [],
     createdAt: [],
     updatedAt: [],
+    MerchantID: [],
     HMacPassword: [],
     EncryptionPassword: [],
   };
@@ -197,11 +191,10 @@ export default function PaymentDetailsCreateForm(props) {
           Currency,
           Status,
           InvoiceNumbers,
-          TransactionID,
-          MerchantID,
           PaymentId,
           createdAt,
           updatedAt,
+          MerchantID,
           HMacPassword,
           EncryptionPassword,
         };
@@ -281,11 +274,10 @@ export default function PaymentDetailsCreateForm(props) {
               Currency,
               Status,
               InvoiceNumbers,
-              TransactionID,
-              MerchantID,
               PaymentId,
               createdAt,
               updatedAt,
+              MerchantID,
               HMacPassword,
               EncryptionPassword,
             };
@@ -326,11 +318,10 @@ export default function PaymentDetailsCreateForm(props) {
               Currency,
               Status,
               InvoiceNumbers,
-              TransactionID,
-              MerchantID,
               PaymentId,
               createdAt,
               updatedAt,
+              MerchantID,
               HMacPassword,
               EncryptionPassword,
             };
@@ -371,11 +362,10 @@ export default function PaymentDetailsCreateForm(props) {
               Currency,
               Status,
               InvoiceNumbers,
-              TransactionID,
-              MerchantID,
               PaymentId,
               createdAt,
               updatedAt,
+              MerchantID,
               HMacPassword,
               EncryptionPassword,
             };
@@ -416,11 +406,10 @@ export default function PaymentDetailsCreateForm(props) {
               Currency,
               Status,
               InvoiceNumbers,
-              TransactionID,
-              MerchantID,
               PaymentId,
               createdAt,
               updatedAt,
+              MerchantID,
               HMacPassword,
               EncryptionPassword,
             };
@@ -461,11 +450,10 @@ export default function PaymentDetailsCreateForm(props) {
               Currency,
               Status,
               InvoiceNumbers,
-              TransactionID,
-              MerchantID,
               PaymentId,
               createdAt,
               updatedAt,
+              MerchantID,
               HMacPassword,
               EncryptionPassword,
             };
@@ -506,11 +494,10 @@ export default function PaymentDetailsCreateForm(props) {
               Currency,
               Status,
               InvoiceNumbers,
-              TransactionID,
-              MerchantID,
               PaymentId,
               createdAt,
               updatedAt,
+              MerchantID,
               HMacPassword,
               EncryptionPassword,
             };
@@ -551,11 +538,10 @@ export default function PaymentDetailsCreateForm(props) {
               Currency,
               Status,
               InvoiceNumbers,
-              TransactionID,
-              MerchantID,
               PaymentId,
               createdAt,
               updatedAt,
+              MerchantID,
               HMacPassword,
               EncryptionPassword,
             };
@@ -596,11 +582,10 @@ export default function PaymentDetailsCreateForm(props) {
               Currency,
               Status,
               InvoiceNumbers,
-              TransactionID,
-              MerchantID,
               PaymentId,
               createdAt,
               updatedAt,
+              MerchantID,
               HMacPassword,
               EncryptionPassword,
             };
@@ -641,11 +626,10 @@ export default function PaymentDetailsCreateForm(props) {
               Currency,
               Status,
               InvoiceNumbers,
-              TransactionID,
-              MerchantID,
               PaymentId,
               createdAt,
               updatedAt,
+              MerchantID,
               HMacPassword,
               EncryptionPassword,
             };
@@ -686,11 +670,10 @@ export default function PaymentDetailsCreateForm(props) {
               Currency,
               Status,
               InvoiceNumbers,
-              TransactionID,
-              MerchantID,
               PaymentId,
               createdAt,
               updatedAt,
+              MerchantID,
               HMacPassword,
               EncryptionPassword,
             };
@@ -731,11 +714,10 @@ export default function PaymentDetailsCreateForm(props) {
               Currency,
               Status,
               InvoiceNumbers,
-              TransactionID,
-              MerchantID,
               PaymentId,
               createdAt,
               updatedAt,
+              MerchantID,
               HMacPassword,
               EncryptionPassword,
             };
@@ -776,11 +758,10 @@ export default function PaymentDetailsCreateForm(props) {
               Currency,
               Status,
               InvoiceNumbers,
-              TransactionID,
-              MerchantID,
               PaymentId,
               createdAt,
               updatedAt,
+              MerchantID,
               HMacPassword,
               EncryptionPassword,
             };
@@ -821,11 +802,10 @@ export default function PaymentDetailsCreateForm(props) {
               Currency: value,
               Status,
               InvoiceNumbers,
-              TransactionID,
-              MerchantID,
               PaymentId,
               createdAt,
               updatedAt,
+              MerchantID,
               HMacPassword,
               EncryptionPassword,
             };
@@ -866,11 +846,10 @@ export default function PaymentDetailsCreateForm(props) {
               Currency,
               Status: value,
               InvoiceNumbers,
-              TransactionID,
-              MerchantID,
               PaymentId,
               createdAt,
               updatedAt,
+              MerchantID,
               HMacPassword,
               EncryptionPassword,
             };
@@ -910,11 +889,10 @@ export default function PaymentDetailsCreateForm(props) {
               Currency,
               Status,
               InvoiceNumbers: value,
-              TransactionID,
-              MerchantID,
               PaymentId,
               createdAt,
               updatedAt,
+              MerchantID,
               HMacPassword,
               EncryptionPassword,
             };
@@ -931,96 +909,6 @@ export default function PaymentDetailsCreateForm(props) {
         hasError={errors.InvoiceNumbers?.hasError}
         {...getOverrideProps(overrides, "InvoiceNumbers")}
       ></TextAreaField>
-      <TextField
-        label="Transaction id"
-        isRequired={false}
-        isReadOnly={false}
-        value={TransactionID}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              FirstName,
-              LastName,
-              CompanyName,
-              Email,
-              AddressLine1,
-              AddressLine2,
-              Country,
-              State,
-              City,
-              PostalCode,
-              PhoneNumber,
-              Amount,
-              Currency,
-              Status,
-              InvoiceNumbers,
-              TransactionID: value,
-              MerchantID,
-              PaymentId,
-              createdAt,
-              updatedAt,
-              HMacPassword,
-              EncryptionPassword,
-            };
-            const result = onChange(modelFields);
-            value = result?.TransactionID ?? value;
-          }
-          if (errors.TransactionID?.hasError) {
-            runValidationTasks("TransactionID", value);
-          }
-          setTransactionID(value);
-        }}
-        onBlur={() => runValidationTasks("TransactionID", TransactionID)}
-        errorMessage={errors.TransactionID?.errorMessage}
-        hasError={errors.TransactionID?.hasError}
-        {...getOverrideProps(overrides, "TransactionID")}
-      ></TextField>
-      <TextField
-        label="Merchant id"
-        isRequired={false}
-        isReadOnly={false}
-        value={MerchantID}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              FirstName,
-              LastName,
-              CompanyName,
-              Email,
-              AddressLine1,
-              AddressLine2,
-              Country,
-              State,
-              City,
-              PostalCode,
-              PhoneNumber,
-              Amount,
-              Currency,
-              Status,
-              InvoiceNumbers,
-              TransactionID,
-              MerchantID: value,
-              PaymentId,
-              createdAt,
-              updatedAt,
-              HMacPassword,
-              EncryptionPassword,
-            };
-            const result = onChange(modelFields);
-            value = result?.MerchantID ?? value;
-          }
-          if (errors.MerchantID?.hasError) {
-            runValidationTasks("MerchantID", value);
-          }
-          setMerchantID(value);
-        }}
-        onBlur={() => runValidationTasks("MerchantID", MerchantID)}
-        errorMessage={errors.MerchantID?.errorMessage}
-        hasError={errors.MerchantID?.hasError}
-        {...getOverrideProps(overrides, "MerchantID")}
-      ></TextField>
       <TextField
         label="Payment id"
         isRequired={false}
@@ -1045,11 +933,10 @@ export default function PaymentDetailsCreateForm(props) {
               Currency,
               Status,
               InvoiceNumbers,
-              TransactionID,
-              MerchantID,
               PaymentId: value,
               createdAt,
               updatedAt,
+              MerchantID,
               HMacPassword,
               EncryptionPassword,
             };
@@ -1092,11 +979,10 @@ export default function PaymentDetailsCreateForm(props) {
               Currency,
               Status,
               InvoiceNumbers,
-              TransactionID,
-              MerchantID,
               PaymentId,
               createdAt: value,
               updatedAt,
+              MerchantID,
               HMacPassword,
               EncryptionPassword,
             };
@@ -1139,11 +1025,10 @@ export default function PaymentDetailsCreateForm(props) {
               Currency,
               Status,
               InvoiceNumbers,
-              TransactionID,
-              MerchantID,
               PaymentId,
               createdAt,
               updatedAt: value,
+              MerchantID,
               HMacPassword,
               EncryptionPassword,
             };
@@ -1159,6 +1044,50 @@ export default function PaymentDetailsCreateForm(props) {
         errorMessage={errors.updatedAt?.errorMessage}
         hasError={errors.updatedAt?.hasError}
         {...getOverrideProps(overrides, "updatedAt")}
+      ></TextField>
+      <TextField
+        label="Merchant id"
+        isRequired={false}
+        isReadOnly={false}
+        value={MerchantID}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              FirstName,
+              LastName,
+              CompanyName,
+              Email,
+              AddressLine1,
+              AddressLine2,
+              Country,
+              State,
+              City,
+              PostalCode,
+              PhoneNumber,
+              Amount,
+              Currency,
+              Status,
+              InvoiceNumbers,
+              PaymentId,
+              createdAt,
+              updatedAt,
+              MerchantID: value,
+              HMacPassword,
+              EncryptionPassword,
+            };
+            const result = onChange(modelFields);
+            value = result?.MerchantID ?? value;
+          }
+          if (errors.MerchantID?.hasError) {
+            runValidationTasks("MerchantID", value);
+          }
+          setMerchantID(value);
+        }}
+        onBlur={() => runValidationTasks("MerchantID", MerchantID)}
+        errorMessage={errors.MerchantID?.errorMessage}
+        hasError={errors.MerchantID?.hasError}
+        {...getOverrideProps(overrides, "MerchantID")}
       ></TextField>
       <TextField
         label="H mac password"
@@ -1184,11 +1113,10 @@ export default function PaymentDetailsCreateForm(props) {
               Currency,
               Status,
               InvoiceNumbers,
-              TransactionID,
-              MerchantID,
               PaymentId,
               createdAt,
               updatedAt,
+              MerchantID,
               HMacPassword: value,
               EncryptionPassword,
             };
@@ -1229,11 +1157,10 @@ export default function PaymentDetailsCreateForm(props) {
               Currency,
               Status,
               InvoiceNumbers,
-              TransactionID,
-              MerchantID,
               PaymentId,
               createdAt,
               updatedAt,
+              MerchantID,
               HMacPassword,
               EncryptionPassword: value,
             };

@@ -20,11 +20,10 @@ export const getPaymentDetails = /* GraphQL */ `
       Currency
       Status
       InvoiceNumbers
-      TransactionID
-      MerchantID
       PaymentId
       createdAt
       updatedAt
+      MerchantID
       HMacPassword
       EncryptionPassword
       __typename
@@ -55,11 +54,10 @@ export const listPaymentDetails = /* GraphQL */ `
         Currency
         Status
         InvoiceNumbers
-        TransactionID
-        MerchantID
         PaymentId
         createdAt
         updatedAt
+        MerchantID
         HMacPassword
         EncryptionPassword
         __typename

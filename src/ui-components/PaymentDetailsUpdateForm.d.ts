@@ -37,11 +37,10 @@ export declare type PaymentDetailsUpdateFormInputValues = {
     Currency?: string;
     Status?: string;
     InvoiceNumbers?: string;
-    TransactionID?: string;
-    MerchantID?: string;
     PaymentId?: string;
     createdAt?: string;
     updatedAt?: string;
+    MerchantID?: string;
     HMacPassword?: string;
     EncryptionPassword?: string;
 };
@@ -61,11 +60,10 @@ export declare type PaymentDetailsUpdateFormValidationValues = {
     Currency?: ValidationFunction<string>;
     Status?: ValidationFunction<string>;
     InvoiceNumbers?: ValidationFunction<string>;
-    TransactionID?: ValidationFunction<string>;
-    MerchantID?: ValidationFunction<string>;
     PaymentId?: ValidationFunction<string>;
     createdAt?: ValidationFunction<string>;
     updatedAt?: ValidationFunction<string>;
+    MerchantID?: ValidationFunction<string>;
     HMacPassword?: ValidationFunction<string>;
     EncryptionPassword?: ValidationFunction<string>;
 };
@@ -87,11 +85,10 @@ export declare type PaymentDetailsUpdateFormOverridesProps = {
     Currency?: PrimitiveOverrideProps<TextFieldProps>;
     Status?: PrimitiveOverrideProps<TextFieldProps>;
     InvoiceNumbers?: PrimitiveOverrideProps<TextAreaFieldProps>;
-    TransactionID?: PrimitiveOverrideProps<TextFieldProps>;
-    MerchantID?: PrimitiveOverrideProps<TextFieldProps>;
     PaymentId?: PrimitiveOverrideProps<TextFieldProps>;
     createdAt?: PrimitiveOverrideProps<TextFieldProps>;
     updatedAt?: PrimitiveOverrideProps<TextFieldProps>;
+    MerchantID?: PrimitiveOverrideProps<TextFieldProps>;
     HMacPassword?: PrimitiveOverrideProps<TextFieldProps>;
     EncryptionPassword?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
