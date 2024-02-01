@@ -49,6 +49,7 @@ export default function PaymentDetailsCreateForm(props) {
     MerchantID: "",
     HMacPassword: "",
     EncryptionPassword: "",
+    SAPUpdateStatusMessage: "",
   };
   const [FirstName, setFirstName] = React.useState(initialValues.FirstName);
   const [LastName, setLastName] = React.useState(initialValues.LastName);
@@ -85,6 +86,9 @@ export default function PaymentDetailsCreateForm(props) {
   const [EncryptionPassword, setEncryptionPassword] = React.useState(
     initialValues.EncryptionPassword
   );
+  const [SAPUpdateStatusMessage, setSAPUpdateStatusMessage] = React.useState(
+    initialValues.SAPUpdateStatusMessage
+  );
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setFirstName(initialValues.FirstName);
@@ -108,6 +112,7 @@ export default function PaymentDetailsCreateForm(props) {
     setMerchantID(initialValues.MerchantID);
     setHMacPassword(initialValues.HMacPassword);
     setEncryptionPassword(initialValues.EncryptionPassword);
+    setSAPUpdateStatusMessage(initialValues.SAPUpdateStatusMessage);
     setErrors({});
   };
   const validations = {
@@ -132,6 +137,7 @@ export default function PaymentDetailsCreateForm(props) {
     MerchantID: [],
     HMacPassword: [],
     EncryptionPassword: [],
+    SAPUpdateStatusMessage: [{ type: "JSON" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -197,6 +203,7 @@ export default function PaymentDetailsCreateForm(props) {
           MerchantID,
           HMacPassword,
           EncryptionPassword,
+          SAPUpdateStatusMessage,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -280,6 +287,7 @@ export default function PaymentDetailsCreateForm(props) {
               MerchantID,
               HMacPassword,
               EncryptionPassword,
+              SAPUpdateStatusMessage,
             };
             const result = onChange(modelFields);
             value = result?.FirstName ?? value;
@@ -324,6 +332,7 @@ export default function PaymentDetailsCreateForm(props) {
               MerchantID,
               HMacPassword,
               EncryptionPassword,
+              SAPUpdateStatusMessage,
             };
             const result = onChange(modelFields);
             value = result?.LastName ?? value;
@@ -368,6 +377,7 @@ export default function PaymentDetailsCreateForm(props) {
               MerchantID,
               HMacPassword,
               EncryptionPassword,
+              SAPUpdateStatusMessage,
             };
             const result = onChange(modelFields);
             value = result?.CompanyName ?? value;
@@ -412,6 +422,7 @@ export default function PaymentDetailsCreateForm(props) {
               MerchantID,
               HMacPassword,
               EncryptionPassword,
+              SAPUpdateStatusMessage,
             };
             const result = onChange(modelFields);
             value = result?.Email ?? value;
@@ -456,6 +467,7 @@ export default function PaymentDetailsCreateForm(props) {
               MerchantID,
               HMacPassword,
               EncryptionPassword,
+              SAPUpdateStatusMessage,
             };
             const result = onChange(modelFields);
             value = result?.AddressLine1 ?? value;
@@ -500,6 +512,7 @@ export default function PaymentDetailsCreateForm(props) {
               MerchantID,
               HMacPassword,
               EncryptionPassword,
+              SAPUpdateStatusMessage,
             };
             const result = onChange(modelFields);
             value = result?.AddressLine2 ?? value;
@@ -544,6 +557,7 @@ export default function PaymentDetailsCreateForm(props) {
               MerchantID,
               HMacPassword,
               EncryptionPassword,
+              SAPUpdateStatusMessage,
             };
             const result = onChange(modelFields);
             value = result?.Country ?? value;
@@ -588,6 +602,7 @@ export default function PaymentDetailsCreateForm(props) {
               MerchantID,
               HMacPassword,
               EncryptionPassword,
+              SAPUpdateStatusMessage,
             };
             const result = onChange(modelFields);
             value = result?.State ?? value;
@@ -632,6 +647,7 @@ export default function PaymentDetailsCreateForm(props) {
               MerchantID,
               HMacPassword,
               EncryptionPassword,
+              SAPUpdateStatusMessage,
             };
             const result = onChange(modelFields);
             value = result?.City ?? value;
@@ -676,6 +692,7 @@ export default function PaymentDetailsCreateForm(props) {
               MerchantID,
               HMacPassword,
               EncryptionPassword,
+              SAPUpdateStatusMessage,
             };
             const result = onChange(modelFields);
             value = result?.PostalCode ?? value;
@@ -720,6 +737,7 @@ export default function PaymentDetailsCreateForm(props) {
               MerchantID,
               HMacPassword,
               EncryptionPassword,
+              SAPUpdateStatusMessage,
             };
             const result = onChange(modelFields);
             value = result?.PhoneNumber ?? value;
@@ -764,6 +782,7 @@ export default function PaymentDetailsCreateForm(props) {
               MerchantID,
               HMacPassword,
               EncryptionPassword,
+              SAPUpdateStatusMessage,
             };
             const result = onChange(modelFields);
             value = result?.Amount ?? value;
@@ -808,6 +827,7 @@ export default function PaymentDetailsCreateForm(props) {
               MerchantID,
               HMacPassword,
               EncryptionPassword,
+              SAPUpdateStatusMessage,
             };
             const result = onChange(modelFields);
             value = result?.Currency ?? value;
@@ -852,6 +872,7 @@ export default function PaymentDetailsCreateForm(props) {
               MerchantID,
               HMacPassword,
               EncryptionPassword,
+              SAPUpdateStatusMessage,
             };
             const result = onChange(modelFields);
             value = result?.Status ?? value;
@@ -895,6 +916,7 @@ export default function PaymentDetailsCreateForm(props) {
               MerchantID,
               HMacPassword,
               EncryptionPassword,
+              SAPUpdateStatusMessage,
             };
             const result = onChange(modelFields);
             value = result?.InvoiceNumbers ?? value;
@@ -939,6 +961,7 @@ export default function PaymentDetailsCreateForm(props) {
               MerchantID,
               HMacPassword,
               EncryptionPassword,
+              SAPUpdateStatusMessage,
             };
             const result = onChange(modelFields);
             value = result?.PaymentId ?? value;
@@ -985,6 +1008,7 @@ export default function PaymentDetailsCreateForm(props) {
               MerchantID,
               HMacPassword,
               EncryptionPassword,
+              SAPUpdateStatusMessage,
             };
             const result = onChange(modelFields);
             value = result?.createdAt ?? value;
@@ -1031,6 +1055,7 @@ export default function PaymentDetailsCreateForm(props) {
               MerchantID,
               HMacPassword,
               EncryptionPassword,
+              SAPUpdateStatusMessage,
             };
             const result = onChange(modelFields);
             value = result?.updatedAt ?? value;
@@ -1075,6 +1100,7 @@ export default function PaymentDetailsCreateForm(props) {
               MerchantID: value,
               HMacPassword,
               EncryptionPassword,
+              SAPUpdateStatusMessage,
             };
             const result = onChange(modelFields);
             value = result?.MerchantID ?? value;
@@ -1119,6 +1145,7 @@ export default function PaymentDetailsCreateForm(props) {
               MerchantID,
               HMacPassword: value,
               EncryptionPassword,
+              SAPUpdateStatusMessage,
             };
             const result = onChange(modelFields);
             value = result?.HMacPassword ?? value;
@@ -1163,6 +1190,7 @@ export default function PaymentDetailsCreateForm(props) {
               MerchantID,
               HMacPassword,
               EncryptionPassword: value,
+              SAPUpdateStatusMessage,
             };
             const result = onChange(modelFields);
             value = result?.EncryptionPassword ?? value;
@@ -1179,6 +1207,52 @@ export default function PaymentDetailsCreateForm(props) {
         hasError={errors.EncryptionPassword?.hasError}
         {...getOverrideProps(overrides, "EncryptionPassword")}
       ></TextField>
+      <TextAreaField
+        label="Sap update status message"
+        isRequired={false}
+        isReadOnly={false}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              FirstName,
+              LastName,
+              CompanyName,
+              Email,
+              AddressLine1,
+              AddressLine2,
+              Country,
+              State,
+              City,
+              PostalCode,
+              PhoneNumber,
+              Amount,
+              Currency,
+              Status,
+              InvoiceNumbers,
+              PaymentId,
+              createdAt,
+              updatedAt,
+              MerchantID,
+              HMacPassword,
+              EncryptionPassword,
+              SAPUpdateStatusMessage: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.SAPUpdateStatusMessage ?? value;
+          }
+          if (errors.SAPUpdateStatusMessage?.hasError) {
+            runValidationTasks("SAPUpdateStatusMessage", value);
+          }
+          setSAPUpdateStatusMessage(value);
+        }}
+        onBlur={() =>
+          runValidationTasks("SAPUpdateStatusMessage", SAPUpdateStatusMessage)
+        }
+        errorMessage={errors.SAPUpdateStatusMessage?.errorMessage}
+        hasError={errors.SAPUpdateStatusMessage?.hasError}
+        {...getOverrideProps(overrides, "SAPUpdateStatusMessage")}
+      ></TextAreaField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}

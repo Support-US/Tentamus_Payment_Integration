@@ -24,4 +24,5 @@ updatedAt: AWSDateTime
 MerchantID :String
 HMacPassword: String
 EncryptionPassword: String
+SAPUpdateStatusMessage: AWSJSON 
 }

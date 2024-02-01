@@ -78,7 +78,7 @@ async function CreateData(DynamoDBdata){
     const postdata = JSON.stringify(postData);
     
     try{
-    const response = await axios.post(`https://my351609.sapbydesign.com/sap/byd/odata/cust/v1/payment_advice/ZPaymentAdviceRootCollection`, postdata, {
+    const response = await axios.post(`${(secretValue).SAPHostName}/sap/byd/odata/cust/v1/payment_advice/ZPaymentAdviceRootCollection`, postdata, {
         headers: {
                 
                 'Content-Type': 'application/json', 

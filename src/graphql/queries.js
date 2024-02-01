@@ -26,6 +26,7 @@ export const getPaymentDetails = /* GraphQL */ `
       MerchantID
       HMacPassword
       EncryptionPassword
+      SAPUpdateStatusMessage
       __typename
     }
   }
@@ -60,6 +61,7 @@ export const listPaymentDetails = /* GraphQL */ `
         MerchantID
         HMacPassword
         EncryptionPassword
+        SAPUpdateStatusMessage
         __typename
       }
       nextToken

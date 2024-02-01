@@ -19,11 +19,11 @@
         },
         "PaymentDetailsResponse": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-51521-deployment",
-          "s3Key": "amplify-builds/PaymentDetailsResponse-3930716641424141777a-build.zip"
+          "s3Key": "amplify-builds/PaymentDetailsResponse-584a7965426a2f653979-build.zip"
         },
         "ComputopWebhook": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-51521-deployment",
-          "s3Key": "amplify-builds/ComputopWebhook-64444d35685a374e5750-build.zip"
+          "s3Key": "amplify-builds/ComputopWebhook-653658744a6276712f4a-build.zip"
         }
       }
     }

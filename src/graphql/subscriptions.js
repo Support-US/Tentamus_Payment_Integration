@@ -28,6 +28,7 @@ export const onCreatePaymentDetails = /* GraphQL */ `
       MerchantID
       HMacPassword
       EncryptionPassword
+      SAPUpdateStatusMessage
       __typename
     }
   }
@@ -59,6 +60,7 @@ export const onUpdatePaymentDetails = /* GraphQL */ `
       MerchantID
       HMacPassword
       EncryptionPassword
+      SAPUpdateStatusMessage
       __typename
     }
   }
@@ -90,6 +92,7 @@ export const onDeletePaymentDetails = /* GraphQL */ `
       MerchantID
       HMacPassword
       EncryptionPassword
+      SAPUpdateStatusMessage
       __typename
     }
   }

@@ -1,33 +1,32 @@
 import React, { useEffect } from 'react'
 import FailureImage from './FailureImage.png'
-// import FailureImage from './FailureImage2.jpg'
-import { ToastContainer, toast, Slide } from 'react-toastify';
+import { ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import AFLLogo from "../../images/AFL_Logo.png";
+import { showToast } from '../../Components/ToastUtils';
+
 
 const FailurePage = () => {
   useEffect(() => {
-    const Tid = localStorage.getItem("Tid")
-    toast.error(`Your payment was Failed for Transcation Id: ${Tid}`, {
-      position: "top-center",
-      autoClose: 3000,
-      // hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      theme: "light",
-      transition: Slide
-    })
-    console.log("ID-- ", Tid);
+    // const Tid = localStorage.getItem("Tid")
+    showToast("Your last transaction was Failed!", "error")
+    // console.log("ID-- ", Tid);
   }, [])
   return (
 
     <>
+      <div className='mt-5 flex justify-content-center align-items-center gap-3 sm:gap-5' style={{ textAlign: 'center' }}>
+        <img src={AFLLogo} alt="AFL Logo" style={{ width: '50px', height: 'auto' }} />
+        <span className='text-center'>
+          Analytical Food Laboratories
+        </span>
+      </div>
       <ToastContainer />
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '50vh', marginTop: '8rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '50vh', marginTop: '4rem' }}>
         <img
           src={FailureImage}
-          alt="Success Illustration"
-          style={{ maxWidth: '100%', maxHeight: '50vh' }}
+          alt="Failure Illustration"
+          style={{ width: '500px', height:"400px" }}
         />
       </div>
 

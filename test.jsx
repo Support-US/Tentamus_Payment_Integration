@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Grid, TextField, FormControl, Autocomplete, IconButton, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { Field, Formik } from 'formik';
+import { Field, Formik, FieldArray } from 'formik';
 import './CustomerPaymentDetailsForm.css';
 import { API } from 'aws-amplify';
 import cc from 'currency-codes'
@@ -12,7 +12,7 @@ import { Country, State } from 'country-state-city';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectFormData, updateFormData } from '../../Store/Slice/formSlice';
 import { HmacSHA256, enc } from 'crypto-js';
-// import CryptoJS from 'crypto-js';
+import CryptoJS from 'crypto-js';
 import MuiPhoneNumber from 'mui-phone-number';
 import AFLLogo from "../../images/AFL_Logo.png";
 import { ToastContainer } from 'react-toastify';
@@ -25,6 +25,8 @@ import { showToast } from '../../Components/ToastUtils';
 
 const newcountries = Country.getAllCountries();
 const currency = cc.codes();
+// console.log("currency", currency)
+
 
 // const dropdowncountries = newcountries.map(country => {
 //   // console.log("country",country);
@@ -157,6 +159,16 @@ const CustomerPaymentDetailsForm = () => {
     return error
   }
 
+  // const validateState = (value) => {
+  //   console.log("validateState", value);
+  //   let error;
+
+  //   if (!value || (typeof value === 'string' && value.trim() === "")) {
+  //     error = "State is required";
+  //   }
+  //   return error;
+  // };
+
   const validateState = (value) => {
     let error;
     if (!value || value.trim() === '') {
@@ -225,64 +237,56 @@ const CustomerPaymentDetailsForm = () => {
   // };
 
   const handleComputopRedirection = (paymentDetails) => {
-    // console.log("handleComputopRedirection", paymentDetails);
-    const { Currency, Amount, MerchantID, id, EncryptionPassword } = paymentDetails;
 
+    console.log("handleComputopRedirection", paymentDetails);
+    const { Currency, Amount, MerchantID, id, EncryptionPassword } = paymentDetails;
     const successURL = `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}/success`;
     const failureURL = `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}/error`;
     const notifyURL = 'https://8j54xrirvb.execute-api.us-east-2.amazonaws.com/dev/webhook';
 
-    let dataToEncrypt = `MerchantID=${MerchantID}&TransID=${id}&Currency=${Currency}&Amount=${Amount}&MAC=${hmacKey}&URLNotify=${notifyURL}&URLSuccess=${successURL}&URLFailure=${failureURL}`;
-    // let dataToEncrypt = `MerchantID=Tentamus_Adamson_test&TransID=1234&Currency=USD&Amount=22&MAC=3dd7ef66c092e4d5851291db13a809eb93defd167c99e3bc85b4c5365f3cdbe4&URLNotify=https://8j54xrirvb.execute-api.us-east-2.amazonaws.com/dev/webhook&URLSuccess=http://localhost:3000/success&URLFailure=http://localhost:3000/error`;
-    
-    // Working
-    // let dataToEncrypt = `MerchantID=Tentamus_Adamson_test&TransID=dceb13cf-9692-4772-b18f-38332d4c3cdd&Currency=USD&Amount=22&MAC=3dd7ef66c092e4d5851291db13a809eb93defd167c99e3bc85b4c5365f3cdbe4&URLNotify=https://8j54xrirvb.execute-api.us-east-2.amazonaws.com/dev/webhook&URLSuccess=http://localhost:3000/success&URLFailure=http://localhost:3000/error`;
-    const computopDataParameter = BlowfishEncryption(dataToEncrypt, EncryptionPassword);
+    // console.log("PAYMENT DETAILS", Currency, Amount, MerchantID, id, EncryptionPassword );
+    let data = 'MerchantID=' + MerchantID + '&TransID=' + id + '&Currency=' + Currency + '&Amount=' + Amount + '&MAC=' + hmacKey + '&URLNotify=' + notifyURL + '&URLSuccess=' + successURL + '&URLFailure=' + failureURL;
+
+
+    // let data = `MerchantID=${MerchantID}&TransID=${id}&Currency=${Currency}&Amount=${Amount}&MAC=${hmacKey}&URLNotify=${notifyURL}&URLSuccess=${successURL}&URLFailure=${failureURL}`;
+    const computopDataParameter = BlowfishEncryption(data, EncryptionPassword);
+
+    console.log("computopDataParameter", computopDataParameter)
 
     // const merchantID = 'Generic3DSTest';
     const backgroundURL = 'https://www.tentamus.com/wp-content/uploads/2021/03/about_us_tentamus_fahnen_IMG_0722-2799x1679.jpg';
-    // const timestampInMilliseconds = new Date().getTime();
-    // localStorage.setItem("timestamp", timestampInMilliseconds);
 
-    console.log("DATA", dataToEncrypt);
-    console.log("DATA-LENGTH", dataToEncrypt.length);
+    console.log(`Currency=${Currency}&Amount=${Amount}`, "merchantID", MerchantID, "hmacKey", hmacKey, "len", data.length, "data", computopDataParameter);
 
-    alert(JSON.stringify(dataToEncrypt));
-    alert(JSON.stringify(dataToEncrypt.length));
+    window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${data.length}&Data=${computopDataParameter}&TransID=${id}&URLSuccess=${successURL}&URLFailure=${failureURL}&URLNotify=${notifyURL}&MAC=${hmacKey}&Language=en`;
 
-
-
-    console.log(`OUTPUT --- https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataToEncrypt.length}&Data=${computopDataParameter}`);
-    // console.log(`Currency=${Currency}&Amount=${Amount}`, "merchantID", MerchantID, "hmacKey", hmacKey, "len", data.length, "data", computopDataParameter);
-
-    window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataToEncrypt.length}&Data=${computopDataParameter}&CustomField1=${Amount} USD`;
-    // window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${data.length}&Data=${computopDataParameter}&TransID=${id}&MAC=${hmacKey}&URLSuccess=${successURL}&URLFailure=${failureURL}&URLNotify=${notifyURL}&Language=en`;
-
+  
     // window.open(`https://www.computop-paygate.com/payssl.aspx?MerchantID=Tentamus_Adamson_test&MsgVer=2.0&Len=${data.length}&Data=${computopDataParameter}&TransID=${id}&URLSuccess=${successURL}&URLFailure=${failureURL}&URLNotify=${notifyURL}&MAC=${hmacKey}&Language=en`, '_blank', 'noopener,noreferrer');
+    // window.open(`https://www.computop-paygate.com/payssl.aspx?MerchantID=Tentamus_Adamson_test&MsgVer=2.0&Len=${data.length}&Data=${computopDataParameter}&TransID=${id}&URLSuccess=https://nipurnait.com/&URLFailure=https://www.google.co.in/&URLNotify=${notifyURL}&MAC=${hmacKey}&Language=en`, '_blank', 'noopener,noreferrer');
   }
-
   const generateHMAC = (data) => {
     const apiData = data;
-    const secretKey = paymentDetails.HMacPassword;
+
+
     const message = `*${apiData.id}*${apiData.MerchantID}*${apiData.Amount}*${apiData.Currency}`;
 
-    // const message = `*dceb13cf-9692-4772-b18f-38332d4c3cdd*Tentamus_Adamson_test*22*USD`;
-    // const secretKey = "K=p25W[iX_t6)7BrcR?8N!9dx3L(Ho*4";
+    
+
+    const secretKey = paymentDetails.HMacPassword;
+
+
     console.log("Message", message, "secretKey", secretKey);
 
-    const hash = HmacSHA256(message, secretKey);
-    const hashInHex = hash.toString(enc.Hex);
-    console.log("hashInHex---", hashInHex);
+    const hash = CryptoJS.HmacSHA256(message, secretKey)
+    const hashInHex = hash.toString(CryptoJS.enc.Hex)
+    console.log("hashInHex", hashInHex)
+    const uppercaseHMAC = hashInHex.toUpperCase(); // Convert to uppercase
 
-    // const hash = CryptoJS.HmacSHA256(message, secretKey)
-    // const hashInHex = hash.toString(CryptoJS.enc.Hex)
-    // console.log("hashInHex", hashInHex)
-    // const uppercaseHMAC = hashInHex.toUpperCase(); // Convert to uppercase
+    console.log("Uppercase HMAC", uppercaseHMAC);
 
-    // console.log("Uppercase HMAC", uppercaseHMAC);
+    setHmacKey(uppercaseHMAC);
 
-    // setHmacKey(uppercaseHMAC);
-    setHmacKey(hashInHex);
+   
   }
 
   const postPaymentDetails = async (data) => {
@@ -414,7 +418,7 @@ const CustomerPaymentDetailsForm = () => {
                   <Grid>
                     {/* Heading */}
                     <div className='flex justify-content-center align-items-center gap-3 sm:gap-5' style={{ textAlign: 'center' }}>
-                      <img src={AFLLogo} style={{ width: '50px', height: 'auto' }} alt='AFL Logo' />
+                      <img src={AFLLogo} alt="AFL Logo" style={{ width: '50px', height: 'auto' }} />
                       <span className='text-center'>
                         Analytical Food Laboratories
                       </span>
@@ -712,7 +716,7 @@ const CustomerPaymentDetailsForm = () => {
                         </FormControl>
                       </Grid>
 
-                      {/* Invoice */}
+                      {/* Invoice 0*/}
                       {/* <Grid item xs={8}>
                       <div className='invoice-container'>
                         <div className='invoiceDetails'>
@@ -758,7 +762,7 @@ const CustomerPaymentDetailsForm = () => {
 
                     </Grid> */}
 
-                      {/* Invoice */}
+                      {/* Invoice 1*/}
                       <Grid item xs={6}>
                         <div className='invoice-container'>
                           <div className='text-xs sm:text-lg font-semibold'>
@@ -774,6 +778,13 @@ const CustomerPaymentDetailsForm = () => {
                         </div>
                         {textFields.map((value, index) => (
                           <div key={index} className='textFieldContainer'>
+                            {/* <TextField
+                              style={{ marginBottom: '10px' }}
+                              size="small"
+                              value={value}
+                              label="Invoice No*"
+                              onChange={(e) => handleTextFieldChange(index, e.target.value)}
+                            /> */}
                             <TextField
                               style={{ marginBottom: '10px' }}
                               size="small"
