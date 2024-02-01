@@ -241,16 +241,14 @@ const CustomerPaymentDetailsForm = () => {
 
     // const merchantID = 'Generic3DSTest';
     const backgroundURL = 'https://www.tentamus.com/wp-content/uploads/2021/03/about_us_tentamus_fahnen_IMG_0722-2799x1679.jpg';
-    // const timestampInMilliseconds = new Date().getTime();
-    // localStorage.setItem("timestamp", timestampInMilliseconds);
+    const timestampInMilliseconds = new Date().getTime();
+    localStorage.setItem("timestamp", timestampInMilliseconds);
 
     console.log("DATA", dataToEncrypt);
     console.log("DATA-LENGTH", dataToEncrypt.length);
 
     alert(JSON.stringify(dataToEncrypt));
     alert(JSON.stringify(dataToEncrypt.length));
-
-
 
     console.log(`OUTPUT --- https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataToEncrypt.length}&Data=${computopDataParameter}`);
     // console.log(`Currency=${Currency}&Amount=${Amount}`, "merchantID", MerchantID, "hmacKey", hmacKey, "len", data.length, "data", computopDataParameter);
