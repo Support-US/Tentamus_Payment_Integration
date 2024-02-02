@@ -37,13 +37,13 @@ export declare type PaymentDetailsUpdateFormInputValues = {
     Currency?: string;
     Status?: string;
     InvoiceNumbers?: string;
-    TransactionID?: string;
-    MerchantID?: string;
     PaymentId?: string;
     createdAt?: string;
     updatedAt?: string;
+    MerchantID?: string;
     HMacPassword?: string;
     EncryptionPassword?: string;
+    SAPUpdateStatusMessage?: string;
 };
 export declare type PaymentDetailsUpdateFormValidationValues = {
     FirstName?: ValidationFunction<string>;
@@ -61,13 +61,13 @@ export declare type PaymentDetailsUpdateFormValidationValues = {
     Currency?: ValidationFunction<string>;
     Status?: ValidationFunction<string>;
     InvoiceNumbers?: ValidationFunction<string>;
-    TransactionID?: ValidationFunction<string>;
-    MerchantID?: ValidationFunction<string>;
     PaymentId?: ValidationFunction<string>;
     createdAt?: ValidationFunction<string>;
     updatedAt?: ValidationFunction<string>;
+    MerchantID?: ValidationFunction<string>;
     HMacPassword?: ValidationFunction<string>;
     EncryptionPassword?: ValidationFunction<string>;
+    SAPUpdateStatusMessage?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type PaymentDetailsUpdateFormOverridesProps = {
@@ -87,13 +87,13 @@ export declare type PaymentDetailsUpdateFormOverridesProps = {
     Currency?: PrimitiveOverrideProps<TextFieldProps>;
     Status?: PrimitiveOverrideProps<TextFieldProps>;
     InvoiceNumbers?: PrimitiveOverrideProps<TextAreaFieldProps>;
-    TransactionID?: PrimitiveOverrideProps<TextFieldProps>;
-    MerchantID?: PrimitiveOverrideProps<TextFieldProps>;
     PaymentId?: PrimitiveOverrideProps<TextFieldProps>;
     createdAt?: PrimitiveOverrideProps<TextFieldProps>;
     updatedAt?: PrimitiveOverrideProps<TextFieldProps>;
+    MerchantID?: PrimitiveOverrideProps<TextFieldProps>;
     HMacPassword?: PrimitiveOverrideProps<TextFieldProps>;
     EncryptionPassword?: PrimitiveOverrideProps<TextFieldProps>;
+    SAPUpdateStatusMessage?: PrimitiveOverrideProps<TextAreaFieldProps>;
 } & EscapeHatchProps;
 export declare type PaymentDetailsUpdateFormProps = React.PropsWithChildren<{
     overrides?: PaymentDetailsUpdateFormOverridesProps | undefined | null;

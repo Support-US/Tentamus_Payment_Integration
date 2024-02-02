@@ -51,6 +51,11 @@
       ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
+    },
+    "RetryProcessor": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
     }
   },
   "parameters": {
@@ -99,6 +104,22 @@
         {
           "category": "function",
           "resourceName": "PaymentDetailsResponse"
+        }
+      ]
+    },
+    "AMPLIFY_function_RetryProcessor_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "RetryProcessor"
+        }
+      ]
+    },
+    "AMPLIFY_function_RetryProcessor_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "RetryProcessor"
         }
       ]
     }

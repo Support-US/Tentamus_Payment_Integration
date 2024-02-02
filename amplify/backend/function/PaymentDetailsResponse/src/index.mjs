@@ -6,10 +6,8 @@ const secretsManager = new AWS.SecretsManager();
 export const handler = async (event) => { 
     
         console.log(`EVENT: ${JSON.stringify(event)}`);
-        
         const data = await secretsManager.getSecretValue({ SecretId:`Tentamus_Payment_Integration`}).promise();
-        
-        const secretValue = data.SecretString;
+        const secretValue = JSON.parse(data.SecretString);
 
     try {
         
@@ -78,11 +76,12 @@ async function CreateData(DynamoDBdata){
     const postdata = JSON.stringify(postData);
     
     try{
-    const response = await axios.post(`${(secretValue).SAPHostName}/sap/byd/odata/cust/v1/payment_advice/ZPaymentAdviceRootCollection`, postdata, {
+    const response = await axios.post(
+        `${(secretValue).SAPHostName}/sap/byd/odata/cust/v1/payment_advice/ZPaymentAdviceRootCollection`, postdata, {
         headers: {
                 
                 'Content-Type': 'application/json', 
-                 Authorization: "Basic " + new Buffer.from(`${JSON.parse(secretValue).OdataUsername}` + ":" + `${JSON.parse(secretValue).OdataPassword}`).toString("base64")
+                 Authorization: "Basic " + new Buffer.from(`${(secretValue).OdataUsername}` + ":" + `${(secretValue).OdataPassword}`).toString("base64")
 
         },
     });
