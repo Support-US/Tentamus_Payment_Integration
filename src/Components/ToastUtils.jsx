@@ -1,12 +1,12 @@
 import { Slide, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-export const showToast = (message, status) => {
-    console.log("messgae", message, status)
+export const showToast = (message, status, Amount) => {
+
     switch (status) {
 
         case 'Validation':
-            toast.error(message, {
+            toast.info(message, {
                 position: "top-right",
                 autoClose: 3000,
                 hideProgressBar: true,
@@ -29,7 +29,7 @@ export const showToast = (message, status) => {
                 draggable: true,
                 theme: "light",
                 transition: Slide,
-                style: { fontSize: '14px' }
+                style: { fontSize: '15px' }
             });
             break;
 
@@ -46,9 +46,5 @@ export const showToast = (message, status) => {
                 style: { fontSize: '15px' }
             });
             break;
-
-
     }
-
-
 };

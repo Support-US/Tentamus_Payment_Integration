@@ -15,7 +15,7 @@
   align-items: baseline;
   margin-top: 1rem;
   font-weight: 600;
-  color: green;
+  color: #007640;
   font-size: 25px;
 }
 
@@ -25,7 +25,7 @@
   align-items: baseline;
   margin-top: 1rem;
   font-weight: 600;
-  color: red;
+  color: #007640;
   font-size: 25px;
 }
 
@@ -102,4 +102,17 @@
   /* padding-right: 40px; */
   background: linear-gradient(to right, #b7f1d7, #ffffff);
   color: #153243;
+}
+
+.loadingIcon {
+  animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

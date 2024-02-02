@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Grid, TextField, FormControl, Autocomplete, IconButton, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { Field, Formik, FieldArray } from 'formik';
+import { Field, Formik } from 'formik';
 import './CustomerPaymentDetailsForm.css';
 import { API } from 'aws-amplify';
 import cc from 'currency-codes'
@@ -12,21 +12,15 @@ import { Country, State } from 'country-state-city';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectFormData, updateFormData } from '../../Store/Slice/formSlice';
 import { HmacSHA256, enc } from 'crypto-js';
-import CryptoJS from 'crypto-js';
+// import CryptoJS from 'crypto-js';
 import MuiPhoneNumber from 'mui-phone-number';
 import AFLLogo from "../../images/AFL_Logo.png";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { showToast } from '../../Components/ToastUtils';
 
-
-
-
-
 const newcountries = Country.getAllCountries();
 const currency = cc.codes();
-// console.log("currency", currency)
-
 
 // const dropdowncountries = newcountries.map(country => {
 //   // console.log("country",country);
@@ -92,7 +86,6 @@ const CustomerPaymentDetailsForm = () => {
   }, [hmacKey]);
 
   const validateFirstName = (value) => {
-
     let error;
     const lettersOnlyRegex = /^[a-zA-Z]+$/;
 
@@ -120,7 +113,6 @@ const CustomerPaymentDetailsForm = () => {
 
   const validateCompanyName = (value) => {
     let error;
-    // const lettersOnlyRegex = /^[a-zA-Z]+$/;
     const lettersOnlyRegex = /^[a-zA-Z\s]+$/;
 
     if (!value || value.trim().length === 0) {
@@ -159,16 +151,6 @@ const CustomerPaymentDetailsForm = () => {
     return error
   }
 
-  // const validateState = (value) => {
-  //   console.log("validateState", value);
-  //   let error;
-
-  //   if (!value || (typeof value === 'string' && value.trim() === "")) {
-  //     error = "State is required";
-  //   }
-  //   return error;
-  // };
-
   const validateState = (value) => {
     let error;
     if (!value || value.trim() === '') {
@@ -191,8 +173,7 @@ const CustomerPaymentDetailsForm = () => {
     let error;
     if (!value) {
       error = "Field is required";
-    }
-    else if (!value || value.length < 7) {
+    } else if (!value || value.length < 7) {
       error = "Please enter a valid phone number.";
     }
     return error
@@ -237,56 +218,64 @@ const CustomerPaymentDetailsForm = () => {
   // };
 
   const handleComputopRedirection = (paymentDetails) => {
-
     console.log("handleComputopRedirection", paymentDetails);
     const { Currency, Amount, MerchantID, id, EncryptionPassword } = paymentDetails;
+
     const successURL = `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}/success`;
     const failureURL = `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}/error`;
     const notifyURL = 'https://8j54xrirvb.execute-api.us-east-2.amazonaws.com/dev/webhook';
 
-    // console.log("PAYMENT DETAILS", Currency, Amount, MerchantID, id, EncryptionPassword );
-    let data = 'MerchantID=' + MerchantID + '&TransID=' + id + '&Currency=' + Currency + '&Amount=' + Amount + '&MAC=' + hmacKey + '&URLNotify=' + notifyURL + '&URLSuccess=' + successURL + '&URLFailure=' + failureURL;
+    let dataToEncrypt = `MerchantID=${MerchantID}&TransID=${id}&Currency=${Currency}&Amount=${Amount}&MAC=${hmacKey}&URLNotify=${notifyURL}&URLSuccess=${successURL}&URLFailure=${failureURL}`;
+    // let dataToEncrypt = `MerchantID=Tentamus_Adamson_test&TransID=1234&Currency=USD&Amount=22&MAC=3dd7ef66c092e4d5851291db13a809eb93defd167c99e3bc85b4c5365f3cdbe4&URLNotify=https://8j54xrirvb.execute-api.us-east-2.amazonaws.com/dev/webhook&URLSuccess=http://localhost:3000/success&URLFailure=http://localhost:3000/error`;
 
+    // Working
+    // let dataToEncrypt = `MerchantID=Tentamus_Adamson_test&TransID=dceb13cf-9692-4772-b18f-38332d4c3cdd&Currency=USD&Amount=22&MAC=3dd7ef66c092e4d5851291db13a809eb93defd167c99e3bc85b4c5365f3cdbe4&URLNotify=https://8j54xrirvb.execute-api.us-east-2.amazonaws.com/dev/webhook&URLSuccess=http://localhost:3000/success&URLFailure=http://localhost:3000/error`;
+    const computopDataParameter = BlowfishEncryption(dataToEncrypt, EncryptionPassword);
 
-    // let data = `MerchantID=${MerchantID}&TransID=${id}&Currency=${Currency}&Amount=${Amount}&MAC=${hmacKey}&URLNotify=${notifyURL}&URLSuccess=${successURL}&URLFailure=${failureURL}`;
-    const computopDataParameter = BlowfishEncryption(data, EncryptionPassword);
-
-    console.log("computopDataParameter", computopDataParameter)
 
     // const merchantID = 'Generic3DSTest';
     const backgroundURL = 'https://www.tentamus.com/wp-content/uploads/2021/03/about_us_tentamus_fahnen_IMG_0722-2799x1679.jpg';
+    const timestampInMilliseconds = new Date().getTime();
+    localStorage.setItem("timestamp", timestampInMilliseconds);
 
-    console.log(`Currency=${Currency}&Amount=${Amount}`, "merchantID", MerchantID, "hmacKey", hmacKey, "len", data.length, "data", computopDataParameter);
+    console.log("DATA", dataToEncrypt);
+    console.log("DATA-LENGTH", dataToEncrypt.length);
 
-    window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${data.length}&Data=${computopDataParameter}&TransID=${id}&URLSuccess=${successURL}&URLFailure=${failureURL}&URLNotify=${notifyURL}&MAC=${hmacKey}&Language=en`;
+    alert(JSON.stringify(dataToEncrypt));
+    alert(JSON.stringify(dataToEncrypt.length));
 
-  
+    console.log(`OUTPUT --- https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataToEncrypt.length}&Data=${computopDataParameter}&CustomField1=${Amount} USD`);
+    // console.log(`Currency=${Currency}&Amount=${Amount}`, "merchantID", MerchantID, "hmacKey", hmacKey, "len", data.length, "data", computopDataParameter);
+
+    window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataToEncrypt.length}&Data=${computopDataParameter}&CustomField1=${Amount} USD`;
+
+
+    // window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${data.length}&Data=${computopDataParameter}&TransID=${id}&MAC=${hmacKey}&URLSuccess=${successURL}&URLFailure=${failureURL}&URLNotify=${notifyURL}&Language=en`;
+
     // window.open(`https://www.computop-paygate.com/payssl.aspx?MerchantID=Tentamus_Adamson_test&MsgVer=2.0&Len=${data.length}&Data=${computopDataParameter}&TransID=${id}&URLSuccess=${successURL}&URLFailure=${failureURL}&URLNotify=${notifyURL}&MAC=${hmacKey}&Language=en`, '_blank', 'noopener,noreferrer');
-    // window.open(`https://www.computop-paygate.com/payssl.aspx?MerchantID=Tentamus_Adamson_test&MsgVer=2.0&Len=${data.length}&Data=${computopDataParameter}&TransID=${id}&URLSuccess=https://nipurnait.com/&URLFailure=https://www.google.co.in/&URLNotify=${notifyURL}&MAC=${hmacKey}&Language=en`, '_blank', 'noopener,noreferrer');
   }
+
   const generateHMAC = (data) => {
+
     const apiData = data;
-
-
-    const message = `*${apiData.id}*${apiData.MerchantID}*${apiData.Amount}*${apiData.Currency}`;
-
-    
-
     const secretKey = paymentDetails.HMacPassword;
-
-
+    const message = `*${apiData.id}*${apiData.MerchantID}*${apiData.Amount}*${apiData.Currency}`;
     console.log("Message", message, "secretKey", secretKey);
 
-    const hash = CryptoJS.HmacSHA256(message, secretKey)
-    const hashInHex = hash.toString(CryptoJS.enc.Hex)
-    console.log("hashInHex", hashInHex)
-    const uppercaseHMAC = hashInHex.toUpperCase(); // Convert to uppercase
+    // const message = `*dceb13cf-9692-4772-b18f-38332d4c3cdd*Tentamus_Adamson_test*22*USD`;
+    // const secretKey = "K=p25W[iX_t6)7BrcR?8N!9dx3L(Ho*4";
 
-    console.log("Uppercase HMAC", uppercaseHMAC);
+    const hash = HmacSHA256(message, secretKey);
+    const hashInHex = hash.toString(enc.Hex);
+    console.log("hashInHex---", hashInHex);
+    setHmacKey(hashInHex);
 
-    setHmacKey(uppercaseHMAC);
-
-   
+    // const hash = CryptoJS.HmacSHA256(message, secretKey)
+    // const hashInHex = hash.toString(CryptoJS.enc.Hex)
+    // console.log("hashInHex", hashInHex)
+    // const uppercaseHMAC = hashInHex.toUpperCase(); // Convert to uppercase
+    // console.log("Uppercase HMAC", uppercaseHMAC);
+    // setHmacKey(uppercaseHMAC);
   }
 
   const postPaymentDetails = async (data) => {
@@ -302,15 +291,14 @@ const CustomerPaymentDetailsForm = () => {
       console.log("GraphQL Response:", response);
       setPaymentDetails(response.data.createPaymentDetails);
       localStorage.setItem("Tid", response.data.createPaymentDetails.id)
-
+      localStorage.setItem("Amount", response.data.createPaymentDetails.Amount)
+      localStorage.setItem("Currency", response.data.createPaymentDetails.Currency)
 
       // if (hmacKey !== '') {
       //   // Computop redirection
       //   handleComputopRedirection(response.data.createPaymentDetails.Currency, response.data.createPaymentDetails.Amount, response.data.createPaymentDetails.id);
       // }
-
-    }
-    catch (error) {
+    } catch (error) {
       console.log("createPaymentDetails error", error);
     }
   }
@@ -318,21 +306,18 @@ const CustomerPaymentDetailsForm = () => {
   const handleFormSubmit = async (values, { resetForm }) => {
     console.log("handleFormSubmit", values, textFields);
     console.log("textFields", textFields);
+
     if (textFields[0] === "") {
-     
-   showToast(" Invoice Field is required","Validation")
-    }
-    else{
-
-    const formattedInvoiceNumbers = textFields.map((value) => ({ InvoiceNo: value }));
-
-    console.log("formattedInvoiceNumbers",formattedInvoiceNumbers);
+      showToast(" Invoice Field is required", "Validation")
+    } else {
+      const formattedInvoiceNumbers = textFields.map((value) => ({ InvoiceNo: value }));
+      console.log("formattedInvoiceNumbers", formattedInvoiceNumbers);
 
       const formData = {
         ...values,
         InvoiceNumbers: JSON.stringify(formattedInvoiceNumbers)
       }
-      console.log("formData",formData)
+      console.log("formData", formData)
 
       try {
         const updatedFormData = {
@@ -341,34 +326,27 @@ const CustomerPaymentDetailsForm = () => {
         };
 
         dispatch(updateFormData(updatedFormData));
-
         postPaymentDetails(updatedFormData);
-
         resetForm();
         setTextFields(['']);
         setTouchedFields([false]);
-       
+
       }
       catch (error) {
         console.error("Create Payment Details error", error);
         throw error;
       }
     }
-
-
-
   }
 
   const handleTotalResetForm = (handleReset) => {
     handleReset();
     setTextFields(['']);
     setTouchedFields([false]);
-
   };
 
   const [textFields, setTextFields] = useState(['']); // Initialize with one empty string
   const [touchedFields, setTouchedFields] = useState([false]);
- 
 
   const handleAddTextField = () => {
     setTextFields([...textFields, '']);
@@ -402,13 +380,10 @@ const CustomerPaymentDetailsForm = () => {
     setTouchedFields(updatedTouchedFields);
   };
 
-
-
-
   return (
     <>
       <div>
-      <ToastContainer/>
+        <ToastContainer />
         <div className='card-container' style={{ border: "1px solid #007640" }}>
           <div>
             <Formik onSubmit={handleFormSubmit} initialValues={initialValues}>
@@ -418,7 +393,7 @@ const CustomerPaymentDetailsForm = () => {
                   <Grid>
                     {/* Heading */}
                     <div className='flex justify-content-center align-items-center gap-3 sm:gap-5' style={{ textAlign: 'center' }}>
-                      <img src={AFLLogo} alt="AFL Logo" style={{ width: '50px', height: 'auto' }} />
+                      <img src={AFLLogo} style={{ width: '50px', height: 'auto' }} alt='AFL Logo' />
                       <span className='text-center'>
                         Analytical Food Laboratories
                       </span>
@@ -716,7 +691,7 @@ const CustomerPaymentDetailsForm = () => {
                         </FormControl>
                       </Grid>
 
-                      {/* Invoice 0*/}
+                      {/* Invoice */}
                       {/* <Grid item xs={8}>
                       <div className='invoice-container'>
                         <div className='invoiceDetails'>
@@ -762,7 +737,7 @@ const CustomerPaymentDetailsForm = () => {
 
                     </Grid> */}
 
-                      {/* Invoice 1*/}
+                      {/* Invoice */}
                       <Grid item xs={6}>
                         <div className='invoice-container'>
                           <div className='text-xs sm:text-lg font-semibold'>
@@ -778,13 +753,6 @@ const CustomerPaymentDetailsForm = () => {
                         </div>
                         {textFields.map((value, index) => (
                           <div key={index} className='textFieldContainer'>
-                            {/* <TextField
-                              style={{ marginBottom: '10px' }}
-                              size="small"
-                              value={value}
-                              label="Invoice No*"
-                              onChange={(e) => handleTextFieldChange(index, e.target.value)}
-                            /> */}
                             <TextField
                               style={{ marginBottom: '10px' }}
                               size="small"

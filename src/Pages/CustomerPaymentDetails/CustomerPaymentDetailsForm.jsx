@@ -15,32 +15,14 @@ import { HmacSHA256, enc } from 'crypto-js';
 // import CryptoJS from 'crypto-js';
 import MuiPhoneNumber from 'mui-phone-number';
 import AFLLogo from "../../images/AFL_Logo.png";
+import mylogo from "../../images/3.png";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { showToast } from '../../Components/ToastUtils';
-
-
-
-
+import { DonutLargeOutlined } from '@mui/icons-material';
 
 const newcountries = Country.getAllCountries();
 const currency = cc.codes();
-
-// const dropdowncountries = newcountries.map(country => {
-//   // console.log("country",country);
-//   return {
-//     countryName: country.name,
-//     countryCode: country.isoCode
-//   };
-// });
-
-// const dropdownCurrencies = currency.map(code => {
-//   // console.log("Currency",currency);
-//   return {
-//     label: code,
-//     value: code
-//   };
-// });
 
 const CustomerPaymentDetailsForm = () => {
   const [dropdowncountries, setDropdowncountries] = useState([]);
@@ -50,6 +32,8 @@ const CustomerPaymentDetailsForm = () => {
   const initialValues = useSelector(selectFormData);
   const [hmacKey, setHmacKey] = useState("");
   const [paymentDetails, setPaymentDetails] = useState(null);
+  const [combinedInvoices, setCombinedInvoices] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const usStates = State.getStatesOfCountry('US');
@@ -179,8 +163,7 @@ const CustomerPaymentDetailsForm = () => {
     let error;
     if (!value) {
       error = "Field is required";
-    }
-    else if (!value || value.length < 7) {
+    } else if (!value || value.length < 7) {
       error = "Please enter a valid phone number.";
     }
     return error
@@ -225,7 +208,7 @@ const CustomerPaymentDetailsForm = () => {
   // };
 
   const handleComputopRedirection = (paymentDetails) => {
-    // console.log("handleComputopRedirection", paymentDetails);
+    console.log("handleComputopRedirection", paymentDetails);
     const { Currency, Amount, MerchantID, id, EncryptionPassword } = paymentDetails;
 
     const successURL = `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}/success`;
@@ -234,7 +217,9 @@ const CustomerPaymentDetailsForm = () => {
 
     let dataToEncrypt = `MerchantID=${MerchantID}&TransID=${id}&Currency=${Currency}&Amount=${Amount}&MAC=${hmacKey}&URLNotify=${notifyURL}&URLSuccess=${successURL}&URLFailure=${failureURL}`;
     // let dataToEncrypt = `MerchantID=Tentamus_Adamson_test&TransID=1234&Currency=USD&Amount=22&MAC=3dd7ef66c092e4d5851291db13a809eb93defd167c99e3bc85b4c5365f3cdbe4&URLNotify=https://8j54xrirvb.execute-api.us-east-2.amazonaws.com/dev/webhook&URLSuccess=http://localhost:3000/success&URLFailure=http://localhost:3000/error`;
-    
+
+    console.log("dataToEncrypt", dataToEncrypt);
+    // alert(JSON.stringify(dataToEncrypt));
     // Working
     // let dataToEncrypt = `MerchantID=Tentamus_Adamson_test&TransID=dceb13cf-9692-4772-b18f-38332d4c3cdd&Currency=USD&Amount=22&MAC=3dd7ef66c092e4d5851291db13a809eb93defd167c99e3bc85b4c5365f3cdbe4&URLNotify=https://8j54xrirvb.execute-api.us-east-2.amazonaws.com/dev/webhook&URLSuccess=http://localhost:3000/success&URLFailure=http://localhost:3000/error`;
     const computopDataParameter = BlowfishEncryption(dataToEncrypt, EncryptionPassword);
@@ -247,16 +232,14 @@ const CustomerPaymentDetailsForm = () => {
     console.log("DATA", dataToEncrypt);
     console.log("DATA-LENGTH", dataToEncrypt.length);
 
-    alert(JSON.stringify(dataToEncrypt));
-    alert(JSON.stringify(dataToEncrypt.length));
+    // alert(JSON.stringify(dataToEncrypt));
+    // alert(JSON.stringify(dataToEncrypt.length));
+    // alert(JSON.stringify(hmacKey));
 
-    console.log(`OUTPUT --- https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataToEncrypt.length}&Data=${computopDataParameter}`);
-    // console.log(`Currency=${Currency}&Amount=${Amount}`, "merchantID", MerchantID, "hmacKey", hmacKey, "len", data.length, "data", computopDataParameter);
+    setLoading(false);
 
-    window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataToEncrypt.length}&Data=${computopDataParameter}&CustomField1=${Amount} USD`;
-    // window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${data.length}&Data=${computopDataParameter}&TransID=${id}&MAC=${hmacKey}&URLSuccess=${successURL}&URLFailure=${failureURL}&URLNotify=${notifyURL}&Language=en`;
+    window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataToEncrypt.length}&Data=${computopDataParameter}&CustomField1=${Amount} USD&CustomField3=${mylogo}&CustomField4=${combinedInvoices}&CustomField5=${paymentDetails.FirstName} ${paymentDetails.LastName}&CustomField7=${paymentDetails.id}`;
 
-    // window.open(`https://www.computop-paygate.com/payssl.aspx?MerchantID=Tentamus_Adamson_test&MsgVer=2.0&Len=${data.length}&Data=${computopDataParameter}&TransID=${id}&URLSuccess=${successURL}&URLFailure=${failureURL}&URLNotify=${notifyURL}&MAC=${hmacKey}&Language=en`, '_blank', 'noopener,noreferrer');
   }
 
   const generateHMAC = (data) => {
@@ -284,6 +267,7 @@ const CustomerPaymentDetailsForm = () => {
   }
 
   const postPaymentDetails = async (data) => {
+    setLoading(true);
     try {
       const response = await API.graphql(
         {
@@ -295,8 +279,10 @@ const CustomerPaymentDetailsForm = () => {
       )
       console.log("GraphQL Response:", response);
       setPaymentDetails(response.data.createPaymentDetails);
-      localStorage.setItem("Tid", response.data.createPaymentDetails.id)
-
+      localStorage.setItem("Tid", response.data.createPaymentDetails.id);
+      localStorage.setItem("Amount", response.data.createPaymentDetails.Amount)
+      localStorage.setItem("Currency", response.data.createPaymentDetails.Currency)
+      // setLoading(false);
 
       // if (hmacKey !== '') {
       //   // Computop redirection
@@ -305,7 +291,9 @@ const CustomerPaymentDetailsForm = () => {
 
     }
     catch (error) {
+      // setLoading(false);
       console.log("createPaymentDetails error", error);
+      showToast("Something went wrong. Please try again", "error");
     }
   }
 
@@ -313,20 +301,21 @@ const CustomerPaymentDetailsForm = () => {
     console.log("handleFormSubmit", values, textFields);
     console.log("textFields", textFields);
     if (textFields[0] === "") {
-     
-   showToast(" Invoice Field is required","Validation")
+
+      showToast(" Invoice Field is required", "Validation")
     }
-    else{
+    else {
+      setCombinedInvoices(textFields.join("%0A"));
 
-    const formattedInvoiceNumbers = textFields.map((value) => ({ InvoiceNo: value }));
+      const formattedInvoiceNumbers = textFields.map((value) => ({ InvoiceNo: value }));
 
-    console.log("formattedInvoiceNumbers",formattedInvoiceNumbers);
+      console.log("formattedInvoiceNumbers", formattedInvoiceNumbers);
 
       const formData = {
         ...values,
         InvoiceNumbers: JSON.stringify(formattedInvoiceNumbers)
       }
-      console.log("formData",formData)
+      console.log("formData", formData)
 
       try {
         const updatedFormData = {
@@ -341,15 +330,13 @@ const CustomerPaymentDetailsForm = () => {
         resetForm();
         setTextFields(['']);
         setTouchedFields([false]);
-       
+
       }
       catch (error) {
         console.error("Create Payment Details error", error);
         throw error;
       }
     }
-
-
 
   }
 
@@ -362,7 +349,7 @@ const CustomerPaymentDetailsForm = () => {
 
   const [textFields, setTextFields] = useState(['']); // Initialize with one empty string
   const [touchedFields, setTouchedFields] = useState([false]);
- 
+
 
   const handleAddTextField = () => {
     setTextFields([...textFields, '']);
@@ -402,7 +389,7 @@ const CustomerPaymentDetailsForm = () => {
   return (
     <>
       <div>
-      <ToastContainer/>
+        <ToastContainer />
         <div className='card-container' style={{ border: "1px solid #007640" }}>
           <div>
             <Formik onSubmit={handleFormSubmit} initialValues={initialValues}>
@@ -792,7 +779,7 @@ const CustomerPaymentDetailsForm = () => {
                         ))}
                       </Grid>
 
-                      {/* Button */}
+                      {/* Submit Button */}
                       <Grid item xs={12} sm={12} container justifyContent="flex-end">
                         <div className='field-container' style={{ display: 'flex', gap: '10px' }}>
                           <FormControl>
@@ -807,16 +794,36 @@ const CustomerPaymentDetailsForm = () => {
                             </Button>
                           </FormControl>
                           <FormControl>
-                            <Button
-                              variant="contained"
-                              color="success"
-                              size='small'
-                              disableElevation
-                              onClick={handleSubmit}
-                              style={{ textTransform: "capitalize", fontWeight: 600 }}
-                            >
-                              Submit
-                            </Button>
+                            {
+                              loading === true ?
+                                <>
+                                  <Button
+                                    variant="contained"
+                                    color="success"
+                                    size='small'
+                                    startIcon={<DonutLargeOutlined className="loadingIcon" />}
+                                    disableElevation
+                                    disabled
+                                    style={{ textTransform: "capitalize", fontWeight: 600 }}
+                                  >
+                                    Submitting...
+                                  </Button>
+                                </>
+                                :
+                                <>
+                                  <Button
+                                    variant="contained"
+                                    color="success"
+                                    size='small'
+                                    disableElevation
+                                    onClick={handleSubmit}
+                                    style={{ textTransform: "capitalize", fontWeight: 600 }}
+                                  >
+                                    Submit
+                                  </Button>
+                                </>
+                            }
+
                           </FormControl>
                         </div>
                       </Grid>
