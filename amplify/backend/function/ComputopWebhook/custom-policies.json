@@ -16,14 +16,5 @@
     "Resource": [
       "arn:aws:dynamodb:us-east-2:988839728996:table/*"
     ]
-  },
-  {
-        "Effect": "Allow",
-        "Action":[ 
-          "sqs:SendMessage"
-        ],
-        "Resource":[
-          "arn:aws:sqs:us-east-2:988839728996:SAP-API-SQS"
-        ]
   }
 ]

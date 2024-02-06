@@ -1,12 +1,15 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import FailureImage from './FailureImage.png'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AFLLogo from "../../images/AFL_Logo.png";
 import { showToast } from '../../Components/ToastUtils';
+import CurrencyFormat from '../../Components/CurrencyFormat';
+import { Button } from '@mui/material';
+import { ArrowBackOutlined } from '@mui/icons-material';
 
 const FailurePage = () => {
-
+  const [loading, setLoading] = useState(false);
   const Amount = localStorage.getItem("Amount")
   const Currency = localStorage.getItem("Currency")
 
@@ -34,16 +37,44 @@ const FailurePage = () => {
 
       <span className='payment-failure-text' style={{ fontWeight: 450, fontSize: '1.4em', textAlign: 'center', fontFamily: 'Arial, sans-serif' }}>
         Your last transaction for an amount of&nbsp;
-        <span style={{ fontWeight: 800, fontSize: '1.2em' }}>{Amount}</span>&nbsp;
+        <span style={{ fontWeight: 800, fontSize: '1.2em' }}>{CurrencyFormat(Amount)}</span>&nbsp;
         <span style={{ fontWeight: 800, fontSize: '1.2em' }}>{Currency}</span>&nbsp;
         was
         <span style={{ fontWeight: 800, fontSize: '1.2em' }}>&nbsp;Failed.</span>&nbsp;Please try again.
       </span>
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: "2rem" }}>
-        <span>
-          <a href='https://www.afltexas.com' >Go back to afltexas</a>
-        </span>
+        {
+          loading === true ?
+            <>
+              <Button
+                variant="contained"
+                color="success"
+                size='small'
+                disabled
+                style={{ textTransform: "capitalize", fontWeight: 600 }}
+              >
+                Forwarding to AFL ...
+              </Button>
+            </>
+            :
+            <>
+              <Button
+                variant="contained"
+                color="success"
+                size='small'
+                startIcon={<ArrowBackOutlined />}
+                style={{ textTransform: "capitalize", fontWeight: 600 }}
+                onClick={() => {
+                  (window.location.href = 'https://www.afltexas.com');
+                  setLoading(true);
+                }
+                }
+              >
+                Back to AFL
+              </Button>
+            </>
+        }
       </div>
     </>
 

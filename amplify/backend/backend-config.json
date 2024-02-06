@@ -37,7 +37,12 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
-    "PaymentDetailsResponse": {
+    "GetPaymentDetails": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "PaymentDetailResponse": {
       "build": true,
       "dependsOn": [
         {
@@ -49,11 +54,6 @@
           "resourceName": "TentamusPaymentIntegration"
         }
       ],
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    },
-    "RetryProcessor": {
-      "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     }
@@ -88,6 +88,38 @@
         {
           "category": "function",
           "resourceName": "CreateBankpaymentAdvice"
+        }
+      ]
+    },
+    "AMPLIFY_function_GetPaymentDetails_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "GetPaymentDetails"
+        }
+      ]
+    },
+    "AMPLIFY_function_GetPaymentDetails_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "GetPaymentDetails"
+        }
+      ]
+    },
+    "AMPLIFY_function_PaymentDetailResponse_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "PaymentDetailResponse"
+        }
+      ]
+    },
+    "AMPLIFY_function_PaymentDetailResponse_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "PaymentDetailResponse"
         }
       ]
     },

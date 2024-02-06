@@ -20,15 +20,15 @@ export const onCreatePaymentDetails = /* GraphQL */ `
       PhoneNumber
       Amount
       Currency
-      Status
       InvoiceNumbers
       PaymentId
       createdAt
       updatedAt
-      MerchantID
-      HMacPassword
-      EncryptionPassword
-      SAPUpdateStatusMessage
+      PaymentStatus
+      BeforePaymentSAPstatus
+      AfterPaymentSAPstatus
+      SAPErrorMessage
+      SAPObjectID
       __typename
     }
   }
@@ -52,15 +52,15 @@ export const onUpdatePaymentDetails = /* GraphQL */ `
       PhoneNumber
       Amount
       Currency
-      Status
       InvoiceNumbers
       PaymentId
       createdAt
       updatedAt
-      MerchantID
-      HMacPassword
-      EncryptionPassword
-      SAPUpdateStatusMessage
+      PaymentStatus
+      BeforePaymentSAPstatus
+      AfterPaymentSAPstatus
+      SAPErrorMessage
+      SAPObjectID
       __typename
     }
   }
@@ -84,15 +84,15 @@ export const onDeletePaymentDetails = /* GraphQL */ `
       PhoneNumber
       Amount
       Currency
-      Status
       InvoiceNumbers
       PaymentId
       createdAt
       updatedAt
-      MerchantID
-      HMacPassword
-      EncryptionPassword
-      SAPUpdateStatusMessage
+      PaymentStatus
+      BeforePaymentSAPstatus
+      AfterPaymentSAPstatus
+      SAPErrorMessage
+      SAPObjectID
       __typename
     }
   }

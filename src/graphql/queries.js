@@ -18,15 +18,15 @@ export const getPaymentDetails = /* GraphQL */ `
       PhoneNumber
       Amount
       Currency
-      Status
       InvoiceNumbers
       PaymentId
       createdAt
       updatedAt
-      MerchantID
-      HMacPassword
-      EncryptionPassword
-      SAPUpdateStatusMessage
+      PaymentStatus
+      BeforePaymentSAPstatus
+      AfterPaymentSAPstatus
+      SAPErrorMessage
+      SAPObjectID
       __typename
     }
   }
@@ -53,15 +53,15 @@ export const listPaymentDetails = /* GraphQL */ `
         PhoneNumber
         Amount
         Currency
-        Status
         InvoiceNumbers
         PaymentId
         createdAt
         updatedAt
-        MerchantID
-        HMacPassword
-        EncryptionPassword
-        SAPUpdateStatusMessage
+        PaymentStatus
+        BeforePaymentSAPstatus
+        AfterPaymentSAPstatus
+        SAPErrorMessage
+        SAPObjectID
         __typename
       }
       nextToken

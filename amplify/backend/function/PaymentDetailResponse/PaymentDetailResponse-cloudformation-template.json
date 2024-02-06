@@ -15,6 +15,14 @@
     },
     "s3Key": {
       "Type": "String"
+    },
+    "apiTentamusPaymentIntegrationGraphQLAPIIdOutput": {
+      "Type": "String",
+      "Default": "apiTentamusPaymentIntegrationGraphQLAPIIdOutput"
+    },
+    "apiTentamusPaymentIntegrationGraphQLAPIEndpointOutput": {
+      "Type": "String",
+      "Default": "apiTentamusPaymentIntegrationGraphQLAPIEndpointOutput"
     }
   },
   "Conditions": {
@@ -47,12 +55,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "RetryProcessor",
+            "PaymentDetailResponse",
             {
               "Fn::Join": [
                 "",
                 [
-                  "RetryProcessor",
+                  "PaymentDetailResponse",
                   "-",
                   {
                     "Ref": "env"
@@ -82,7 +90,7 @@
         "Layers": [
           "arn:aws:lambda:us-east-2:988839728996:layer:TentamusPaymentIntegration:1"
         ],
-        "Timeout": 25
+        "Timeout": 900
       }
     },
     "LambdaExecutionRole": {
@@ -91,12 +99,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "tentamuspaymentintegLambdaRole5ec1bf47",
+            "tentamuspaymentintegLambdaRolef2eda013",
             {
               "Fn::Join": [
                 "",
                 [
-                  "tentamuspaymentintegLambdaRole5ec1bf47",
+                  "tentamuspaymentintegLambdaRolef2eda013",
                   "-",
                   {
                     "Ref": "env"
@@ -167,6 +175,62 @@
         }
       }
     },
+    "LambdaTriggerPolicyPaymentDetails": {
+      "DependsOn": [
+        "LambdaExecutionRole"
+      ],
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "amplify-lambda-execution-policy-PaymentDetails",
+        "Roles": [
+          {
+            "Ref": "LambdaExecutionRole"
+          }
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "dynamodb:DescribeStream",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:ListStreams"
+              ],
+              "Resource": {
+                "Fn::ImportValue": {
+                  "Fn::Sub": "${apiTentamusPaymentIntegrationGraphQLAPIIdOutput}:GetAtt:PaymentDetailsTable:StreamArn"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "LambdaEventSourceMappingPaymentDetails": {
+      "Type": "AWS::Lambda::EventSourceMapping",
+      "DependsOn": [
+        "LambdaTriggerPolicyPaymentDetails",
+        "LambdaExecutionRole"
+      ],
+      "Properties": {
+        "BatchSize": 100,
+        "Enabled": true,
+        "EventSourceArn": {
+          "Fn::ImportValue": {
+            "Fn::Sub": "${apiTentamusPaymentIntegrationGraphQLAPIIdOutput}:GetAtt:PaymentDetailsTable:StreamArn"
+          }
+        },
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "LambdaFunction",
+            "Arn"
+          ]
+        },
+        "StartingPosition": "LATEST"
+      }
+    },
     "CustomLambdaExecutionPolicy": {
       "Type": "AWS::IAM::Policy",
       "Properties": {
@@ -190,15 +254,6 @@
               ],
               "Resource": [
                 "arn:aws:dynamodb:us-east-2:988839728996:table/*"
-              ]
-            },
-            {
-              "Effect": "Allow",
-              "Action": [
-                "sqs:SendMessage"
-              ],
-              "Resource": [
-                "arn:aws:sqs:us-east-2:988839728996:SAP-API-SQS"
               ]
             }
           ]

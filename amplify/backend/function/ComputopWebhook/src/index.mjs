@@ -54,7 +54,6 @@ export const handler = async (event) => {
             };
         }         
             
-        
     } catch (error) {
         console.error('Error:', error);
 
@@ -132,7 +131,7 @@ async function CreateData(parsedObject){
 
             // Send data to SAP API
             const response = await axios.patch(
-              `${(secretValue).SAPHostName}/sap/byd/odata/cust/v1/payment_advice/ZPaymentAdviceRootCollection('3B3D1E764AA61EEEB0B7C09BB1C98810')`,
+              `${(secretValue).SAPHostName}/sap/byd/odata/cust/v1/payment_advice/ZPaymentAdviceRootCollection('${parsedObject.Object}')`,
                 postData,
                 {
                     headers: {
@@ -152,7 +151,7 @@ async function CreateData(parsedObject){
                 const updatedResponse = await UpdatePaymentDetailsID(parsedObject);
                 console.log("updatedResponse :", updatedResponse);
                 return {
-                    statusCode: 200,
+                    statusCode: 204,
                     body: updatedResponse,
                 };
             } else {

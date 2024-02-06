@@ -14,13 +14,11 @@ const initialState = {
         City: "",
         PostalCode: "",
         PhoneNumber: "+1",
-        Amount: "", 
+        Amount: "",
         Currency: "USD",
-        EncryptionPassword: "", 
-        HMacPassword: "",
-        MerchantID: "",
-        PaymentId: "",
-        Status: "inprogress", 
+        PaymentStatus: "In Progress",
+        SuccessURL: `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}/success`,
+        FailureURL: `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}/error`
     },
 };
 
