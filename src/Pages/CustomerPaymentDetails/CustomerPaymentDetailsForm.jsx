@@ -39,6 +39,7 @@ const CustomerPaymentDetailsForm = () => {
   });
   const [combinedInvoices, setCombinedInvoices] = useState("");
   const [loading, setLoading] = useState(false);
+  const [amountInUSD, setAmountInUSD] = useState(0);
 
   useEffect(() => {
     const usStates = State.getStatesOfCountry('US');
@@ -213,8 +214,7 @@ const CustomerPaymentDetailsForm = () => {
   const handleComputopRedirection = (paymentDetails) => {
     console.log("handleComputopRedirection", initialValues);
     const { MerchantID, CalculatedHMAC, EncryptedString, TransactionID, dataLength } = paymentDetails;
-    const { FirstName, LastName, Amount, Currency, AddressLine1, City, State, Country, PhoneNumber, PostalCode } = initialValues;
-    localStorage.setItem("EncryptedString", EncryptedString);
+    const { FirstName, LastName, Currency, Amount, AddressLine1, City, State, Country, PhoneNumber, PostalCode } = initialValues;
 
     // let amountInCents = parseFloat(Amount)*100; //Amount in cents
 
@@ -242,11 +242,9 @@ const CustomerPaymentDetailsForm = () => {
     // alert(JSON.stringify(dataToEncrypt));
     // alert(JSON.stringify(dataToEncrypt.length));
     // alert(JSON.stringify(hmacKey));
-
     setLoading(false);
     // alert(`https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataLength}&Data=${EncryptedString}&CustomField1=${Amount} ${Currency}&CustomField3=https://www.afltexas.com/wp-content/uploads/2022/07/AFL_GroupTag.svg&CustomField4=${combinedInvoices}&CustomField5=${FirstName} ${LastName}%0A ${AddressLine1}%0A ${City}%0A ${PostalCode}%0A ${State}%0A ${Country}%0A ${PhoneNumber}&CustomField7=${TransactionID}`);
-    window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataLength}&Data=${EncryptedString}&CustomField1=${Amount} ${Currency}&CustomField3=https://www.afltexas.com/wp-content/uploads/2022/07/AFL_GroupTag.svg&CustomField4=${combinedInvoices}&CustomField5=${FirstName} ${LastName}%0A ${AddressLine1}%0A ${City}%0A ${PostalCode}%0A ${State}%0A ${Country}%0A ${PhoneNumber}&CustomField7=${TransactionID}`;
-
+    window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataLength}&Data=${EncryptedString}&CustomField1=${amountInUSD} ${Currency}&CustomField3=https://www.afltexas.com/wp-content/uploads/2022/07/AFL_GroupTag.svg&CustomField4=${combinedInvoices}&CustomField5=${FirstName} ${LastName}%0A ${AddressLine1}%0A ${City}%0A ${State}%0A ${PostalCode}%0A ${Country}%0A ${PhoneNumber}&CustomField7=${TransactionID}`;
   }
 
   // const generateHMAC = (data) => {
@@ -288,8 +286,7 @@ const CustomerPaymentDetailsForm = () => {
         dataLength: response.data.PaymentDetailsCreate.Length,
       }));
 
-      localStorage.setItem("Tid", data.id);
-      localStorage.setItem("Amount", data.Amount);
+      localStorage.setItem("Tid", response.data.PaymentDetailsCreate.TransactionID);
       localStorage.setItem("Currency", data.Currency);
 
       resetForm();
@@ -332,37 +329,37 @@ const CustomerPaymentDetailsForm = () => {
         ...values,
         InvoiceNumbers: JSON.stringify(formattedInvoiceNumbers)
       }
-      console.log("formData", formData)
+      console.log("formData", formData);
 
       try {
+
+        setAmountInUSD(formData.Amount);
+        localStorage.setItem("Amount", formData.Amount);
+
         const updatedFormData = {
           ...formData,
-          Amount: formData.Amount.toString(),
+          Amount: (formData.Amount * 100),
         };
 
+        // Updating initialvalues
         dispatch(updateFormData(updatedFormData));
 
         await postPaymentDetails(updatedFormData, resetForm);
-
-
-
       }
       catch (error) {
         console.error("Create Payment Details error", error);
         throw error;
       }
     }
-
   }
 
   const handleTotalResetForm = (handleReset) => {
     handleReset();
     setTextFields(['']);
     setTouchedFields([false]);
-
   };
 
-  const [textFields, setTextFields] = useState(['']); // Initialize with one empty string
+  const [textFields, setTextFields] = useState(['']);
   const [touchedFields, setTouchedFields] = useState([false]);
 
 
@@ -397,9 +394,6 @@ const CustomerPaymentDetailsForm = () => {
     updatedTouchedFields[index] = true;
     setTouchedFields(updatedTouchedFields);
   };
-
-
-
 
   return (
     <>

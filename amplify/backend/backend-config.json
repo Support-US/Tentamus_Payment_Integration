@@ -20,10 +20,11 @@
         "authConfig": {
           "additionalAuthenticationProviders": [],
           "defaultAuthentication": {
-            "apiKeyConfig": {
-              "apiKeyExpirationDays": 7
-            },
-            "authenticationType": "API_KEY"
+            "authenticationType": "AWS_LAMBDA",
+            "lambdaAuthorizerConfig": {
+              "lambdaFunction": "graphQlLambdaAuthorizera2387a1d",
+              "ttlSeconds": "300"
+            }
           }
         }
       },
@@ -54,6 +55,11 @@
           "resourceName": "TentamusPaymentIntegration"
         }
       ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "graphQlLambdaAuthorizera2387a1d": {
+      "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     }
@@ -152,6 +158,22 @@
         {
           "category": "function",
           "resourceName": "RetryProcessor"
+        }
+      ]
+    },
+    "AMPLIFY_function_graphQlLambdaAuthorizera2387a1d_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "graphQlLambdaAuthorizera2387a1d"
+        }
+      ]
+    },
+    "AMPLIFY_function_graphQlLambdaAuthorizera2387a1d_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "graphQlLambdaAuthorizera2387a1d"
         }
       ]
     }

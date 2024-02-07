@@ -6,7 +6,7 @@ const { HmacSHA256, enc } = pkg;
 
 import { DynamoDBClient,PutItemCommand } from "@aws-sdk/client-dynamodb";
 
- const client = new DynamoDBClient({ region: "us-east-2" });
+const client = new DynamoDBClient({ region: "us-east-2" });
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -40,18 +40,26 @@ console.log(`Request EVENT: ${JSON.stringify(event)}`);
         let calculatedHMAC =await generateHMAC(createdPaymentdetails,merchantID,paymentDetails.Amount, paymentDetails.Currency,HMacPassword);
         console.log("calculatedHMAC :", calculatedHMAC);
         
-        let dataToEncrypt = `MerchantID=${merchantID}&TransID=${createdPaymentdetails}&Currency=${paymentDetails.Currency}&Amount=${paymentDetails.Amount}&MAC=${calculatedHMAC}&URLNotify=${notifyURL}&URLSuccess=${paymentDetails.successURL}&URLFailure=${paymentDetails.failureURL}`;
-   
+        
+        // let CalculatedAmount = (parseInt(paymentDetails.Amount*100)).toString();
+        // console.log("CalculatedAmount :", CalculatedAmount);
+         
+        let dataToEncrypt = `MerchantID=${merchantID}&TransID=${createdPaymentdetails}&Currency=${paymentDetails.Currency}&Amount=${paymentDetails.Amount}&MAC=${calculatedHMAC}&URLNotify=${notifyURL}&URLSuccess=${paymentDetails.SuccessURL}&URLFailure=${paymentDetails.FailureURL}`;
+        console.log("dataToEncrypt :", dataToEncrypt);
         // Encrypt the string
         let EncryptedString  = await  BlowfishEncryption(dataToEncrypt, blowfishKey,);
         console.log("EncryptedString for Response :",EncryptedString);
-       
+        
+
+
+
        return {
-        EncryptedString: EncryptedString,
-        Length:EncryptedString.length,
-        MerchantID:merchantID,
-        CalculatedHMAC:calculatedHMAC,
-        TransactionID:createdPaymentdetails
+                            EncryptedString: EncryptedString,
+                            Length: EncryptedString.length,
+                            MerchantID: merchantID,
+                            CalculatedHMAC: calculatedHMAC,
+                            TransactionID: createdPaymentdetails
+                        
           };
 
       }
@@ -79,9 +87,9 @@ console.log(`Request EVENT: ${JSON.stringify(event)}`);
     }
   } catch (error) {
     console.error('Error:', error);
-    throw error;
-  }
-     
+        throw error;
+    }
+
  async function createPaymentDetails(){ 
      
              try{ 
@@ -95,7 +103,8 @@ console.log(`Request EVENT: ${JSON.stringify(event)}`);
             let invoiceno = `InvoiceNo ${index}`;
             return { [invoiceno] : { S: item.InvoiceNo }};
         });
-        
+        const amount = (paymentDetails.Amount / 100).toString();
+        console.log("amount :",amount);
         console.log("Given Invoice Details array : ",invoices);
         
 
@@ -103,7 +112,7 @@ console.log(`Request EVENT: ${JSON.stringify(event)}`);
                     new PutItemCommand({
                         TableName: PaymentDetailsTableName,
                         Item:{
-                          id: { S : id.toUpperCase()},
+                          id: { S : id},
                           FirstName : { S:paymentDetails.FirstName },
                           LastName :  { S:paymentDetails.LastName },
                           CompanyName : { S:paymentDetails.CompanyName },
@@ -115,7 +124,7 @@ console.log(`Request EVENT: ${JSON.stringify(event)}`);
                           City :  { S:paymentDetails.City },
                           PostalCode :  { S:paymentDetails.PostalCode},
                           PhoneNumber :  { S:paymentDetails.PhoneNumber },
-                          Amount :  { S:paymentDetails.Amount },
+                          Amount :  { S:amount },
                           Currency :  { S:paymentDetails.Currency },
                           PaymentStatus :  { S:paymentDetails.PaymentStatus },
                           InvoiceNumbers: { M: Object.assign({}, ...invoices) }, 

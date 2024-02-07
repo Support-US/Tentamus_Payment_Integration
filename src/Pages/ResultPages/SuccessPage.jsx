@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import SucessImage from "./SuccessImage.jpg"
-// import image from "./image.png"
 import { ToastContainer } from 'react-toastify';
 import AFLLogo from "../../images/AFL_Logo.png";
 import ConfettiEffect from './ConfettiEffect';
 import { showToast } from '../../Components/ToastUtils';
 import CurrencyFormat from '../../Components/CurrencyFormat';
 import { Button } from '@mui/material';
-import { ArrowBackOutlined, ArrowLeftOutlined } from '@mui/icons-material';
+import { ArrowBackOutlined } from '@mui/icons-material';
 
 const SuccessPage = () => {
   const [loading, setLoading] = useState(false);
   const Amount = localStorage.getItem("Amount");
   const Currency = localStorage.getItem("Currency");
+  const TransactionId = localStorage.getItem("Tid");
 
   useEffect(() => {
     // showToast(`Your last transaction for an amount of ${Amount} ${Currency} was successful.`, "success");
@@ -21,37 +20,31 @@ const SuccessPage = () => {
 
   return (
     <>
-      <div className='mt-5 flex justify-content-center align-items-center gap-3 sm:gap-5' style={{ textAlign: 'center' }}>
-        <img src={AFLLogo} alt="AFL Logo" style={{ width: '50px', height: 'auto' }} />
-        <span className='text-center'>
-          Analytical Food Laboratories
-        </span>
-      </div>
       <ToastContainer />
 
       <ConfettiEffect />
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}>
-        {/* <img
-          src={SucessImage}
-          // src={image}
-          alt="Success Illustration"
-          style={{ width: '550px', height: "400px" }}
-        /> */}
-        <div class="wrapper"> <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"> <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" /> <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
-        </svg>
+      <span className='payment-text'>
+        Your payment for {CurrencyFormat(Amount)} {Currency}
+      </span>
+
+      <span className='success-text'> Successful.</span >
+
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '40vh'}}>
+        <div class="wrapper">
+          <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+          </svg>
         </div>
       </div>
 
-      <span className='payment-success-text' style={{ fontWeight: 450, fontSize: '1.4em', textAlign: 'center' }}>
-        Your last transaction for an amount of&nbsp;
-        <span style={{ fontWeight: 800, fontSize: '1.2em' }}>{CurrencyFormat(Amount)}</span>&nbsp;
-        <span style={{ fontWeight: 800, fontSize: '1.2em' }}>{Currency}</span>&nbsp;
-        was
-        <span style={{ fontWeight: 800, fontSize: '1.2em' }}>&nbsp;successful.</span>
-      </span>
+      <div className='flex justify-content-center align-items-center gap-2' style={{ color: "var(--primary-color)" , marginTop:'-2.5rem',marginBottom: '2rem'}}>
+        <span style={{ fontWeight: 450, fontSize: '1.2em' }} > Your Transaction ID {" "} : </span>
+        <span style={{ fontWeight: 600, fontSize: '1.2em' }}>{TransactionId}</span>
+      </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: "2rem" }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '1rem', marginBottom: '8rem' }}>
         {
           loading === true ?
             <>
@@ -84,6 +77,30 @@ const SuccessPage = () => {
             </>
         }
       </div>
+
+
+
+
+      <div className='mt-5 flex justify-content-center align-items-center gap-3 sm:gap-5' style={{ textAlign: 'center' }}>
+        <img src={AFLLogo} alt="AFL Logo" style={{ width: '50px', height: 'auto' }} />
+      </div>
+
+      <div>
+        <span style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'baseline',
+          marginTop: '0.5rem',
+          fontWeight: 600,
+          color: '#007640',
+          fontSize: '15px',
+        }}>
+          Analytical Food Laboratories
+        </span>
+
+      </div>
+
+
 
     </>
   )

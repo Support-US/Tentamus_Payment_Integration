@@ -37,7 +37,7 @@ TransactionID:String!
 }
 
 type PaymentDetails
- @model  @auth(rules: [{ allow: public }]) {
+ @model   {
 id: ID!
 FirstName: String!
 LastName : String!

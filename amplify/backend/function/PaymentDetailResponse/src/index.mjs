@@ -135,12 +135,12 @@ async function CreateData(DynamoDBdata){
 
 async function UpdatePaymentDetailsID(SAPdata) {
     console.log("UPDATE data ",SAPdata );
-    
+    let tableId = SAPdata.TransactionID;
     try{
         const params = {
             TableName: PaymentDetailsTableName,  
             Key: { 
-                id: { S: SAPdata.TransactionID },
+                id: { S: tableId },
             },
             UpdateExpression: "SET SAPObjectID = :newobjecttId,BeforePaymentSAPstatus = :newStatusMessage",
             ExpressionAttributeValues: {
@@ -163,6 +163,8 @@ async function UpdatePaymentDetailsID(SAPdata) {
 }
 
 async function UpdateFailurestatus(error,data,errStatus) {
+    
+    let tableId = data.TransID;
     console.log("Error ",error);
     console.log("data ",data);
     console.log("errStatus ",errStatus); 
@@ -172,7 +174,7 @@ async function UpdateFailurestatus(error,data,errStatus) {
              params = {
             TableName: PaymentDetailsTableName,
             Key: {
-                id: { S: data.TransactionID },
+                id: { S: tableId },
             },
             UpdateExpression: "SET PaymentStatus = :newStatus, BeforePaymentSAPstatus = :newStatusMessage,SAPErrorMessage = :newerrorMessage",
             ExpressionAttributeValues: {
@@ -187,7 +189,7 @@ async function UpdateFailurestatus(error,data,errStatus) {
          params = {
             TableName: PaymentDetailsTableName,
             Key: {
-                id: { S: data.TransID },
+                id: { S: tableId },
             },
              UpdateExpression: "SET PaymentStatus = :newStatus, BeforePaymentSAPstatus = :newStatusMessage,SAPErrorMessage = :newerrorMessage",
             ExpressionAttributeValues: {

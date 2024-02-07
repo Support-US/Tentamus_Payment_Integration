@@ -1,7 +1,9 @@
 import AWS from 'aws-sdk';
 import { Blowfish } from 'egoroof-blowfish';
 import { Buffer } from 'buffer';
-import { DynamoDBClient, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, UpdateItemCommand, GetItemCommand } from "@aws-sdk/client-dynamodb";
+import { unmarshall } from '@aws-sdk/util-dynamodb';
+
 import axios from 'axios';
 import pkg from 'crypto-js';
 const { HmacSHA256, enc } = pkg;
@@ -41,8 +43,13 @@ export const handler = async (event) => {
         const Hmac = parsedObject.MAC;
         console.log("Hmac :", Hmac);
         
+        
+        //Get ObjectID
+        const getObjectID =await GetObjectid(parsedObject.TransID);
+        console.log("getObjectID :", getObjectID);
+        
         if (Hmac.trim() === calculatedHMAC.trim()) {
-            let response = await CreateData(parsedObject);
+            let response = await CreateData(parsedObject,getObjectID);
             console.log("response :",response); 
             return response;
         }
@@ -116,10 +123,38 @@ async function generateHMAC(PayID,transID, merchantID, Status, code, hmacPasswor
         
         return hashInHex.toUpperCase();
   }
+  
+async function GetObjectid(TransID) {
+    console.log("TransID :",TransID);
+    const params = {
+        TableName: PaymentDetailsTableName,
+        Key: {
+            id: { S: TransID },
+        },
+    };
 
-async function CreateData(parsedObject){
+    try {
+        const command = new GetItemCommand(params);
+        const response = await client.send(command);
+
+        // Access the retrieved item from response.Item
+        const item = response.Item;
+
+        // Handle the retrieved item as needed
+        console.log('Retrieved Item:', item);
+
+        return item;
+    } catch (error) {
+        console.error('Error retrieving item:', error);
+        throw error;
+    }
+}
+
+async function CreateData(parsedObject,getObjectID){
 
     try{
+    let getDBData = unmarshall(getObjectID);
+    
     let postData = {
             PaymentID: parsedObject.PayID,
             Status: parsedObject.Status === 'OK' ? 'Success' : 'Failed',
@@ -131,7 +166,7 @@ async function CreateData(parsedObject){
 
             // Send data to SAP API
             const response = await axios.patch(
-              `${(secretValue).SAPHostName}/sap/byd/odata/cust/v1/payment_advice/ZPaymentAdviceRootCollection('${parsedObject.Object}')`,
+              `${(secretValue).SAPHostName}/sap/byd/odata/cust/v1/payment_advice/ZPaymentAdviceRootCollection('${getDBData.SAPObjectID}')`,
                 postData,
                 {
                     headers: {
@@ -188,15 +223,12 @@ async function UpdatePaymentDetailsID(parsedObject) {
         Key: {
             id: { S: parsedObject.TransID },
         },
-        UpdateExpression: "SET PaymentId = :newPaymentId, #statusAttr = :newStatus,SAPUpdateStatusMessage = :newStatusMessage",
+        UpdateExpression: "SET PaymentId = :newPaymentId, PaymentStatus = :newStatus,AfterPaymentSAPstatus = :newStatusMessage",
         ExpressionAttributeValues: {
             ":newPaymentId": { S: parsedObject.PayID },
             ":newStatus": { S: parsedObject.Status === 'OK' ? 'Success' : 'Failed'}, 
             ":newStatusMessage": { S: "Success"},
         },
-         ExpressionAttributeNames: {
-        "#statusAttr": "Status", 
-    },
         ReturnValues: "ALL_NEW",
     };
 
@@ -214,14 +246,12 @@ async function UpdateFailurestatus(error,parsedObject,errStatus) {
         Key: {
             id: { S: parsedObject.TransID },
         },
-        UpdateExpression: "SET #statusAttr = :newStatus, SAPUpdateStatusMessage = :newStatusMessage",
+        UpdateExpression: "SET PaymentStatus = :newStatus, AfterPaymentSAPstatus = :newStatusMessage,SAPErrorMessage = :newErrorMessage",
         ExpressionAttributeValues: {
             ":newStatus": { S: parsedObject.Status === 'OK' ? 'Success' : 'Failed' },
             ":newStatusMessage": { M: { "FailureStatusCode": { S: (error.status).toString() }, "ErrorMessage": { S: error.body } } },
+            ":newErrorMessage": { M: { "ErrorMessage": { S: error.message } } },
         },
-        ExpressionAttributeNames: {
-        "#statusAttr": "Status", 
-    },
         ReturnValues: "ALL_NEW",
     };
     }
@@ -231,14 +261,13 @@ async function UpdateFailurestatus(error,parsedObject,errStatus) {
         Key: {
             id: { S: parsedObject.TransID },
         },
-        UpdateExpression: "SET #statusAttr = :newStatus, SAPUpdateStatusMessage = :newStatusMessage",
+        UpdateExpression: "SET PaymentStatus = :newStatus, AfterPaymentSAPstatus = :newStatusMessage,SAPErrorMessage = :newErrorMessage",
         ExpressionAttributeValues: {
             ":newStatus": { S: parsedObject.Status === 'OK' ? 'Success' : 'Failed' },
             ":newStatusMessage": { M: { "FailureStatusCode": { S: (error.response.status).toString() }, "ErrorMessage": { S: error.message } } },
+            ":newErrorMessage": { M: { "ErrorMessage": { S: error.message } } },
         },
-        ExpressionAttributeNames: {
-        "#statusAttr": "Status", 
-    },
+        
         ReturnValues: "ALL_NEW",
     };
 }

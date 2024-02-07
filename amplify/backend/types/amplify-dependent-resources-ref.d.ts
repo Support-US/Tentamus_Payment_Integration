@@ -7,8 +7,7 @@ export type AmplifyDependentResourcesAttributes = {
     },
     "TentamusPaymentIntegration": {
       "GraphQLAPIEndpointOutput": "string",
-      "GraphQLAPIIdOutput": "string",
-      "GraphQLAPIKeyOutput": "string"
+      "GraphQLAPIIdOutput": "string"
     }
   },
   "function": {
@@ -27,6 +26,13 @@ export type AmplifyDependentResourcesAttributes = {
       "Region": "string"
     },
     "PaymentDetailResponse": {
+      "Arn": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string"
+    },
+    "graphQlLambdaAuthorizera2387a1d": {
       "Arn": "string",
       "LambdaExecutionRole": "string",
       "LambdaExecutionRoleArn": "string",

@@ -23,7 +23,7 @@
         },
         "ComputopWebhook": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-51521-deployment",
-          "s3Key": "amplify-builds/ComputopWebhook-3842417967353957774b-build.zip"
+          "s3Key": "amplify-builds/ComputopWebhook-7874754c365174585754-build.zip"
         },
         "RetryProcessor": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-51521-deployment",
@@ -31,11 +31,15 @@
         },
         "GetPaymentDetails": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-51521-deployment",
-          "s3Key": "amplify-builds/GetPaymentDetails-4743522f4b5330364649-build.zip"
+          "s3Key": "amplify-builds/GetPaymentDetails-3872315a515150516c32-build.zip"
         },
         "PaymentDetailResponse": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-51521-deployment",
-          "s3Key": "amplify-builds/PaymentDetailResponse-6852754a393976346e4b-build.zip"
+          "s3Key": "amplify-builds/PaymentDetailResponse-584d52696e5a394e766c-build.zip"
+        },
+        "graphQlLambdaAuthorizera2387a1d": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-51521-deployment",
+          "s3Key": "amplify-builds/graphQlLambdaAuthorizera2387a1d-2f2f334f387732346141-build.zip"
         }
       }
     }
