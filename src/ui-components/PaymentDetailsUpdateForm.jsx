@@ -48,6 +48,7 @@ export default function PaymentDetailsUpdateForm(props) {
     createdAt: "",
     updatedAt: "",
     PaymentStatus: "",
+    CurrencyDecimalDigit: "",
     BeforePaymentSAPstatus: "",
     AfterPaymentSAPstatus: "",
     SAPErrorMessage: "",
@@ -82,6 +83,9 @@ export default function PaymentDetailsUpdateForm(props) {
   const [updatedAt, setUpdatedAt] = React.useState(initialValues.updatedAt);
   const [PaymentStatus, setPaymentStatus] = React.useState(
     initialValues.PaymentStatus
+  );
+  const [CurrencyDecimalDigit, setCurrencyDecimalDigit] = React.useState(
+    initialValues.CurrencyDecimalDigit
   );
   const [BeforePaymentSAPstatus, setBeforePaymentSAPstatus] = React.useState(
     initialValues.BeforePaymentSAPstatus
@@ -123,6 +127,7 @@ export default function PaymentDetailsUpdateForm(props) {
     setCreatedAt(cleanValues.createdAt);
     setUpdatedAt(cleanValues.updatedAt);
     setPaymentStatus(cleanValues.PaymentStatus);
+    setCurrencyDecimalDigit(cleanValues.CurrencyDecimalDigit);
     setBeforePaymentSAPstatus(cleanValues.BeforePaymentSAPstatus);
     setAfterPaymentSAPstatus(cleanValues.AfterPaymentSAPstatus);
     setSAPErrorMessage(cleanValues.SAPErrorMessage);
@@ -166,6 +171,7 @@ export default function PaymentDetailsUpdateForm(props) {
     createdAt: [],
     updatedAt: [],
     PaymentStatus: [{ type: "Required" }],
+    CurrencyDecimalDigit: [],
     BeforePaymentSAPstatus: [],
     AfterPaymentSAPstatus: [],
     SAPErrorMessage: [],
@@ -232,6 +238,7 @@ export default function PaymentDetailsUpdateForm(props) {
           createdAt: createdAt ?? null,
           updatedAt: updatedAt ?? null,
           PaymentStatus,
+          CurrencyDecimalDigit: CurrencyDecimalDigit ?? null,
           BeforePaymentSAPstatus: BeforePaymentSAPstatus ?? null,
           AfterPaymentSAPstatus: AfterPaymentSAPstatus ?? null,
           SAPErrorMessage: SAPErrorMessage ?? null,
@@ -314,6 +321,7 @@ export default function PaymentDetailsUpdateForm(props) {
               createdAt,
               updatedAt,
               PaymentStatus,
+              CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
               AfterPaymentSAPstatus,
               SAPErrorMessage,
@@ -359,6 +367,7 @@ export default function PaymentDetailsUpdateForm(props) {
               createdAt,
               updatedAt,
               PaymentStatus,
+              CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
               AfterPaymentSAPstatus,
               SAPErrorMessage,
@@ -404,6 +413,7 @@ export default function PaymentDetailsUpdateForm(props) {
               createdAt,
               updatedAt,
               PaymentStatus,
+              CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
               AfterPaymentSAPstatus,
               SAPErrorMessage,
@@ -449,6 +459,7 @@ export default function PaymentDetailsUpdateForm(props) {
               createdAt,
               updatedAt,
               PaymentStatus,
+              CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
               AfterPaymentSAPstatus,
               SAPErrorMessage,
@@ -494,6 +505,7 @@ export default function PaymentDetailsUpdateForm(props) {
               createdAt,
               updatedAt,
               PaymentStatus,
+              CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
               AfterPaymentSAPstatus,
               SAPErrorMessage,
@@ -539,6 +551,7 @@ export default function PaymentDetailsUpdateForm(props) {
               createdAt,
               updatedAt,
               PaymentStatus,
+              CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
               AfterPaymentSAPstatus,
               SAPErrorMessage,
@@ -584,6 +597,7 @@ export default function PaymentDetailsUpdateForm(props) {
               createdAt,
               updatedAt,
               PaymentStatus,
+              CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
               AfterPaymentSAPstatus,
               SAPErrorMessage,
@@ -629,6 +643,7 @@ export default function PaymentDetailsUpdateForm(props) {
               createdAt,
               updatedAt,
               PaymentStatus,
+              CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
               AfterPaymentSAPstatus,
               SAPErrorMessage,
@@ -674,6 +689,7 @@ export default function PaymentDetailsUpdateForm(props) {
               createdAt,
               updatedAt,
               PaymentStatus,
+              CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
               AfterPaymentSAPstatus,
               SAPErrorMessage,
@@ -719,6 +735,7 @@ export default function PaymentDetailsUpdateForm(props) {
               createdAt,
               updatedAt,
               PaymentStatus,
+              CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
               AfterPaymentSAPstatus,
               SAPErrorMessage,
@@ -764,6 +781,7 @@ export default function PaymentDetailsUpdateForm(props) {
               createdAt,
               updatedAt,
               PaymentStatus,
+              CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
               AfterPaymentSAPstatus,
               SAPErrorMessage,
@@ -809,6 +827,7 @@ export default function PaymentDetailsUpdateForm(props) {
               createdAt,
               updatedAt,
               PaymentStatus,
+              CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
               AfterPaymentSAPstatus,
               SAPErrorMessage,
@@ -854,6 +873,7 @@ export default function PaymentDetailsUpdateForm(props) {
               createdAt,
               updatedAt,
               PaymentStatus,
+              CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
               AfterPaymentSAPstatus,
               SAPErrorMessage,
@@ -899,6 +919,7 @@ export default function PaymentDetailsUpdateForm(props) {
               createdAt,
               updatedAt,
               PaymentStatus,
+              CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
               AfterPaymentSAPstatus,
               SAPErrorMessage,
@@ -944,6 +965,7 @@ export default function PaymentDetailsUpdateForm(props) {
               createdAt,
               updatedAt,
               PaymentStatus,
+              CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
               AfterPaymentSAPstatus,
               SAPErrorMessage,
@@ -991,6 +1013,7 @@ export default function PaymentDetailsUpdateForm(props) {
               createdAt: value,
               updatedAt,
               PaymentStatus,
+              CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
               AfterPaymentSAPstatus,
               SAPErrorMessage,
@@ -1038,6 +1061,7 @@ export default function PaymentDetailsUpdateForm(props) {
               createdAt,
               updatedAt: value,
               PaymentStatus,
+              CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
               AfterPaymentSAPstatus,
               SAPErrorMessage,
@@ -1083,6 +1107,7 @@ export default function PaymentDetailsUpdateForm(props) {
               createdAt,
               updatedAt,
               PaymentStatus: value,
+              CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
               AfterPaymentSAPstatus,
               SAPErrorMessage,
@@ -1100,6 +1125,54 @@ export default function PaymentDetailsUpdateForm(props) {
         errorMessage={errors.PaymentStatus?.errorMessage}
         hasError={errors.PaymentStatus?.hasError}
         {...getOverrideProps(overrides, "PaymentStatus")}
+      ></TextField>
+      <TextField
+        label="Currency decimal digit"
+        isRequired={false}
+        isReadOnly={false}
+        value={CurrencyDecimalDigit}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              FirstName,
+              LastName,
+              CompanyName,
+              Email,
+              AddressLine1,
+              AddressLine2,
+              Country,
+              State,
+              City,
+              PostalCode,
+              PhoneNumber,
+              Amount,
+              Currency,
+              InvoiceNumbers,
+              PaymentId,
+              createdAt,
+              updatedAt,
+              PaymentStatus,
+              CurrencyDecimalDigit: value,
+              BeforePaymentSAPstatus,
+              AfterPaymentSAPstatus,
+              SAPErrorMessage,
+              SAPObjectID,
+            };
+            const result = onChange(modelFields);
+            value = result?.CurrencyDecimalDigit ?? value;
+          }
+          if (errors.CurrencyDecimalDigit?.hasError) {
+            runValidationTasks("CurrencyDecimalDigit", value);
+          }
+          setCurrencyDecimalDigit(value);
+        }}
+        onBlur={() =>
+          runValidationTasks("CurrencyDecimalDigit", CurrencyDecimalDigit)
+        }
+        errorMessage={errors.CurrencyDecimalDigit?.errorMessage}
+        hasError={errors.CurrencyDecimalDigit?.hasError}
+        {...getOverrideProps(overrides, "CurrencyDecimalDigit")}
       ></TextField>
       <TextField
         label="Before payment sa pstatus"
@@ -1128,6 +1201,7 @@ export default function PaymentDetailsUpdateForm(props) {
               createdAt,
               updatedAt,
               PaymentStatus,
+              CurrencyDecimalDigit,
               BeforePaymentSAPstatus: value,
               AfterPaymentSAPstatus,
               SAPErrorMessage,
@@ -1175,6 +1249,7 @@ export default function PaymentDetailsUpdateForm(props) {
               createdAt,
               updatedAt,
               PaymentStatus,
+              CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
               AfterPaymentSAPstatus: value,
               SAPErrorMessage,
@@ -1222,6 +1297,7 @@ export default function PaymentDetailsUpdateForm(props) {
               createdAt,
               updatedAt,
               PaymentStatus,
+              CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
               AfterPaymentSAPstatus,
               SAPErrorMessage: value,
@@ -1267,6 +1343,7 @@ export default function PaymentDetailsUpdateForm(props) {
               createdAt,
               updatedAt,
               PaymentStatus,
+              CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
               AfterPaymentSAPstatus,
               SAPErrorMessage,

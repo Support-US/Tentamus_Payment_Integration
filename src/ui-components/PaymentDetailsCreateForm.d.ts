@@ -40,6 +40,7 @@ export declare type PaymentDetailsCreateFormInputValues = {
     createdAt?: string;
     updatedAt?: string;
     PaymentStatus?: string;
+    CurrencyDecimalDigit?: string;
     BeforePaymentSAPstatus?: string;
     AfterPaymentSAPstatus?: string;
     SAPErrorMessage?: string;
@@ -64,6 +65,7 @@ export declare type PaymentDetailsCreateFormValidationValues = {
     createdAt?: ValidationFunction<string>;
     updatedAt?: ValidationFunction<string>;
     PaymentStatus?: ValidationFunction<string>;
+    CurrencyDecimalDigit?: ValidationFunction<string>;
     BeforePaymentSAPstatus?: ValidationFunction<string>;
     AfterPaymentSAPstatus?: ValidationFunction<string>;
     SAPErrorMessage?: ValidationFunction<string>;
@@ -90,6 +92,7 @@ export declare type PaymentDetailsCreateFormOverridesProps = {
     createdAt?: PrimitiveOverrideProps<TextFieldProps>;
     updatedAt?: PrimitiveOverrideProps<TextFieldProps>;
     PaymentStatus?: PrimitiveOverrideProps<TextFieldProps>;
+    CurrencyDecimalDigit?: PrimitiveOverrideProps<TextFieldProps>;
     BeforePaymentSAPstatus?: PrimitiveOverrideProps<TextFieldProps>;
     AfterPaymentSAPstatus?: PrimitiveOverrideProps<TextFieldProps>;
     SAPErrorMessage?: PrimitiveOverrideProps<TextFieldProps>;

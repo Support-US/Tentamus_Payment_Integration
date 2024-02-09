@@ -40,7 +40,14 @@
         "graphQlLambdaAuthorizera2387a1d": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-51521-deployment",
           "s3Key": "amplify-builds/graphQlLambdaAuthorizera2387a1d-2f2f334f387732346141-build.zip"
+        },
+        "APIauthorization": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-51521-deployment",
+          "s3Key": "amplify-builds/APIauthorization-37686a4556536972554c-build.zip"
         }
+      },
+      "auth": {
+        "tentamuspaymentinteg": {}
       }
     }
   }

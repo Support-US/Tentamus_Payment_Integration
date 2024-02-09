@@ -4,9 +4,10 @@
     "apiName": "TentamusPaymentIntegration",
     "serviceName": "AppSync",
     "defaultAuthType": {
-      "mode": "AWS_LAMBDA",
-      "lambdaFunction": "graphQlLambdaAuthorizera2387a1d",
-      "ttlSeconds": "300"
+      "mode": "API_KEY",
+      "expirationTime": 7,
+      "apiKeyExpirationDate": "2024-02-15T05:26:59.676Z",
+      "keyDescription": "apikeyforapi"
     },
     "conflictResolution": {},
     "additionalAuthTypes": []

@@ -14,7 +14,6 @@ const SuccessPage = () => {
   const TransactionId = localStorage.getItem("Tid");
 
   useEffect(() => {
-    // showToast(`Your last transaction for an amount of ${Amount} ${Currency} was successful.`, "success");
     showToast(`Your last transaction was successful.`, "success");
   }, [])
 
@@ -30,7 +29,7 @@ const SuccessPage = () => {
 
       <span className='success-text'> Successful.</span >
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '40vh'}}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '40vh' }}>
         <div class="wrapper">
           <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
             <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
@@ -39,7 +38,7 @@ const SuccessPage = () => {
         </div>
       </div>
 
-      <div className='flex justify-content-center align-items-center gap-2' style={{ color: "var(--primary-color)" , marginTop:'-2.5rem',marginBottom: '2rem'}}>
+      <div className='flex justify-content-center align-items-center gap-2' style={{ color: "var(--primary-color)", marginTop: '-2.5rem', marginBottom: '2rem' }}>
         <span style={{ fontWeight: 450, fontSize: '1.2em' }} > Your Transaction ID {" "} : </span>
         <span style={{ fontWeight: 600, fontSize: '1.2em' }}>{TransactionId}</span>
       </div>
@@ -78,9 +77,6 @@ const SuccessPage = () => {
         }
       </div>
 
-
-
-
       <div className='mt-5 flex justify-content-center align-items-center gap-3 sm:gap-5' style={{ textAlign: 'center' }}>
         <img src={AFLLogo} alt="AFL Logo" style={{ width: '50px', height: 'auto' }} />
       </div>
@@ -99,8 +95,6 @@ const SuccessPage = () => {
         </span>
 
       </div>
-
-
 
     </>
   )

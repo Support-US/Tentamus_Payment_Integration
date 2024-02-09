@@ -26,6 +26,7 @@ PaymentStatus : String!
 InvoiceNumbers :AWSJSON!
 SuccessURL:String!
 FailureURL:String!
+CurrencyDecimalDigit: String
 }
 
 type CreatePaymentDetailsResponse {
@@ -57,6 +58,7 @@ PaymentId: String
 createdAt: AWSDateTime
 updatedAt: AWSDateTime
 PaymentStatus : String!
+CurrencyDecimalDigit: String
 BeforePaymentSAPstatus:String
 AfterPaymentSAPstatus: String 
 SAPErrorMessage:String

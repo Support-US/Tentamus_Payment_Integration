@@ -1,5 +1,10 @@
 export type AmplifyDependentResourcesAttributes = {
   "api": {
+    "AuthorizationAPI": {
+      "ApiId": "string",
+      "ApiName": "string",
+      "RootUrl": "string"
+    },
     "ComputopWebhook": {
       "ApiId": "string",
       "ApiName": "string",
@@ -7,10 +12,29 @@ export type AmplifyDependentResourcesAttributes = {
     },
     "TentamusPaymentIntegration": {
       "GraphQLAPIEndpointOutput": "string",
-      "GraphQLAPIIdOutput": "string"
+      "GraphQLAPIIdOutput": "string",
+      "GraphQLAPIKeyOutput": "string"
+    }
+  },
+  "auth": {
+    "tentamuspaymentinteg": {
+      "AppClientID": "string",
+      "AppClientIDWeb": "string",
+      "IdentityPoolId": "string",
+      "IdentityPoolName": "string",
+      "UserPoolArn": "string",
+      "UserPoolId": "string",
+      "UserPoolName": "string"
     }
   },
   "function": {
+    "APIauthorization": {
+      "Arn": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string"
+    },
     "ComputopWebhook": {
       "Arn": "string",
       "LambdaExecutionRole": "string",
@@ -26,13 +50,6 @@ export type AmplifyDependentResourcesAttributes = {
       "Region": "string"
     },
     "PaymentDetailResponse": {
-      "Arn": "string",
-      "LambdaExecutionRole": "string",
-      "LambdaExecutionRoleArn": "string",
-      "Name": "string",
-      "Region": "string"
-    },
-    "graphQlLambdaAuthorizera2387a1d": {
       "Arn": "string",
       "LambdaExecutionRole": "string",
       "LambdaExecutionRoleArn": "string",

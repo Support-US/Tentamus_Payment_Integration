@@ -38,6 +38,7 @@ export const createPaymentDetails = /* GraphQL */ `
       createdAt
       updatedAt
       PaymentStatus
+      CurrencyDecimalDigit
       BeforePaymentSAPstatus
       AfterPaymentSAPstatus
       SAPErrorMessage
@@ -71,6 +72,7 @@ export const updatePaymentDetails = /* GraphQL */ `
       createdAt
       updatedAt
       PaymentStatus
+      CurrencyDecimalDigit
       BeforePaymentSAPstatus
       AfterPaymentSAPstatus
       SAPErrorMessage
@@ -104,6 +106,7 @@ export const deletePaymentDetails = /* GraphQL */ `
       createdAt
       updatedAt
       PaymentStatus
+      CurrencyDecimalDigit
       BeforePaymentSAPstatus
       AfterPaymentSAPstatus
       SAPErrorMessage

@@ -23,6 +23,7 @@ export const getPaymentDetails = /* GraphQL */ `
       createdAt
       updatedAt
       PaymentStatus
+      CurrencyDecimalDigit
       BeforePaymentSAPstatus
       AfterPaymentSAPstatus
       SAPErrorMessage
@@ -58,6 +59,7 @@ export const listPaymentDetails = /* GraphQL */ `
         createdAt
         updatedAt
         PaymentStatus
+        CurrencyDecimalDigit
         BeforePaymentSAPstatus
         AfterPaymentSAPstatus
         SAPErrorMessage

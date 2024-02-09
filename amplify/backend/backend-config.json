@@ -1,5 +1,19 @@
 {
   "api": {
+    "AuthorizationAPI": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "APIauthorization"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
+    },
     "ComputopWebhook": {
       "dependsOn": [
         {
@@ -20,11 +34,12 @@
         "authConfig": {
           "additionalAuthenticationProviders": [],
           "defaultAuthentication": {
-            "authenticationType": "AWS_LAMBDA",
-            "lambdaAuthorizerConfig": {
-              "lambdaFunction": "graphQlLambdaAuthorizera2387a1d",
-              "ttlSeconds": "300"
-            }
+            "apiKeyConfig": {
+              "apiKeyExpirationDate": "2024-02-15T05:26:59.676Z",
+              "apiKeyExpirationDays": 7,
+              "description": "apikeyforapi"
+            },
+            "authenticationType": "API_KEY"
           }
         }
       },
@@ -32,7 +47,38 @@
       "service": "AppSync"
     }
   },
+  "auth": {
+    "tentamuspaymentinteg": {
+      "dependsOn": [],
+      "frontendAuthConfig": {
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyCharacters": [],
+          "passwordPolicyMinLength": 8
+        },
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "socialProviders": [],
+        "usernameAttributes": [],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito",
+      "serviceType": "managed"
+    }
+  },
   "function": {
+    "APIauthorization": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "ComputopWebhook": {
       "build": true,
       "providerPlugin": "awscloudformation",
@@ -57,14 +103,25 @@
       ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
-    },
-    "graphQlLambdaAuthorizera2387a1d": {
-      "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
     }
   },
   "parameters": {
+    "AMPLIFY_function_APIauthorization_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "APIauthorization"
+        }
+      ]
+    },
+    "AMPLIFY_function_APIauthorization_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "APIauthorization"
+        }
+      ]
+    },
     "AMPLIFY_function_ComputopWebhook_deploymentBucketName": {
       "usedBy": [
         {

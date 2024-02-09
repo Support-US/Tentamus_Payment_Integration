@@ -47,12 +47,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "graphQlLambdaAuthorizera2387a1d",
+            "APIauthorization",
             {
               "Fn::Join": [
                 "",
                 [
-                  "graphQlLambdaAuthorizera2387a1d",
+                  "APIauthorization",
                   "-",
                   {
                     "Ref": "env"
@@ -89,12 +89,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "tentamuspaymentintegLambdaRolec3b6fc70",
+            "tentamuspaymentintegLambdaRole7ec3672c",
             {
               "Fn::Join": [
                 "",
                 [
-                  "tentamuspaymentintegLambdaRolec3b6fc70",
+                  "tentamuspaymentintegLambdaRole7ec3672c",
                   "-",
                   {
                     "Ref": "env"
@@ -165,15 +165,40 @@
         }
       }
     },
-    "PermissionForAppSyncToInvokeLambda": {
-      "Type": "AWS::Lambda::Permission",
+    "CustomLambdaExecutionPolicy": {
+      "Type": "AWS::IAM::Policy",
       "Properties": {
-        "FunctionName": {
-          "Ref": "LambdaFunction"
+        "PolicyName": "custom-lambda-execution-policy",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "secretsmanager:*"
+              ],
+              "Resource": [
+                "arn:aws:secretsmanager:us-east-2:988839728996:secret:*"
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "dynamodb:*"
+              ],
+              "Resource": [
+                "arn:aws:dynamodb:us-east-2:988839728996:table/*"
+              ]
+            }
+          ]
         },
-        "Action": "lambda:InvokeFunction",
-        "Principal": "appsync.amazonaws.com"
-      }
+        "Roles": [
+          {
+            "Ref": "LambdaExecutionRole"
+          }
+        ]
+      },
+      "DependsOn": "LambdaExecutionRole"
     }
   },
   "Outputs": {
