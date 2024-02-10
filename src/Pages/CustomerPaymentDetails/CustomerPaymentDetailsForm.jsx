@@ -323,11 +323,12 @@ const CustomerPaymentDetailsForm = () => {
 
         setAmountInUSD(formData.Amount);
         localStorage.setItem("Amount", formData.Amount);
-        
+
         // Updating initialvalues
         const updatedFormData = {
           ...formData,
           Amount: (multipliedAmount),
+          CurrencyDecimalDigit: currencyDetails.decimalDigits
         };
         dispatch(updateFormData(updatedFormData));
 

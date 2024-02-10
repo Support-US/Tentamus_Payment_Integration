@@ -158,7 +158,7 @@
   width: 100%;
   height: 100%;
   position: fixed;
-  background: rgba(228, 219, 219, 0.119);
+  background: rgba(228, 219, 219, 0.397);
   z-index: 2;
 }
 
@@ -178,12 +178,12 @@
 }
 
 .spinner {
-  width: 55px;
-  height: 55px;
+  width: 30px;
+  height: 30px;
   display: inline-block;
   border-width: 2px;
   border-color: #007640;
-  border-top-color: #fff;
+  border-top-color: #ffffff3e;
   animation: spin 1s infinite linear;
   border-radius: 100%;
   border-style: solid;
