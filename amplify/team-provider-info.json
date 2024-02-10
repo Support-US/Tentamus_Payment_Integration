@@ -31,11 +31,11 @@
         },
         "GetPaymentDetails": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-51521-deployment",
-          "s3Key": "amplify-builds/GetPaymentDetails-3872315a515150516c32-build.zip"
+          "s3Key": "amplify-builds/GetPaymentDetails-35747139787844656547-build.zip"
         },
         "PaymentDetailResponse": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-51521-deployment",
-          "s3Key": "amplify-builds/PaymentDetailResponse-584d52696e5a394e766c-build.zip"
+          "s3Key": "amplify-builds/PaymentDetailResponse-6a4b394b4a4945706665-build.zip"
         },
         "graphQlLambdaAuthorizera2387a1d": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-51521-deployment",

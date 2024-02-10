@@ -5,7 +5,7 @@ type Mutation {
 PaymentDetailsCreate(
     input: PaymentDetailsInput!
   ): CreatePaymentDetailsResponse
-    @function(name: "GetPaymentDetails-${env}")
+    @function(name: "GetPaymentDetails-${env}") 
 }
 
 input PaymentDetailsInput {
@@ -38,7 +38,11 @@ TransactionID:String!
 }
 
 type PaymentDetails
- @model   {
+@model 
+# @auth(
+#   rules:[
+#     {allow: public ,operations: [read,create,delete,update] ,provider: iam}])
+{
 id: ID!
 FirstName: String!
 LastName : String!

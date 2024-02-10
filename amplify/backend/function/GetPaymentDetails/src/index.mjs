@@ -103,10 +103,22 @@ console.log(`Request EVENT: ${JSON.stringify(event)}`);
             let invoiceno = `InvoiceNo ${index}`;
             return { [invoiceno] : { S: item.InvoiceNo }};
         });
-        const amount = (paymentDetails.Amount / 100).toString();
-        console.log("amount :",amount);
-        console.log("Given Invoice Details array : ",invoices);
-        
+       
+        // console.log("Given Invoice Details array : ",invoices);
+        // Perform calculation based on customdecimaldigit value
+          let amount;
+          let CurrencyDecimalDigit = paymentDetails.CurrencyDecimalDigit;
+          if (CurrencyDecimalDigit === 1) {
+            amount = (paymentDetails.Amount / 100).toString();
+          } else if (CurrencyDecimalDigit === 2) {
+            amount =(paymentDetails.Amount / 1000).toString();
+          } else if (CurrencyDecimalDigit === 0) {
+            amount = (paymentDetails.Amount / 10000).toString();
+          } else {
+            // Handle other cases if needed
+            console.error('Invalid customdecimaldigit value');
+          }
+          console.log('Calculated Amount:', amount);
 
             let createdDynamoDBData = await client.send(
                     new PutItemCommand({
@@ -130,6 +142,7 @@ console.log(`Request EVENT: ${JSON.stringify(event)}`);
                           InvoiceNumbers: { M: Object.assign({}, ...invoices) }, 
                           SuccessURL :  { S:paymentDetails.SuccessURL },
                           FailureURL :  { S:paymentDetails.FailureURL },
+                          CurrencyDecimalDigit : { S:paymentDetails.CurrencyDecimalDigit },
                           BeforePaymentSAPstatus:{ S:"" },
                           AfterPaymentSAPstatus: { S:"" }, 
                           SAPErrorMessage:{ S:"" },

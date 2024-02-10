@@ -29,15 +29,30 @@
       "service": "API Gateway"
     },
     "TentamusPaymentIntegration": {
-      "dependsOn": [],
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "tentamuspaymentinteg"
+        }
+      ],
       "output": {
         "authConfig": {
-          "additionalAuthenticationProviders": [],
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+              "userPoolConfig": {
+                "userPoolId": "authtentamuspaymentinteg"
+              }
+            }
+          ],
           "defaultAuthentication": {
             "apiKeyConfig": {
-              "apiKeyExpirationDate": "2024-02-15T05:26:59.676Z",
+              "apiKeyExpirationDate": "2024-02-17T05:23:16.076Z",
               "apiKeyExpirationDays": 7,
-              "description": "apikeyforapi"
+              "description": ""
             },
             "authenticationType": "API_KEY"
           }

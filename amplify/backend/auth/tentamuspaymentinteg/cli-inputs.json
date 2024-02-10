@@ -2,7 +2,7 @@
   "version": "1",
   "cognitoConfig": {
     "identityPoolName": "tentamuspaymentinteg_identitypool_a8bc4787",
-    "allowUnauthenticatedIdentities": false,
+    "allowUnauthenticatedIdentities": true,
     "resourceNameTruncated": "tentama8bc4787",
     "userPoolName": "tentamuspaymentinteg_userpool_a8bc4787",
     "autoVerifiedAttributes": [
@@ -37,6 +37,32 @@
     "resourceName": "tentamuspaymentinteg",
     "sharedId": "a8bc4787",
     "serviceName": "Cognito",
-    "useDefault": "manual"
+    "useDefault": "manual",
+    "authRoleArn": {
+      "Fn::GetAtt": [
+        "AuthRole",
+        "Arn"
+      ]
+    },
+    "unauthRoleArn": {
+      "Fn::GetAtt": [
+        "UnauthRole",
+        "Arn"
+      ]
+    },
+    "breakCircularDependency": true,
+    "useEnabledMfas": true,
+    "dependsOn": [],
+    "thirdPartyAuth": false,
+    "userPoolGroups": false,
+    "adminQueries": false,
+    "triggers": {},
+    "hostedUI": false,
+    "userPoolGroupList": [],
+    "authProviders": [],
+    "parentStack": {
+      "Ref": "AWS::StackId"
+    },
+    "permissions": []
   }
 }

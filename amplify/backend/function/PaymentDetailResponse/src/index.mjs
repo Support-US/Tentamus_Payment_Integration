@@ -64,6 +64,20 @@ async function CreateData(DynamoDBdata){
         InvoiceNo: Invoice[key]
     }));
         console.log(invoices);
+        
+        let amount;
+          let CurrencyDecimalDigit = JsonDBData.CurrencyDecimalDigit;
+          if (CurrencyDecimalDigit === 1) {
+            amount = (JsonDBData.Amount / 100).toString();
+          } else if (CurrencyDecimalDigit === 2) {
+            amount =(JsonDBData.Amount / 1000).toString();
+          } else if (CurrencyDecimalDigit === 0) {
+            amount = (JsonDBData.Amount / 10000).toString();
+          } else {
+            // Handle other cases if needed
+            console.error('Invalid customdecimaldigit value');
+          }
+          console.log('Calculated Amount:', amount);
     let postData = {
                     // PaymentID: "",
                     Email: JsonDBData.Email,
@@ -78,7 +92,7 @@ async function CreateData(DynamoDBdata){
                     City: JsonDBData.City,
                     Status: JsonDBData.PaymentStatus,
                     currencyCode: JsonDBData.Currency,
-                    Amount: JsonDBData.Amount,
+                    Amount: amount,
                     TransactionID: JsonDBData.id,
                     Zip_PostalCode: JsonDBData.PostalCode,
                     ZPaymentAdviceItem: invoices
