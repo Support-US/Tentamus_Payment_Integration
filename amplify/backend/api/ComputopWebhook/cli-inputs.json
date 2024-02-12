@@ -1,8 +1,8 @@
 {
   "version": 1,
   "paths": {
-    "/webhook": {
-      "name": "/webhook",
+    "/PaymentStatus": {
+      "name": "/PaymentStatus",
       "lambdaFunction": "ComputopWebhook",
       "permissions": {
         "setting": "open"

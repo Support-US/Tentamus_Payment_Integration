@@ -1,19 +1,5 @@
 {
   "api": {
-    "AuthorizationAPI": {
-      "dependsOn": [
-        {
-          "attributes": [
-            "Name",
-            "Arn"
-          ],
-          "category": "function",
-          "resourceName": "APIauthorization"
-        }
-      ],
-      "providerPlugin": "awscloudformation",
-      "service": "API Gateway"
-    },
     "ComputopWebhook": {
       "dependsOn": [
         {
@@ -29,30 +15,13 @@
       "service": "API Gateway"
     },
     "TentamusPaymentIntegration": {
-      "dependsOn": [
-        {
-          "attributes": [
-            "UserPoolId"
-          ],
-          "category": "auth",
-          "resourceName": "tentamuspaymentinteg"
-        }
-      ],
+      "dependsOn": [],
       "output": {
         "authConfig": {
-          "additionalAuthenticationProviders": [
-            {
-              "authenticationType": "AMAZON_COGNITO_USER_POOLS",
-              "userPoolConfig": {
-                "userPoolId": "authtentamuspaymentinteg"
-              }
-            }
-          ],
+          "additionalAuthenticationProviders": [],
           "defaultAuthentication": {
             "apiKeyConfig": {
-              "apiKeyExpirationDate": "2024-02-17T05:23:16.076Z",
-              "apiKeyExpirationDays": 7,
-              "description": ""
+              "apiKeyExpirationDays": 7
             },
             "authenticationType": "API_KEY"
           }
@@ -62,45 +31,17 @@
       "service": "AppSync"
     }
   },
-  "auth": {
-    "tentamuspaymentinteg": {
-      "dependsOn": [],
-      "frontendAuthConfig": {
-        "mfaConfiguration": "OFF",
-        "mfaTypes": [
-          "SMS"
-        ],
-        "passwordProtectionSettings": {
-          "passwordPolicyCharacters": [],
-          "passwordPolicyMinLength": 8
-        },
-        "signupAttributes": [
-          "EMAIL"
-        ],
-        "socialProviders": [],
-        "usernameAttributes": [],
-        "verificationMechanisms": [
-          "EMAIL"
-        ]
-      },
-      "providerPlugin": "awscloudformation",
-      "service": "Cognito",
-      "serviceType": "managed"
-    }
-  },
+  "auth": {},
   "function": {
-    "APIauthorization": {
-      "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    },
     "ComputopWebhook": {
       "build": true,
+      "dependsOn": [],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
     "GetPaymentDetails": {
       "build": true,
+      "dependsOn": [],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
@@ -121,22 +62,6 @@
     }
   },
   "parameters": {
-    "AMPLIFY_function_APIauthorization_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "APIauthorization"
-        }
-      ]
-    },
-    "AMPLIFY_function_APIauthorization_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "APIauthorization"
-        }
-      ]
-    },
     "AMPLIFY_function_ComputopWebhook_deploymentBucketName": {
       "usedBy": [
         {
@@ -150,22 +75,6 @@
         {
           "category": "function",
           "resourceName": "ComputopWebhook"
-        }
-      ]
-    },
-    "AMPLIFY_function_CreateBankpaymentAdvice_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "CreateBankpaymentAdvice"
-        }
-      ]
-    },
-    "AMPLIFY_function_CreateBankpaymentAdvice_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "CreateBankpaymentAdvice"
         }
       ]
     },
@@ -198,54 +107,6 @@
         {
           "category": "function",
           "resourceName": "PaymentDetailResponse"
-        }
-      ]
-    },
-    "AMPLIFY_function_PaymentDetailsResponse_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "PaymentDetailsResponse"
-        }
-      ]
-    },
-    "AMPLIFY_function_PaymentDetailsResponse_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "PaymentDetailsResponse"
-        }
-      ]
-    },
-    "AMPLIFY_function_RetryProcessor_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "RetryProcessor"
-        }
-      ]
-    },
-    "AMPLIFY_function_RetryProcessor_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "RetryProcessor"
-        }
-      ]
-    },
-    "AMPLIFY_function_graphQlLambdaAuthorizera2387a1d_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "graphQlLambdaAuthorizera2387a1d"
-        }
-      ]
-    },
-    "AMPLIFY_function_graphQlLambdaAuthorizera2387a1d_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "graphQlLambdaAuthorizera2387a1d"
         }
       ]
     }

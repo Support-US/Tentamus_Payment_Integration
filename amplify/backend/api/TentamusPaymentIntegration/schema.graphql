@@ -39,9 +39,6 @@ TransactionID:String!
 
 type PaymentDetails
 @model 
-# @auth(
-#   rules:[
-#     {allow: public ,operations: [read,create,delete,update] ,provider: iam}])
 {
 id: ID!
 FirstName: String!
@@ -68,6 +65,3 @@ AfterPaymentSAPstatus: String
 SAPErrorMessage:String
 SAPObjectID:String
 }
-
-
-

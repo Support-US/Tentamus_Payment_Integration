@@ -4,7 +4,7 @@ import { unmarshall } from '@aws-sdk/util-dynamodb';
 import { DynamoDBClient, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 const secretsManager = new AWS.SecretsManager();
 const client = new DynamoDBClient({ region: process.env.REGION });
-const PaymentDetailsTableName = `PaymentDetails-hhy6rqmttfa5xp6e4jv5ctvjsi-dev`;
+const PaymentDetailsTableName = `PaymentDetails-4mqwuuijsrbx5p6qtibxxchbsq-dev`;
 
 export const handler = async (event) => {   
        
@@ -64,20 +64,6 @@ async function CreateData(DynamoDBdata){
         InvoiceNo: Invoice[key]
     }));
         console.log(invoices);
-        
-        let amount;
-          let CurrencyDecimalDigit = JsonDBData.CurrencyDecimalDigit;
-          if (CurrencyDecimalDigit === 1) {
-            amount = (JsonDBData.Amount / 100).toString();
-          } else if (CurrencyDecimalDigit === 2) {
-            amount =(JsonDBData.Amount / 1000).toString();
-          } else if (CurrencyDecimalDigit === 0) {
-            amount = (JsonDBData.Amount / 10000).toString();
-          } else {
-            // Handle other cases if needed
-            console.error('Invalid customdecimaldigit value');
-          }
-          console.log('Calculated Amount:', amount);
     let postData = {
                     // PaymentID: "",
                     Email: JsonDBData.Email,
@@ -92,7 +78,7 @@ async function CreateData(DynamoDBdata){
                     City: JsonDBData.City,
                     Status: JsonDBData.PaymentStatus,
                     currencyCode: JsonDBData.Currency,
-                    Amount: amount,
+                    Amount: JsonDBData.Amount,
                     TransactionID: JsonDBData.id,
                     Zip_PostalCode: JsonDBData.PostalCode,
                     ZPaymentAdviceItem: invoices

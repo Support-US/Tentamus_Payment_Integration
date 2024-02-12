@@ -91,12 +91,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "tentamuspaymentintegLambdaRole9c103020",
+            "tentamuspaymentintegLambdaRole112312fa",
             {
               "Fn::Join": [
                 "",
                 [
-                  "tentamuspaymentintegLambdaRole9c103020",
+                  "tentamuspaymentintegLambdaRole112312fa",
                   "-",
                   {
                     "Ref": "env"

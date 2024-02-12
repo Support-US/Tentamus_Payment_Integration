@@ -1,3 +1,8 @@
 {
-  "lambdaLayers": []
+  "lambdaLayers": [
+    {
+      "type": "ExternalLayer",
+      "arn": "arn:aws:lambda:us-east-2:988839728996:layer:TentamusPaymentIntegration:1"
+    }
+  ]
 }
