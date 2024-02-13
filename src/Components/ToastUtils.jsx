@@ -8,7 +8,7 @@ export const showToast = (message, status, Amount) => {
         case 'Validation':
             toast.info(message, {
                 position: "top-right",
-                autoClose: 3000,
+                autoClose: 4000,
                 hideProgressBar: true,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -22,7 +22,7 @@ export const showToast = (message, status, Amount) => {
         case 'success':
             toast.success(message, {
                 position: "top-right",
-                autoClose: 3000,
+                autoClose: 4000,
                 hideProgressBar: true,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -36,7 +36,7 @@ export const showToast = (message, status, Amount) => {
         case 'error':
             toast.error(message, {
                 position: "top-right",
-                autoClose: 3000,
+                autoClose: 4000,
                 hideProgressBar: true,
                 closeOnClick: true,
                 pauseOnHover: true,

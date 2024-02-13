@@ -177,11 +177,12 @@ const CustomerPaymentDetailsForm = () => {
     let error;
     if (!value) {
       error = "Field is required";
-    } else if (!/^\d+(\.\d{1,2})?$/.test(value)) {
-      error = "Please enter a valid amount with only 2 decimals";
+    } else if (!/^\d+(\.\d{1,3})?$/.test(value)) {
+      error = "Please enter a valid amount with only 3 decimals";
     }
-    return error
-  }
+    return error;
+  };
+
 
   const validateCurrency = (value) => {
     let error;
@@ -292,15 +293,36 @@ const CustomerPaymentDetailsForm = () => {
     // console.log("handleFormSubmit", values, textFields);
     // console.log("textFields", textFields);
 
-    // if (textFields[0] === "") {
+    const currencyDetails = currencyDecimalDigit.currency(values.Currency).decimalDigits;
+    console.log("currencyDetails", currencyDetails);
 
-    //   showToast(" Invoice Field is required", "Validation")
-    // }
-    if (textFields.some((field) => field === "")) {
-      showToast(" Invoice Field is required", "Validation");
+    const amountEntered = values.Amount;
+    console.log("amountEntered", amountEntered);
+
+    // Extract the number of decimal digits entered
+    const numberOfDecimalsEntered = (amountEntered.toString().split('.')[1] || []).length;
+
+    // Convert currency details to an array if it's not already
+    // const currencyDetailsArray = Array.isArray(currencyDetails) ? currencyDetails : [currencyDetails];
+
+    // Check if the number of decimal digits entered is valid for the currency
+    // const isValidDecimalDigits = numberOfDecimalsEntered <= Math.max(...currencyDetailsArray);
+    const isValidDecimalDigits = numberOfDecimalsEntered <= currencyDetails;
+
+    if (!isValidDecimalDigits) {
+      if (currencyDetails === 0) {
+        showToast(`${values.Currency} does not allow decimal digits`, 'error');
+      }
+      else {
+        showToast(`${values.Currency} allows only ${currencyDetails} decimal digits`, 'error');
+      }
     }
     else {
-      setCombinedInvoices(textFields.join("%0A"));
+      if (textFields.some((field) => field === "")) {
+        showToast(" Invoice Field is required", "Validation");
+      }
+      else {
+        setCombinedInvoices(textFields.join("%0A"));
 
       const formattedInvoiceNumbers = textFields.map((value) => ({ InvoiceNo: value }));
 
@@ -316,10 +338,10 @@ const CustomerPaymentDetailsForm = () => {
         // setAmountInUSD(formData.Amount);
         // localStorage.setItem("Amount", formData.Amount);
 
-        // Multiplying amount based on smallest unit of currency
-        const currencyDetails = currencyDecimalDigit.currency(values.Currency);
-        const factor = Math.pow(10, currencyDetails.decimalDigits);
-        const multipliedAmount = formData.Amount * factor;
+          // Multiplying amount based on smallest unit of currency
+          // const currencyDetails = currencyDecimalDigit.currency(values.Currency);
+          const factor = Math.pow(10, currencyDetails.decimalDigits);
+          const multipliedAmount = formData.Amount * factor;
 
         setAmountInUSD(formData.Amount);
         localStorage.setItem("Amount", formData.Amount);
@@ -340,6 +362,8 @@ const CustomerPaymentDetailsForm = () => {
         throw error;
       }
     }
+  }
+
   }
 
   const handleTotalResetForm = (handleReset) => {
@@ -384,6 +408,7 @@ const CustomerPaymentDetailsForm = () => {
     setTouchedFields(updatedTouchedFields);
   };
 
+
   return (
     <>
       <div>
@@ -426,7 +451,8 @@ const CustomerPaymentDetailsForm = () => {
                             name="FirstName"
                             type="text"
                             as={TextField}
-                            label="First Name *"
+                            placeholder={!values.FirstName ? " First Name *" : ""}
+                            label={values.FirstName ? "First Name *" : ""}
                             helperText={(touched.FirstName && errors.FirstName)}
                             error={touched.FirstName && Boolean(errors.FirstName)}
                             value={values.FirstName}
@@ -443,7 +469,8 @@ const CustomerPaymentDetailsForm = () => {
                             name="LastName"
                             type="text"
                             as={TextField}
-                            label="Last Name *"
+                            placeholder={!values.LastName ? "Last Name *" : ""}
+                            label={values.LastName ? "Last Name *" : ""}
                             helperText={(touched.LastName && errors.LastName)}
                             error={touched.LastName && Boolean(errors.LastName)}
                             value={values.LastName}
@@ -460,7 +487,8 @@ const CustomerPaymentDetailsForm = () => {
                             name="CompanyName"
                             type="text"
                             as={TextField}
-                            label="Company Name *"
+                            placeholder={!values.CompanyName ? "Company Name *" : ""}
+                            label={values.CompanyName ? "Company Name *" : ""}
                             helperText={(touched.CompanyName && errors.CompanyName)}
                             error={touched.CompanyName && Boolean(errors.CompanyName)}
                             value={values.CompanyName}
@@ -477,7 +505,8 @@ const CustomerPaymentDetailsForm = () => {
                             name="Email"
                             type="text"
                             as={TextField}
-                            label="Email *"
+                            placeholder={!values.Email ? "Email *" : ""}
+                            label={values.Email ? "Email *" : ""}
                             helperText={(touched.Email && errors.Email)}
                             error={touched.Email && Boolean(errors.Email)}
                             value={values.Email}
@@ -494,7 +523,8 @@ const CustomerPaymentDetailsForm = () => {
                             name="AddressLine1"
                             type="text"
                             as={TextField}
-                            label="Address Line 1 *"
+                            placeholder={!values.AddressLine1 ? "Address Line1 *" : ""}
+                            label={values.AddressLine1 ? "Address Line1 *" : ""}
                             helperText={(touched.AddressLine1 && errors.AddressLine1)}
                             error={touched.AddressLine1 && Boolean(errors.AddressLine1)}
                             value={values.AddressLine1}
@@ -511,7 +541,8 @@ const CustomerPaymentDetailsForm = () => {
                             name="AddressLine2"
                             type="text"
                             as={TextField}
-                            label="Address Line 2"
+                            placeholder={!values.AddressLine2 ? "Address Line2" : ""}
+                            label={values.AddressLine2 ? "Address Line2" : ""}
                           />
                         </FormControl>
                       </Grid>
@@ -547,7 +578,8 @@ const CustomerPaymentDetailsForm = () => {
                                   renderInput={(params) => (
                                     <TextField
                                       {...params}
-                                      label="Country *"
+                                      placeholder={!values.Country ? "Country *" : ""}
+                                      label={values.Country ? "Country *" : ""}
                                       variant="outlined"
                                       helperText={(touched.Country && errors.Country)}
                                       error={touched.Country && Boolean(errors.Country)} />
@@ -586,7 +618,8 @@ const CustomerPaymentDetailsForm = () => {
                                   renderInput={(params) => (
                                     <TextField
                                       {...params}
-                                      label="State"
+                                      placeholder={!values.State ? "State *" : ""}
+                                      label={values.State ? "State *" : ""}
                                       variant="outlined"
                                       helperText={form.touched.State && form.errors.State}
                                       error={form.touched.State && Boolean(form.errors.State)}
@@ -608,7 +641,8 @@ const CustomerPaymentDetailsForm = () => {
                             name="City"
                             type="text"
                             as={TextField}
-                            label="City"
+                            placeholder={!values.City ? "City" : ""}
+                            label={values.City ? "City" : ""}
                           />
                         </FormControl>
                       </Grid>
@@ -621,7 +655,8 @@ const CustomerPaymentDetailsForm = () => {
                             name="PostalCode"
                             type="text"
                             as={TextField}
-                            label="Zip / Postal code *"
+                            placeholder={!values.PostalCode ? "PostalCode *" : ""}
+                            label={values.PostalCode ? "PostalCode *" : ""}
                             helperText={(touched.PostalCode && errors.PostalCode)}
                             error={touched.PostalCode && Boolean(errors.PostalCode)}
                             value={values.PostalCode}
@@ -639,7 +674,8 @@ const CustomerPaymentDetailsForm = () => {
                             type="text"
                             as={MuiPhoneNumber}
                             variant="outlined"
-                            label="Phone Number *"
+                            placeholder={!values.PhoneNumber ? "PhoneNumber *" : ""}
+                            label={values.PhoneNumber ? "PhoneNumber *" : ""}
                             onChange={(value) => setFieldValue("PhoneNumber", value)}
                             helperText={(touched.PhoneNumber && errors.PhoneNumber)}
                             error={touched.PhoneNumber && Boolean(errors.PhoneNumber)}
@@ -658,7 +694,8 @@ const CustomerPaymentDetailsForm = () => {
                             name="Amount"
                             type="number"
                             as={TextField}
-                            label="Amount *"
+                            placeholder={!values.Amount ? "Amount *" : ""}
+                            label={values.Amount ? "Amount *" : ""}
                             helperText={(touched.Amount && errors.Amount)}
                             error={touched.Amount && Boolean(errors.Amount)}
                             value={values.Amount}
@@ -691,7 +728,8 @@ const CustomerPaymentDetailsForm = () => {
                                 renderInput={(params) => (
                                   <TextField
                                     {...params}
-                                    label="Currency *"
+                                    placeholder={!values.Currency ? "Currency *" : ""}
+                                    label={values.Currency ? "Currency *" : ""}
                                     variant='outlined'
                                     helperText={(touched.Currency && errors.Currency)}
                                     error={touched.Currency && Boolean(errors.Currency)}
@@ -770,7 +808,8 @@ const CustomerPaymentDetailsForm = () => {
                               style={{ marginBottom: '10px' }}
                               size="small"
                               value={value}
-                              label="Invoice No*"
+                              placeholder={!value[index] ? "Invoice No *" : ""}
+                              label={value[index] ? "Invoice No *" : ""}
                               onChange={(e) => handleTextFieldChange(index, e.target.value)}
                               onBlur={() => handleTextFieldBlur(index)}
                               error={touchedFields[index] && value.trim() === ''}

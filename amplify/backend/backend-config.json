@@ -1,5 +1,19 @@
 {
   "api": {
+    "APIauthorization": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "GetPaymentDetails"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
+    },
     "ComputopWebhook": {
       "dependsOn": [
         {

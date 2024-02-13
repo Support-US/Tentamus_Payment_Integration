@@ -1,8 +1,8 @@
 
 const CurrencyFormat = (number) => {
   const formattedNumber = new Intl.NumberFormat(navigator.language, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 3
   }).format(number);
   return formattedNumber;
 }

@@ -7,11 +7,9 @@ import './CustomerPaymentDetailsForm.css';
 import { API } from 'aws-amplify';
 import cc from 'currency-codes'
 import { PaymentDetailsCreate } from '../../graphql/mutations';
-import { BlowfishEncryption } from '../../Components/BlowfishEncryption';
 import { Country, State } from 'country-state-city';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectFormData, updateFormData } from '../../Store/Slice/formSlice';
-import { HmacSHA256, enc } from 'crypto-js';
 // import CryptoJS from 'crypto-js';
 import MuiPhoneNumber from 'mui-phone-number';
 import AFLLogo from "../../images/AFL_Logo.png";
@@ -19,6 +17,7 @@ import AFLLogo from "../../images/AFL_Logo.png";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { showToast } from '../../Components/ToastUtils';
+const currencyDecimalDigit = require('@mreduar/iso-4217-currencies');
 
 const newcountries = Country.getAllCountries();
 const currency = cc.codes();
@@ -29,7 +28,6 @@ const CustomerPaymentDetailsForm = () => {
   const [states, setStates] = useState([]);
   const dispatch = useDispatch();
   const initialValues = useSelector(selectFormData);
-  const [hmacKey, setHmacKey] = useState("");
   const [paymentDetails, setPaymentDetails] = useState({
     MerchantID: "",
     TransactionID: "",
@@ -39,6 +37,7 @@ const CustomerPaymentDetailsForm = () => {
   });
   const [combinedInvoices, setCombinedInvoices] = useState("");
   const [loading, setLoading] = useState(false);
+  const [amountInUSD, setAmountInUSD] = useState(0);
 
   useEffect(() => {
     const usStates = State.getStatesOfCountry('US');
@@ -178,11 +177,12 @@ const CustomerPaymentDetailsForm = () => {
     let error;
     if (!value) {
       error = "Field is required";
-    } else if (!/^\d+(\.\d{1,2})?$/.test(value)) {
-      error = "Please enter a valid amount with only 2 decimals";
+    } else if (!/^\d+(\.\d{1,3})?$/.test(value)) {
+      error = "Please enter a valid amount with only 3 decimals";
     }
-    return error
-  }
+    return error;
+  };
+
 
   const validateCurrency = (value) => {
     let error;
@@ -211,10 +211,9 @@ const CustomerPaymentDetailsForm = () => {
   // };
 
   const handleComputopRedirection = (paymentDetails) => {
-    console.log("handleComputopRedirection", initialValues);
-    const { MerchantID, CalculatedHMAC, EncryptedString, TransactionID, dataLength } = paymentDetails;
-    const { FirstName, LastName, Amount, Currency, AddressLine1, City, State, Country, PhoneNumber, PostalCode } = initialValues;
-    localStorage.setItem("EncryptedString", EncryptedString);
+    // console.log("handleComputopRedirection", initialValues);
+    const { MerchantID, EncryptedString, TransactionID, dataLength } = paymentDetails;
+    const { FirstName, LastName, Currency, AddressLine1, City, State, Country, PhoneNumber, PostalCode } = initialValues;
 
     // let amountInCents = parseFloat(Amount)*100; //Amount in cents
 
@@ -233,8 +232,6 @@ const CustomerPaymentDetailsForm = () => {
 
     // const merchantID = 'Generic3DSTest';
     const backgroundURL = 'https://www.tentamus.com/wp-content/uploads/2021/03/about_us_tentamus_fahnen_IMG_0722-2799x1679.jpg';
-    const timestampInMilliseconds = new Date().getTime();
-    localStorage.setItem("timestamp", timestampInMilliseconds);
 
     // console.log("DATA", dataToEncrypt);
     // console.log("DATA-LENGTH", dataToEncrypt.length);
@@ -242,42 +239,24 @@ const CustomerPaymentDetailsForm = () => {
     // alert(JSON.stringify(dataToEncrypt));
     // alert(JSON.stringify(dataToEncrypt.length));
     // alert(JSON.stringify(hmacKey));
-
     setLoading(false);
     // alert(`https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataLength}&Data=${EncryptedString}&CustomField1=${Amount} ${Currency}&CustomField3=https://www.afltexas.com/wp-content/uploads/2022/07/AFL_GroupTag.svg&CustomField4=${combinedInvoices}&CustomField5=${FirstName} ${LastName}%0A ${AddressLine1}%0A ${City}%0A ${PostalCode}%0A ${State}%0A ${Country}%0A ${PhoneNumber}&CustomField7=${TransactionID}`);
-    window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataLength}&Data=${EncryptedString}&CustomField1=${Amount} ${Currency}&CustomField3=https://www.afltexas.com/wp-content/uploads/2022/07/AFL_GroupTag.svg&CustomField4=${combinedInvoices}&CustomField5=${FirstName} ${LastName}%0A ${AddressLine1}%0A ${City}%0A ${State}%0A  ${PostalCode}%0A ${Country}%0A ${PhoneNumber}&CustomField7=${TransactionID}`;
-
+    window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataLength}&Data=${EncryptedString}&CustomField1=${amountInUSD} ${Currency}&CustomField3=https://www.afltexas.com/wp-content/uploads/2022/07/AFL_GroupTag.svg&CustomField4=${combinedInvoices}&CustomField5=${FirstName} ${LastName}%0A ${AddressLine1}%0A ${City}%0A ${State}%0A ${PostalCode}%0A ${Country}%0A ${PhoneNumber}&CustomField7=${TransactionID}`;
   }
 
-  // const generateHMAC = (data) => {
-  //   const apiData = data;
-  //   const secretKey = paymentDetails.HMacPassword;
-  //   const message = `*${apiData.id}*${apiData.MerchantID}*${apiData.Amount}*${apiData.Currency}`;
-
-  //   console.log("Message", message, "secretKey", secretKey);
-
-  //   const hash = HmacSHA256(message, secretKey);
-  //   const hashInHex = hash.toString(enc.Hex);
-  //   console.log("hashInHex---", hashInHex);
-  //   setHmacKey(hashInHex);
-  // }
-
   const postPaymentDetails = async (data, resetForm) => {
-    console.log("data", data);
+    // console.log("data", data);
     setLoading(true);
     try {
-      // let das = "48E71E2D68A4971979BFFF3C2FE75BEDC9163BE6A9538D0B397FB1DDB762EC6C36E917369DDD26010BBE18716EB4C3AFBB4DBC48F79718B365C047B4402C62B1D48486DDE6FF56D8DB2AC42AA355DB1D90726724545A3A59AEAB97B0BBAF73BD649CD61FD5EA166FA7E5DF2277153BD8C68AAEFEA2F25F19D0F69F4EC7C397EB5DF696B7986D6604771285ED81A59C03E197F64135F059977DEF134D5D6125AFC01B2652A9ED235533718B50A484CD33CABFD79FC2DB94BA5FE60BD9D8C476C82893BA5DAF0A07B344BEE4FF9C70750314B5A0322A7685DBE1119EB2EE1B8CB79A60A0E4D8CB49F97C752057CFFF141ED76669E9915086070299923BE036DC9ABE4F5F99705382E8459EEA077B5731CE1F33B76F9FDAA1CB3D0B2A8ED4E54CFB48080DF595DC926EB8D495FEBDA2D957809612B6C0F83DDD&TransID=dceb13cf-9692-4772-b18f-38332d4c3cdd";
-      // window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=Tentamus_Adamson_test&Len=306&Data=${das}&CustomField1=200 USD&CustomField3=https://www.afltexas.com/wp-content/uploads/2022/07/AFL_GroupTag.svg&CustomField4=INV-001 %0AInv-002&CustomField5=John Doe%0A Newyork%0A United States&CustomField7=12121dasda22`;
-
       const response = await API.graphql(
         {
           query: PaymentDetailsCreate,
           variables: {
             input: data
-          }
+          },
         }
       )
-      console.log("GraphQL Response:", response);
+      // console.log("GraphQL Response:", response);
 
       setPaymentDetails(prevState => ({
         ...prevState,
@@ -288,10 +267,8 @@ const CustomerPaymentDetailsForm = () => {
         dataLength: response.data.PaymentDetailsCreate.Length,
       }));
 
-      localStorage.setItem("Tid", data.id);
-      localStorage.setItem("Amount", data.Amount);
+      localStorage.setItem("Tid", response.data.PaymentDetailsCreate.TransactionID);
       localStorage.setItem("Currency", data.Currency);
-      localStorage.setItem("Tid", data.id);
 
       resetForm();
       setTextFields(['']);
@@ -313,44 +290,77 @@ const CustomerPaymentDetailsForm = () => {
 
 
   const handleFormSubmit = async (values, { resetForm }) => {
-    console.log("handleFormSubmit", values, textFields);
-    console.log("textFields", textFields);
-    // if (textFields[0] === "") {
+    // console.log("handleFormSubmit", values, textFields);
+    // console.log("textFields", textFields);
 
-    //   showToast(" Invoice Field is required", "Validation")
-    // }
-    if (textFields.some((field) => field === "")) {
-      showToast(" Invoice Field is required", "Validation");
+    const currencyDetails = currencyDecimalDigit.currency(values.Currency).decimalDigits;
+    console.log("currencyDetails", currencyDetails);
+
+    const amountEntered = values.Amount;
+    console.log("amountEntered", amountEntered);
+
+    // Extract the number of decimal digits entered
+    const numberOfDecimalsEntered = (amountEntered.toString().split('.')[1] || []).length;
+
+    // Convert currency details to an array if it's not already
+    // const currencyDetailsArray = Array.isArray(currencyDetails) ? currencyDetails : [currencyDetails];
+
+    // Check if the number of decimal digits entered is valid for the currency
+    // const isValidDecimalDigits = numberOfDecimalsEntered <= Math.max(...currencyDetailsArray);
+    const isValidDecimalDigits = numberOfDecimalsEntered <= currencyDetails;
+
+    if (!isValidDecimalDigits) {
+      if (currencyDetails === 0) {
+        showToast(`${values.Currency} does not allow decimal digits`, 'error');
+      }
+      else {
+        showToast(`${values.Currency} allows only ${currencyDetails} decimal digits`, 'error');
+      }
     }
     else {
-      setCombinedInvoices(textFields.join("%0A"));
-
-      const formattedInvoiceNumbers = textFields.map((value) => ({ InvoiceNo: value }));
-
-      console.log("formattedInvoiceNumbers", formattedInvoiceNumbers);
-
-      const formData = {
-        ...values,
-        InvoiceNumbers: JSON.stringify(formattedInvoiceNumbers)
+      if (textFields.some((field) => field === "")) {
+        showToast(" Invoice Field is required", "Validation");
       }
-      console.log("formData", formData)
+      else {
+        setCombinedInvoices(textFields.join("%0A"));
 
-      try {
-        const updatedFormData = {
-          ...formData,
-          Amount: formData.Amount.toString(),
-        };
+        const formattedInvoiceNumbers = textFields.map((value) => ({ InvoiceNo: value }));
 
-        dispatch(updateFormData(updatedFormData));
+        // console.log("formattedInvoiceNumbers", formattedInvoiceNumbers);
 
-        await postPaymentDetails(updatedFormData, resetForm);
+        const formData = {
+          ...values,
+          InvoiceNumbers: JSON.stringify(formattedInvoiceNumbers)
+        }
+        // console.log("formData", formData);
 
+        try {
+          // setAmountInUSD(formData.Amount);
+          // localStorage.setItem("Amount", formData.Amount);
 
+          // Multiplying amount based on smallest unit of currency
+          // const currencyDetails = currencyDecimalDigit.currency(values.Currency);
+          const factor = Math.pow(10, currencyDetails.decimalDigits);
+          const multipliedAmount = formData.Amount * factor;
 
-      }
-      catch (error) {
-        console.error("Create Payment Details error", error);
-        throw error;
+          setAmountInUSD(formData.Amount);
+          localStorage.setItem("Amount", formData.Amount);
+
+          // Updating initialvalues
+          const updatedFormData = {
+            ...formData,
+            Amount: (multipliedAmount),
+            CurrencyDecimalDigit: currencyDetails.decimalDigits
+          };
+          dispatch(updateFormData(updatedFormData));
+
+          // Graphql API for creating payment details
+          await postPaymentDetails(updatedFormData, resetForm);
+        }
+        catch (error) {
+          console.error("Create Payment Details error", error);
+          throw error;
+        }
       }
     }
 
@@ -360,10 +370,9 @@ const CustomerPaymentDetailsForm = () => {
     handleReset();
     setTextFields(['']);
     setTouchedFields([false]);
-
   };
 
-  const [textFields, setTextFields] = useState(['']); // Initialize with one empty string
+  const [textFields, setTextFields] = useState(['']);
   const [touchedFields, setTouchedFields] = useState([false]);
 
 
@@ -399,9 +408,6 @@ const CustomerPaymentDetailsForm = () => {
     setTouchedFields(updatedTouchedFields);
   };
 
-
-
-
   return (
     <>
       <div>
@@ -415,7 +421,7 @@ const CustomerPaymentDetailsForm = () => {
           </div>
         )}
 
-        <div className='card-container' style={{ border: "1px solid #007640" }}>
+        <div className='card-container'>
           <div>
             <Formik onSubmit={handleFormSubmit} initialValues={initialValues}>
               {({ values, handleSubmit, handleReset, handleChange, errors, touched, setFieldValue }) => (
@@ -783,7 +789,7 @@ const CustomerPaymentDetailsForm = () => {
                           </div>
                         </div>
                         {textFields.map((value, index) => (
-                          <div key={index} className='textFieldContainer'>
+                          <div key={index} className='textFieldContainer fadeindown animation-duration-200'>
                             <TextField
                               style={{ marginBottom: '10px' }}
                               size="small"
@@ -791,11 +797,11 @@ const CustomerPaymentDetailsForm = () => {
                               label="Invoice No*"
                               onChange={(e) => handleTextFieldChange(index, e.target.value)}
                               onBlur={() => handleTextFieldBlur(index)}
-                              error={touchedFields[index] && value.trim() === ''}  // Set error prop based on the condition
+                              error={touchedFields[index] && value.trim() === ''}
                               helperText={touchedFields[index] && value.trim() === '' ? 'Field is required' : ''}
                             />
 
-                            {textFields.length > 1 && ( // Check if there is more than one text field
+                            {textFields.length > 1 && (
                               <IconButton size='small' onClick={() => handleRemoveTextField(index)}>
                                 <RemoveIcon />
                               </IconButton>

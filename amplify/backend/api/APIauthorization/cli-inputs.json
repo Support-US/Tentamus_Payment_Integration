@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "paths": {
+    "/paymentDetails": {
+      "name": "/paymentDetails",
+      "lambdaFunction": "GetPaymentDetails",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}
