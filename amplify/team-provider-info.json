@@ -19,7 +19,7 @@
         },
         "GetPaymentDetails": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-82313-deployment",
-          "s3Key": "amplify-builds/GetPaymentDetails-496e33352f72764b5670-build.zip"
+          "s3Key": "amplify-builds/GetPaymentDetails-38396673616d4f336d39-build.zip"
         },
         "PaymentDetailResponse": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-82313-deployment",

@@ -36,7 +36,7 @@ const FailurePage = () => {
           </span>
           <span className='failure-text'> Failed!</span >
 
-          <div class="wrapper">
+          <div className="wrapper">
             <svg className="crossmark addClass" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52" width="100" height="100">
               <circle className="crossmark__circle animateElement" cx="26" cy="26" r="25" fill="none" />
               <path className="cross__path cross__path--right animateElement" fill="none" d="M16,16 l20,20" />

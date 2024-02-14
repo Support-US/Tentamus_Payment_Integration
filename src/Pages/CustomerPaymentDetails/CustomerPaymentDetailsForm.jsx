@@ -6,7 +6,7 @@ import { Field, Formik } from 'formik';
 import './CustomerPaymentDetailsForm.css';
 import { API } from 'aws-amplify';
 import cc from 'currency-codes'
-import { PaymentDetailsCreate } from '../../graphql/mutations';
+// import { PaymentDetailsCreate } from '../../graphql/mutations';
 import { Country, State } from 'country-state-city';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectFormData, updateFormData } from '../../Store/Slice/formSlice';
@@ -17,6 +17,8 @@ import AFLLogo from "../../images/AFL_Logo.png";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { showToast } from '../../Components/ToastUtils';
+import axios from 'axios';
+import CurrencyFormat from '../../Components/CurrencyFormat';
 const currencyDecimalDigit = require('@mreduar/iso-4217-currencies');
 
 const newcountries = Country.getAllCountries();
@@ -38,6 +40,7 @@ const CustomerPaymentDetailsForm = () => {
   const [combinedInvoices, setCombinedInvoices] = useState("");
   const [loading, setLoading] = useState(false);
   const [amountInUSD, setAmountInUSD] = useState(0);
+  const [countryName, setCountryName] = useState("");
 
   useEffect(() => {
     const usStates = State.getStatesOfCountry('US');
@@ -213,61 +216,46 @@ const CustomerPaymentDetailsForm = () => {
   const handleComputopRedirection = (paymentDetails) => {
     // console.log("handleComputopRedirection", initialValues);
     const { MerchantID, EncryptedString, TransactionID, dataLength } = paymentDetails;
-    const { FirstName, LastName, Currency, AddressLine1, City, State, Country, PhoneNumber, PostalCode } = initialValues;
+    const { FirstName, LastName, Currency, AddressLine1, City, State, PhoneNumber, PostalCode } = initialValues;
+    // const backgroundURL = 'https://www.tentamus.com/wp-content/uploads/2021/03/about_us_tentamus_fahnen_IMG_0722-2799x1679.jpg';
 
-    // let amountInCents = parseFloat(Amount)*100; //Amount in cents
-
-    // const successURL = `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}/success`;
-    // const failureURL = `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}/error`;
-    // const notifyURL = 'https://8j54xrirvb.execute-api.us-east-2.amazonaws.com/dev/webhook';
-
-    // let dataToEncrypt = `MerchantID=${MerchantID}&TransID=${id}&Currency=${Currency}&Amount=${Amount}&MAC=${hmacKey}&URLNotify=${notifyURL}&URLSuccess=${successURL}&URLFailure=${failureURL}`;
-    // let dataToEncrypt = `MerchantID=Tentamus_Adamson_test&TransID=1234&Currency=USD&Amount=22&MAC=3dd7ef66c092e4d5851291db13a809eb93defd167c99e3bc85b4c5365f3cdbe4&URLNotify=https://8j54xrirvb.execute-api.us-east-2.amazonaws.com/dev/webhook&URLSuccess=http://localhost:3000/success&URLFailure=http://localhost:3000/error`;
-
-    // console.log("dataToEncrypt", dataToEncrypt);
-    // alert(JSON.stringify(dataToEncrypt));
-    // Working
-    // let dataToEncrypt = `MerchantID=Tentamus_Adamson_test&TransID=dceb13cf-9692-4772-b18f-38332d4c3cdd&Currency=USD&Amount=22&MAC=3dd7ef66c092e4d5851291db13a809eb93defd167c99e3bc85b4c5365f3cdbe4&URLNotify=https://8j54xrirvb.execute-api.us-east-2.amazonaws.com/dev/webhook&URLSuccess=http://localhost:3000/success&URLFailure=http://localhost:3000/error`;
-    // const computopDataParameter = BlowfishEncryption(dataToEncrypt, EncryptionPassword);
-
-    // const merchantID = 'Generic3DSTest';
-    const backgroundURL = 'https://www.tentamus.com/wp-content/uploads/2021/03/about_us_tentamus_fahnen_IMG_0722-2799x1679.jpg';
-
-    // console.log("DATA", dataToEncrypt);
-    // console.log("DATA-LENGTH", dataToEncrypt.length);
-
-    // alert(JSON.stringify(dataToEncrypt));
-    // alert(JSON.stringify(dataToEncrypt.length));
-    // alert(JSON.stringify(hmacKey));
     setLoading(false);
-    // alert(`https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataLength}&Data=${EncryptedString}&CustomField1=${Amount} ${Currency}&CustomField3=https://www.afltexas.com/wp-content/uploads/2022/07/AFL_GroupTag.svg&CustomField4=${combinedInvoices}&CustomField5=${FirstName} ${LastName}%0A ${AddressLine1}%0A ${City}%0A ${PostalCode}%0A ${State}%0A ${Country}%0A ${PhoneNumber}&CustomField7=${TransactionID}`);
-    window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataLength}&Data=${EncryptedString}&CustomField1=${amountInUSD} ${Currency}&CustomField3=https://www.afltexas.com/wp-content/uploads/2022/07/AFL_GroupTag.svg&CustomField4=${combinedInvoices}&CustomField5=${FirstName} ${LastName}%0A ${AddressLine1}%0A ${City}%0A ${State}%0A ${PostalCode}%0A ${Country}%0A ${PhoneNumber}&CustomField7=${TransactionID}`;
+    window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataLength}&Data=${EncryptedString}&CustomField1=${CurrencyFormat(amountInUSD)} ${Currency}&CustomField3=https://www.afltexas.com/wp-content/uploads/2022/07/AFL_GroupTag.svg&CustomField4=${combinedInvoices}&CustomField5=${FirstName} ${LastName}%0A ${AddressLine1}%0A ${City}%0A ${State}%0A ${PostalCode}%0A ${countryName}%0A ${PhoneNumber}&CustomField7=${TransactionID}`;
   }
 
   const postPaymentDetails = async (data, resetForm) => {
-    // console.log("data", data);
+    console.log("data", data);
     setLoading(true);
+
     try {
-      const response = await API.graphql(
-        {
-          query: PaymentDetailsCreate,
-          variables: {
-            input: data
-          },
-        }
-      )
+      const response = await axios.post('https://42cjoeluv3.execute-api.us-east-2.amazonaws.com/dev/paymentDetails',
+        JSON.stringify(data), {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      });
+      console.log(" API Response:", response)
+
+      // const response = await API.graphql(
+      //   {
+      //     query: PaymentDetailsCreate,
+      //     variables: {
+      //       input: data
+      //     },
+      //   }
+      // )
       // console.log("GraphQL Response:", response);
 
       setPaymentDetails(prevState => ({
         ...prevState,
-        TransactionID: response.data.PaymentDetailsCreate.TransactionID,
-        MerchantID: response.data.PaymentDetailsCreate.MerchantID,
-        CalculatedHMAC: response.data.PaymentDetailsCreate.CalculatedHMAC,
-        EncryptedString: response.data.PaymentDetailsCreate.EncryptedString,
-        dataLength: response.data.PaymentDetailsCreate.Length,
+        TransactionID: response.data.TransactionID,
+        MerchantID: response.data.MerchantID,
+        CalculatedHMAC: response.data.CalculatedHMAC,
+        EncryptedString: response.data.EncryptedString,
+        dataLength: response.data.Length,
       }));
 
-      localStorage.setItem("Tid", response.data.PaymentDetailsCreate.TransactionID);
+      localStorage.setItem("Tid", response.data.TransactionID);
       localStorage.setItem("Currency", data.Currency);
 
       resetForm();
@@ -324,45 +312,42 @@ const CustomerPaymentDetailsForm = () => {
       else {
         setCombinedInvoices(textFields.join("%0A"));
 
-      const formattedInvoiceNumbers = textFields.map((value) => ({ InvoiceNo: value }));
+        const formattedInvoiceNumbers = textFields.map((value) => ({ InvoiceNo: value }));
 
-      // console.log("formattedInvoiceNumbers", formattedInvoiceNumbers);
+        const formData = {
+          ...values,
+          InvoiceNumbers: formattedInvoiceNumbers
+          // InvoiceNumbers: JSON.stringify(formattedInvoiceNumbers)
+        }
+        // console.log("formData", formData);
 
-      const formData = {
-        ...values,
-        InvoiceNumbers: JSON.stringify(formattedInvoiceNumbers)
-      }
-      // console.log("formData", formData);
-
-      try {
-        // setAmountInUSD(formData.Amount);
-        // localStorage.setItem("Amount", formData.Amount);
-
+        try {
           // Multiplying amount based on smallest unit of currency
-          // const currencyDetails = currencyDecimalDigit.currency(values.Currency);
+          const currencyDetails = currencyDecimalDigit.currency(values.Currency);
           const factor = Math.pow(10, currencyDetails.decimalDigits);
           const multipliedAmount = formData.Amount * factor;
 
-        setAmountInUSD(formData.Amount);
-        localStorage.setItem("Amount", formData.Amount);
+          setAmountInUSD(formData.Amount);
+          localStorage.setItem("Amount", formData.Amount);
 
-        // Updating initialvalues
-        const updatedFormData = {
-          ...formData,
-          Amount: (multipliedAmount),
-          CurrencyDecimalDigit: currencyDetails.decimalDigits
-        };
-        dispatch(updateFormData(updatedFormData));
+          // Updating initialvalues
+          const updatedFormData = {
+            ...formData,
+            Amount: multipliedAmount,
+            CurrencyDecimalDigit: currencyDetails.decimalDigits
+          };
 
-        // Graphql API for creating payment details
-        await postPaymentDetails(updatedFormData, resetForm);
-      }
-      catch (error) {
-        console.error("Create Payment Details error", error);
-        throw error;
+          dispatch(updateFormData(updatedFormData));
+
+          // Graphql API for creating payment details
+          await postPaymentDetails(updatedFormData, resetForm);
+        }
+        catch (error) {
+          console.error("Create Payment Details error", error);
+          throw error;
+        }
       }
     }
-  }
 
   }
 
@@ -408,16 +393,15 @@ const CustomerPaymentDetailsForm = () => {
     setTouchedFields(updatedTouchedFields);
   };
 
-
   return (
     <>
       <div>
         <ToastContainer />
 
         {loading && (
-          <div class="overlay">
-            <div class="overlay__inner">
-              <div class="overlay__content"><span class="spinner"></span></div>
+          <div className="overlay">
+            <div className="overlay__inner">
+              <div className="overlay__content"><span className="spinner"></span></div>
             </div>
           </div>
         )}
@@ -569,6 +553,7 @@ const CustomerPaymentDetailsForm = () => {
                                   onChange={(event, value) => {
                                     if (value !== null) {
                                       setStates(State.getStatesOfCountry(value.countryCode));
+                                      setCountryName(value.countryName);
                                     }
                                     form.setFieldValue(
                                       "Country",
