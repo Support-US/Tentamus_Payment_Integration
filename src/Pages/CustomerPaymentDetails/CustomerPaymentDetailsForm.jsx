@@ -40,7 +40,7 @@ const CustomerPaymentDetailsForm = () => {
   const [combinedInvoices, setCombinedInvoices] = useState("");
   const [loading, setLoading] = useState(false);
   const [amountInUSD, setAmountInUSD] = useState(0);
-  const [countryName, setCountryName] = useState("");
+  const [countryName, setCountryName] = useState("United States");
 
   useEffect(() => {
     const usStates = State.getStatesOfCountry('US');
