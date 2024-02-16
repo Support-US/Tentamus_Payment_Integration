@@ -56,15 +56,30 @@ const CustomerPaymentDetailsForm = () => {
 
     setDropdowncountries(countryArray);
 
-    const currencyArray = currency.map(code => {
-      // console.log("Currency",currency);
-      return {
-        label: code,
-        value: code
-      };
-    });
+    const currencyArray = [
+      { label: 'EUR', value: 'EUR' },
+      { label: 'GBP', value: 'GBP' },
+      { label: 'INR', value: 'INR' },
+      { label: 'JPY', value: 'JPY' },
+      { label: 'USD', value: 'USD' },
+    ];
     setDropdownCurrencies(currencyArray);
+    console.log("Currency", currencyArray);
   }, []);
+
+
+  //   const currencyArray = currency.map(code => {
+  //     return {
+  //       label: code,
+  //       value: code
+  //     };
+  //   });
+  //   setDropdownCurrencies(currencyArray);
+  //   console.log("Currency", currencyArray);
+
+  // }, []);
+
+
 
   // useEffect(() => {
   //   if (paymentDetails) {
@@ -793,8 +808,10 @@ const CustomerPaymentDetailsForm = () => {
                               style={{ marginBottom: '10px' }}
                               size="small"
                               value={value}
-                              placeholder={!value[index] ? "Invoice No *" : ""}
-                              label={value[index] ? "Invoice No *" : ""}
+                              placeholder={!value ? "Invoice No *" : ""}
+                              label={value ? "Invoice No *" : ""}
+                              // placeholder={!value[index] ? "Invoice No *" : ""}
+                              // label={value[index] ? "Invoice No *" : ""}
                               onChange={(e) => handleTextFieldChange(index, e.target.value)}
                               onBlur={() => handleTextFieldBlur(index)}
                               error={touchedFields[index] && value.trim() === ''}
