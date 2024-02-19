@@ -6,28 +6,28 @@ const dynamoDB = new AWS.DynamoDB.DocumentClient({ region: process.env.REGION })
 const PaymentDetailsTableName = `PaymentDetails-4mqwuuijsrbx5p6qtibxxchbsq-dev`;
 
 export const handler = async (event) => {
-  console.log(`Request EVENT: ${JSON.stringify(event)}`);
   
   try{
-            const GETPaymentFailedDetails = await getPaymentFailedDetails();
-            console.log("GETPaymentFailedDetails :",GETPaymentFailedDetails);
+          const GETPaymentFailedDetails = await getPaymentFailedDetails();
+          console.log("GETPaymentFailedDetails :",GETPaymentFailedDetails);
           
-            for (const PaymentFailedDetail of GETPaymentFailedDetails) {
-            const sendEmailResponse = await sendFailedPaymentEmail(PaymentFailedDetail);
-            console.log(`Email sent to ${GETPaymentFailedDetails.Email}. Response:`, sendEmailResponse);
-               
-            const GETSAPUpdationFailedDetails = await getSAPUpdationFailedDetails();
-            console.log("GETPaymentFailedDetails :",GETPaymentFailedDetails);
-
-            for (const SAPUpdationFailedDetail of GETSAPUpdationFailedDetails) {
-            if (SAPUpdationFailedDetail.SAPErrorMessage !== '') {
-            const sapUpdateEmailResponse = await sendFailedSAPUpdateEmail(SAPUpdationFailedDetail);
-            console.log(`SAP Update Email sent to ${SAPUpdationFailedDetail.Email}. Response:`, sapUpdateEmailResponse);
-              }
-             }
-}
-
-          return { statusCode: 200, body: 'Emails sent successfully.' };
+          for (const GETPaymentFailedDetails of GETPaymentFailedDetails) {
+      const sendEmailResponse = await sendFailedPaymentEmail(GETPaymentFailedDetails);
+      console.log(`Email sent to ${GETPaymentFailedDetails.Email}. Response:`, sendEmailResponse);
+      
+      if (
+        GETPaymentFailedDetails.BeforePaymentSAPstatus === 'Failed' &&
+        GETPaymentFailedDetails.AfterPaymentSAPstatus === 'Failed' &&
+        GETPaymentFailedDetails.SAPErrorMessage !== ''
+      ) {
+        const sapUpdateEmailResponse = await sendFailedSAPUpdateEmail(GETPaymentFailedDetails);
+        console.log(`SAP Update Email sent to ${GETPaymentFailedDetails.Email}. Response:`, sapUpdateEmailResponse);
+      }
+    }
+    return { statusCode: 200, 
+                  body: 'Emails sent successfully.' 
+      
+           };
            
   }catch (error) {
         console.error('Error:', error);
@@ -40,50 +40,19 @@ export const handler = async (event) => {
     } 
   async function getPaymentFailedDetails() {
 
-  const params = {
-  TableName: PaymentDetailsTableName,
-  FilterExpression: "#PaymentStatus = :PaymentStatus",
-  ExpressionAttributeNames: {
-    "#PaymentStatus": "PaymentStatus",
-   
-  },
-  ExpressionAttributeValues: {
-    ":PaymentStatus": "Failed",
-   
-    
-  },
-};
-
-
-    try {
-      const data = await dynamoDB.scan(params).promise();
-      console.log('Query result:', data.Items);
-
-      console.log("Response of PaymentDetails From DynamoDB : ", data.Items);
-
-      return data.Items; // Returning the queried items
-    } catch (err) {
-      console.error(`Error querying DynamoDB:`, err);
-      throw err; // You may want to handle errors in a better way depending on your application needs
-    }
-  }
-  
-  async function getSAPUpdationFailedDetails() {
-
-  const params = {
-  TableName: PaymentDetailsTableName,
-  FilterExpression: "#SAPErrorMessage <> :Empty",
-  ExpressionAttributeNames: {
-    "#SAPErrorMessage": "SAPErrorMessage",
-   
-  },
-  ExpressionAttributeValues: {
-    ":SAPErrorMessage": "",
-   
-    
-  },
-};
-
+    const params = {
+      TableName: PaymentDetailsTableName,
+      FilterExpression: "#PaymentStatus = :Failed ,#SAPErrorMessage = :!== <empty> ,AfterPaymentSAPstatus = :Failed ,#BeforePaymentSAPstatus = :Failed",
+      ExpressionAttributeNames: {
+      "#PaymentStatus": "PaymentStatus",
+      "#SAPErrorMessage": "SAPErrorMessage",
+      "#AfterPaymentSAPstatus": "AfterPaymentSAPstatus",
+      "#BeforePaymentSAPstatus": "BeforePaymentSAPstatus",
+      },
+      ExpressionAttributeValues: {
+        ":PaymentStatus": "Failed",
+      },
+    };
 
     try {
       const data = await dynamoDB.scan(params).promise();
@@ -161,8 +130,8 @@ export const handler = async (event) => {
     }
   }
   
-  async function sendFailedSAPUpdateEmail(GETSAPUpdationFailedDetails) {
-  let getDBData = unmarshall(GETSAPUpdationFailedDetails);
+  async function sendFailedSAPUpdateEmail(getPaymentFailedDetails) {
+  let getDBData = unmarshall(getPaymentFailedDetails);
   let responseBody, subjectContent, textContent, status;
 
   if (
