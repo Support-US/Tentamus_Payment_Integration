@@ -58,7 +58,7 @@ const FailurePage = () => {
       }
       catch (error) {
         console.log("fetchPaymentDetails error", error);
-        showToast("Data fetch error", "error");
+        showToast("Data fetch error, but your transaction was failed.", "error");
 
       }
       console.log("pay", paymentDetails);
@@ -185,12 +185,8 @@ const FailurePage = () => {
           <>
             <div className="overlays mb-3">
               <div className="overlay__inner">
-                {/* <span class="processing-text">Payment Processing...</span> */}
-                <div className="overlay__content">
-                  <span className="spinner"></span>
-                </div>
-                {/* <span className='flex justify-content-center align-items-center h-screen mt-5'>Please don't refresh the page</span> */}
-                <span className='flex justify-content-center align-items-center h-screen mt-5'>Payment Processing...</span>
+                <div className="overlay__content"><span className="spinner"></span></div>
+                <span className='flex justify-content-center align-items-center h-screen mt-5'>Pleas don't refresh the page</span>
               </div>
             </div>
           </>
@@ -200,7 +196,7 @@ const FailurePage = () => {
   )
 }
 
-export default FailurePage;
+      export default FailurePage;
 
 
 

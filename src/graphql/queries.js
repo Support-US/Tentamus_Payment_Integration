@@ -28,6 +28,7 @@ export const getPaymentDetails = /* GraphQL */ `
       AfterPaymentSAPstatus
       SAPErrorMessage
       SAPObjectID
+      Description
       __typename
     }
   }
@@ -64,6 +65,7 @@ export const listPaymentDetails = /* GraphQL */ `
         AfterPaymentSAPstatus
         SAPErrorMessage
         SAPObjectID
+        Description
         __typename
       }
       nextToken

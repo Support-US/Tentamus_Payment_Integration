@@ -163,8 +163,12 @@ const SuccessPage = () => {
           <>
             <div className="overlays mb-3">
               <div className="overlay__inner">
-                <div className="overlay__content"><span className="spinner"></span></div>
-                <span className='flex justify-content-center align-items-center h-screen mt-5'>Pleas don't refresh the page</span>
+                {/* <span class="processing-text">Payment Processing...</span> */}
+                <div className="overlay__content">
+                  <span className="spinner"></span>
+                </div>
+                {/* <span className='flex justify-content-center align-items-center h-screen mt-5'>Please don't refresh the page</span> */}
+                <span className='flex justify-content-center align-items-center h-screen mt-5'>Payment Processing...</span>
               </div>
             </div>
           </>

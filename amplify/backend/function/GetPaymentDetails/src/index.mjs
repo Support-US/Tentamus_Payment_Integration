@@ -94,7 +94,8 @@ export const handler = async (event, context) => {
                                   BeforePaymentSAPstatus:{ S:"" },
                                   AfterPaymentSAPstatus: { S:"" }, 
                                   SAPErrorMessage:{ S:"" },
-                                  SAPObjectID:{ S:"" }
+                                  SAPObjectID:{ S:"" },
+                                  Description:{ S:"" }
                     
                   }})
                   );
@@ -142,7 +143,7 @@ export const handler = async (event, context) => {
         //  Uncomment below to enable CORS requests
           headers: {
             "Access-Control-Allow-Headers" : "Content-Type",
-            "Access-Control-Allow-Origin": "http://localhost:3000",
+            // "Access-Control-Allow-Origin": "http://localhost:3000",
             "Access-Control-Allow-Origin": "https://development.d389b8rydflvtl.amplifyapp.com",
             "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
           },

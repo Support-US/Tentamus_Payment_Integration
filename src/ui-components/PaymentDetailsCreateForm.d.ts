@@ -45,6 +45,7 @@ export declare type PaymentDetailsCreateFormInputValues = {
     AfterPaymentSAPstatus?: string;
     SAPErrorMessage?: string;
     SAPObjectID?: string;
+    Description?: string;
 };
 export declare type PaymentDetailsCreateFormValidationValues = {
     FirstName?: ValidationFunction<string>;
@@ -70,6 +71,7 @@ export declare type PaymentDetailsCreateFormValidationValues = {
     AfterPaymentSAPstatus?: ValidationFunction<string>;
     SAPErrorMessage?: ValidationFunction<string>;
     SAPObjectID?: ValidationFunction<string>;
+    Description?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type PaymentDetailsCreateFormOverridesProps = {
@@ -97,6 +99,7 @@ export declare type PaymentDetailsCreateFormOverridesProps = {
     AfterPaymentSAPstatus?: PrimitiveOverrideProps<TextFieldProps>;
     SAPErrorMessage?: PrimitiveOverrideProps<TextFieldProps>;
     SAPObjectID?: PrimitiveOverrideProps<TextFieldProps>;
+    Description?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type PaymentDetailsCreateFormProps = React.PropsWithChildren<{
     overrides?: PaymentDetailsCreateFormOverridesProps | undefined | null;

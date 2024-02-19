@@ -223,11 +223,12 @@ async function UpdatePaymentDetailsID(parsedObject) {
         Key: {
             id: { S: parsedObject.TransID },
         },
-        UpdateExpression: "SET PaymentId = :newPaymentId, PaymentStatus = :newStatus,AfterPaymentSAPstatus = :newStatusMessage",
+        UpdateExpression: "SET PaymentId = :newPaymentId, PaymentStatus = :newStatus,AfterPaymentSAPstatus = :newStatusMessage,Description = :newDescription",
         ExpressionAttributeValues: {
             ":newPaymentId": { S: parsedObject.PayID },
             ":newStatus": { S: parsedObject.Status === 'OK' ? 'Success' : 'Failed'}, 
             ":newStatusMessage": { S: "Success"},
+            ":newDescription": { S: parsedObject.Description },
         },
         ReturnValues: "ALL_NEW",
     };
@@ -284,5 +285,5 @@ async function UpdateFailurestatus(error,parsedObject,errStatus) {
 } 
 };
 
-
+   
 
