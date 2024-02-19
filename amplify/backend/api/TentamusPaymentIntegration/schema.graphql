@@ -64,4 +64,5 @@ BeforePaymentSAPstatus:String
 AfterPaymentSAPstatus: String 
 SAPErrorMessage:String
 SAPObjectID:String
+Description:String
 }
