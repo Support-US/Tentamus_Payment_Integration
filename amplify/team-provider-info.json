@@ -35,7 +35,7 @@
         },
         "SendPaymentFailedMail": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-82313-deployment",
-          "s3Key": "amplify-builds/SendPaymentFailedMail-6d38766c747a55356178-build.zip"
+          "s3Key": "amplify-builds/SendPaymentFailedMail-76783335797873393761-build.zip"
         }
       }
     }
