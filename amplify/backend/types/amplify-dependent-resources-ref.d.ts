@@ -5,19 +5,31 @@ export type AmplifyDependentResourcesAttributes = {
       "ApiName": "string",
       "RootUrl": "string"
     },
-    "ComputopWebhook": {
-      "ApiId": "string",
-      "ApiName": "string",
-      "RootUrl": "string"
-    },
     "TentamusPaymentIntegration": {
       "GraphQLAPIEndpointOutput": "string",
       "GraphQLAPIIdOutput": "string",
       "GraphQLAPIKeyOutput": "string"
+    },
+    "Webhook": {
+      "ApiId": "string",
+      "ApiName": "string",
+      "RootUrl": "string"
+    },
+    "getAmountAPI": {
+      "ApiId": "string",
+      "ApiName": "string",
+      "RootUrl": "string"
     }
   },
   "function": {
-    "ComputopWebhook": {
+    "ComputopPaygateWebhook": {
+      "Arn": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string"
+    },
+    "GetAmountDetails": {
       "Arn": "string",
       "LambdaExecutionRole": "string",
       "LambdaExecutionRoleArn": "string",
@@ -33,6 +45,14 @@ export type AmplifyDependentResourcesAttributes = {
     },
     "PaymentDetailResponse": {
       "Arn": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string"
+    },
+    "SendPaymentFailedMail": {
+      "Arn": "string",
+      "CloudWatchEventRule": "string",
       "LambdaExecutionRole": "string",
       "LambdaExecutionRoleArn": "string",
       "Name": "string",

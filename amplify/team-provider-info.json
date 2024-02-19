@@ -19,11 +19,23 @@
         },
         "GetPaymentDetails": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-82313-deployment",
-          "s3Key": "amplify-builds/GetPaymentDetails-38396673616d4f336d39-build.zip"
+          "s3Key": "amplify-builds/GetPaymentDetails-4244444e62495a432b50-build.zip"
         },
         "PaymentDetailResponse": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-82313-deployment",
-          "s3Key": "amplify-builds/PaymentDetailResponse-46797153464e3679775a-build.zip"
+          "s3Key": "amplify-builds/PaymentDetailResponse-7451436e475a4e795a71-build.zip"
+        },
+        "ComputopPaygateWebhook": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-82313-deployment",
+          "s3Key": "amplify-builds/ComputopPaygateWebhook-675a584b397944356133-build.zip"
+        },
+        "GetAmountDetails": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-82313-deployment",
+          "s3Key": "amplify-builds/GetAmountDetails-464461744535524d7032-build.zip"
+        },
+        "SendPaymentFailedMail": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-82313-deployment",
+          "s3Key": "amplify-builds/SendPaymentFailedMail-6d38766c747a55356178-build.zip"
         }
       }
     }

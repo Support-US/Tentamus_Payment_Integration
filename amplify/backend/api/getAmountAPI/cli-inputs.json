@@ -1,9 +1,9 @@
 {
   "version": 1,
   "paths": {
-    "/PaymentStatus": {
-      "name": "/PaymentStatus",
-      "lambdaFunction": "ComputopWebhook",
+    "/items": {
+      "name": "/items",
+      "lambdaFunction": "GetAmountDetails",
       "permissions": {
         "setting": "open"
       }

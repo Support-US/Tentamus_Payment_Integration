@@ -14,20 +14,6 @@
       "providerPlugin": "awscloudformation",
       "service": "API Gateway"
     },
-    "ComputopWebhook": {
-      "dependsOn": [
-        {
-          "attributes": [
-            "Name",
-            "Arn"
-          ],
-          "category": "function",
-          "resourceName": "ComputopWebhook"
-        }
-      ],
-      "providerPlugin": "awscloudformation",
-      "service": "API Gateway"
-    },
     "TentamusPaymentIntegration": {
       "dependsOn": [],
       "output": {
@@ -43,13 +29,45 @@
       },
       "providerPlugin": "awscloudformation",
       "service": "AppSync"
+    },
+    "Webhook": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "ComputopPaygateWebhook"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
+    },
+    "getAmountAPI": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "GetAmountDetails"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
     }
   },
   "auth": {},
   "function": {
-    "ComputopWebhook": {
+    "ComputopPaygateWebhook": {
       "build": true,
-      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "GetAmountDetails": {
+      "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
@@ -73,9 +91,31 @@
       ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
+    },
+    "SendPaymentFailedMail": {
+      "build": true,
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
     }
   },
   "parameters": {
+    "AMPLIFY_function_ComputopPaygateWebhook_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "ComputopPaygateWebhook"
+        }
+      ]
+    },
+    "AMPLIFY_function_ComputopPaygateWebhook_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "ComputopPaygateWebhook"
+        }
+      ]
+    },
     "AMPLIFY_function_ComputopWebhook_deploymentBucketName": {
       "usedBy": [
         {
@@ -89,6 +129,22 @@
         {
           "category": "function",
           "resourceName": "ComputopWebhook"
+        }
+      ]
+    },
+    "AMPLIFY_function_GetAmountDetails_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "GetAmountDetails"
+        }
+      ]
+    },
+    "AMPLIFY_function_GetAmountDetails_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "GetAmountDetails"
         }
       ]
     },
@@ -121,6 +177,22 @@
         {
           "category": "function",
           "resourceName": "PaymentDetailResponse"
+        }
+      ]
+    },
+    "AMPLIFY_function_SendPaymentFailedMail_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "SendPaymentFailedMail"
+        }
+      ]
+    },
+    "AMPLIFY_function_SendPaymentFailedMail_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "SendPaymentFailedMail"
         }
       ]
     }

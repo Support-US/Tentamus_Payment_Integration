@@ -270,9 +270,6 @@ const CustomerPaymentDetailsForm = () => {
         dataLength: response.data.Length,
       }));
 
-      localStorage.setItem("Tid", response.data.TransactionID);
-      localStorage.setItem("Currency", data.Currency);
-
       resetForm();
       setTextFields(['']);
       setTouchedFields([false]);
@@ -343,7 +340,6 @@ const CustomerPaymentDetailsForm = () => {
           const multipliedAmount = formData.Amount * factor;
 
           setAmountInUSD(formData.Amount);
-          localStorage.setItem("Amount", formData.Amount);
 
           // Updating initialvalues
           const updatedFormData = {
