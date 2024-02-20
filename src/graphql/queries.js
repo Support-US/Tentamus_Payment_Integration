@@ -21,7 +21,6 @@ export const getPaymentDetails = /* GraphQL */ `
       InvoiceNumbers
       PaymentId
       createdAt
-      updatedAt
       PaymentStatus
       CurrencyDecimalDigit
       BeforePaymentSAPstatus
@@ -29,6 +28,7 @@ export const getPaymentDetails = /* GraphQL */ `
       SAPErrorMessage
       SAPObjectID
       Description
+      updatedAt
       __typename
     }
   }
@@ -58,7 +58,6 @@ export const listPaymentDetails = /* GraphQL */ `
         InvoiceNumbers
         PaymentId
         createdAt
-        updatedAt
         PaymentStatus
         CurrencyDecimalDigit
         BeforePaymentSAPstatus
@@ -66,6 +65,7 @@ export const listPaymentDetails = /* GraphQL */ `
         SAPErrorMessage
         SAPObjectID
         Description
+        updatedAt
         __typename
       }
       nextToken

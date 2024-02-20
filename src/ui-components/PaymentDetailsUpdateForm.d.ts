@@ -38,7 +38,6 @@ export declare type PaymentDetailsUpdateFormInputValues = {
     InvoiceNumbers?: string;
     PaymentId?: string;
     createdAt?: string;
-    updatedAt?: string;
     PaymentStatus?: string;
     CurrencyDecimalDigit?: string;
     BeforePaymentSAPstatus?: string;
@@ -64,7 +63,6 @@ export declare type PaymentDetailsUpdateFormValidationValues = {
     InvoiceNumbers?: ValidationFunction<string>;
     PaymentId?: ValidationFunction<string>;
     createdAt?: ValidationFunction<string>;
-    updatedAt?: ValidationFunction<string>;
     PaymentStatus?: ValidationFunction<string>;
     CurrencyDecimalDigit?: ValidationFunction<string>;
     BeforePaymentSAPstatus?: ValidationFunction<string>;
@@ -92,7 +90,6 @@ export declare type PaymentDetailsUpdateFormOverridesProps = {
     InvoiceNumbers?: PrimitiveOverrideProps<TextAreaFieldProps>;
     PaymentId?: PrimitiveOverrideProps<TextFieldProps>;
     createdAt?: PrimitiveOverrideProps<TextFieldProps>;
-    updatedAt?: PrimitiveOverrideProps<TextFieldProps>;
     PaymentStatus?: PrimitiveOverrideProps<TextFieldProps>;
     CurrencyDecimalDigit?: PrimitiveOverrideProps<TextFieldProps>;
     BeforePaymentSAPstatus?: PrimitiveOverrideProps<TextFieldProps>;

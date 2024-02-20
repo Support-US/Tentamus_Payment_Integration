@@ -46,7 +46,6 @@ export default function PaymentDetailsUpdateForm(props) {
     InvoiceNumbers: "",
     PaymentId: "",
     createdAt: "",
-    updatedAt: "",
     PaymentStatus: "",
     CurrencyDecimalDigit: "",
     BeforePaymentSAPstatus: "",
@@ -81,7 +80,6 @@ export default function PaymentDetailsUpdateForm(props) {
   );
   const [PaymentId, setPaymentId] = React.useState(initialValues.PaymentId);
   const [createdAt, setCreatedAt] = React.useState(initialValues.createdAt);
-  const [updatedAt, setUpdatedAt] = React.useState(initialValues.updatedAt);
   const [PaymentStatus, setPaymentStatus] = React.useState(
     initialValues.PaymentStatus
   );
@@ -129,7 +127,6 @@ export default function PaymentDetailsUpdateForm(props) {
     );
     setPaymentId(cleanValues.PaymentId);
     setCreatedAt(cleanValues.createdAt);
-    setUpdatedAt(cleanValues.updatedAt);
     setPaymentStatus(cleanValues.PaymentStatus);
     setCurrencyDecimalDigit(cleanValues.CurrencyDecimalDigit);
     setBeforePaymentSAPstatus(cleanValues.BeforePaymentSAPstatus);
@@ -174,7 +171,6 @@ export default function PaymentDetailsUpdateForm(props) {
     InvoiceNumbers: [{ type: "Required" }, { type: "JSON" }],
     PaymentId: [],
     createdAt: [],
-    updatedAt: [],
     PaymentStatus: [{ type: "Required" }],
     CurrencyDecimalDigit: [],
     BeforePaymentSAPstatus: [],
@@ -199,23 +195,6 @@ export default function PaymentDetailsUpdateForm(props) {
     }
     setErrors((errors) => ({ ...errors, [fieldName]: validationResponse }));
     return validationResponse;
-  };
-  const convertToLocal = (date) => {
-    const df = new Intl.DateTimeFormat("default", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      calendar: "iso8601",
-      numberingSystem: "latn",
-      hourCycle: "h23",
-    });
-    const parts = df.formatToParts(date).reduce((acc, part) => {
-      acc[part.type] = part.value;
-      return acc;
-    }, {});
-    return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
   };
   return (
     <Grid
@@ -242,7 +221,6 @@ export default function PaymentDetailsUpdateForm(props) {
           InvoiceNumbers,
           PaymentId: PaymentId ?? null,
           createdAt: createdAt ?? null,
-          updatedAt: updatedAt ?? null,
           PaymentStatus,
           CurrencyDecimalDigit: CurrencyDecimalDigit ?? null,
           BeforePaymentSAPstatus: BeforePaymentSAPstatus ?? null,
@@ -326,7 +304,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers,
               PaymentId,
               createdAt,
-              updatedAt,
               PaymentStatus,
               CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
@@ -373,7 +350,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers,
               PaymentId,
               createdAt,
-              updatedAt,
               PaymentStatus,
               CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
@@ -420,7 +396,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers,
               PaymentId,
               createdAt,
-              updatedAt,
               PaymentStatus,
               CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
@@ -467,7 +442,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers,
               PaymentId,
               createdAt,
-              updatedAt,
               PaymentStatus,
               CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
@@ -514,7 +488,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers,
               PaymentId,
               createdAt,
-              updatedAt,
               PaymentStatus,
               CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
@@ -561,7 +534,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers,
               PaymentId,
               createdAt,
-              updatedAt,
               PaymentStatus,
               CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
@@ -608,7 +580,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers,
               PaymentId,
               createdAt,
-              updatedAt,
               PaymentStatus,
               CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
@@ -655,7 +626,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers,
               PaymentId,
               createdAt,
-              updatedAt,
               PaymentStatus,
               CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
@@ -702,7 +672,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers,
               PaymentId,
               createdAt,
-              updatedAt,
               PaymentStatus,
               CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
@@ -749,7 +718,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers,
               PaymentId,
               createdAt,
-              updatedAt,
               PaymentStatus,
               CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
@@ -796,7 +764,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers,
               PaymentId,
               createdAt,
-              updatedAt,
               PaymentStatus,
               CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
@@ -843,7 +810,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers,
               PaymentId,
               createdAt,
-              updatedAt,
               PaymentStatus,
               CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
@@ -890,7 +856,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers,
               PaymentId,
               createdAt,
-              updatedAt,
               PaymentStatus,
               CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
@@ -937,7 +902,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers: value,
               PaymentId,
               createdAt,
-              updatedAt,
               PaymentStatus,
               CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
@@ -984,7 +948,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers,
               PaymentId: value,
               createdAt,
-              updatedAt,
               PaymentStatus,
               CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
@@ -1010,11 +973,9 @@ export default function PaymentDetailsUpdateForm(props) {
         label="Created at"
         isRequired={false}
         isReadOnly={false}
-        type="datetime-local"
-        value={createdAt && convertToLocal(new Date(createdAt))}
+        value={createdAt}
         onChange={(e) => {
-          let value =
-            e.target.value === "" ? "" : new Date(e.target.value).toISOString();
+          let { value } = e.target;
           if (onChange) {
             const modelFields = {
               FirstName,
@@ -1033,7 +994,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers,
               PaymentId,
               createdAt: value,
-              updatedAt,
               PaymentStatus,
               CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
@@ -1054,55 +1014,6 @@ export default function PaymentDetailsUpdateForm(props) {
         errorMessage={errors.createdAt?.errorMessage}
         hasError={errors.createdAt?.hasError}
         {...getOverrideProps(overrides, "createdAt")}
-      ></TextField>
-      <TextField
-        label="Updated at"
-        isRequired={false}
-        isReadOnly={false}
-        type="datetime-local"
-        value={updatedAt && convertToLocal(new Date(updatedAt))}
-        onChange={(e) => {
-          let value =
-            e.target.value === "" ? "" : new Date(e.target.value).toISOString();
-          if (onChange) {
-            const modelFields = {
-              FirstName,
-              LastName,
-              CompanyName,
-              Email,
-              AddressLine1,
-              AddressLine2,
-              Country,
-              State,
-              City,
-              PostalCode,
-              PhoneNumber,
-              Amount,
-              Currency,
-              InvoiceNumbers,
-              PaymentId,
-              createdAt,
-              updatedAt: value,
-              PaymentStatus,
-              CurrencyDecimalDigit,
-              BeforePaymentSAPstatus,
-              AfterPaymentSAPstatus,
-              SAPErrorMessage,
-              SAPObjectID,
-              Description,
-            };
-            const result = onChange(modelFields);
-            value = result?.updatedAt ?? value;
-          }
-          if (errors.updatedAt?.hasError) {
-            runValidationTasks("updatedAt", value);
-          }
-          setUpdatedAt(value);
-        }}
-        onBlur={() => runValidationTasks("updatedAt", updatedAt)}
-        errorMessage={errors.updatedAt?.errorMessage}
-        hasError={errors.updatedAt?.hasError}
-        {...getOverrideProps(overrides, "updatedAt")}
       ></TextField>
       <TextField
         label="Payment status"
@@ -1129,7 +1040,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers,
               PaymentId,
               createdAt,
-              updatedAt,
               PaymentStatus: value,
               CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
@@ -1176,7 +1086,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers,
               PaymentId,
               createdAt,
-              updatedAt,
               PaymentStatus,
               CurrencyDecimalDigit: value,
               BeforePaymentSAPstatus,
@@ -1225,7 +1134,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers,
               PaymentId,
               createdAt,
-              updatedAt,
               PaymentStatus,
               CurrencyDecimalDigit,
               BeforePaymentSAPstatus: value,
@@ -1274,7 +1182,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers,
               PaymentId,
               createdAt,
-              updatedAt,
               PaymentStatus,
               CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
@@ -1323,7 +1230,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers,
               PaymentId,
               createdAt,
-              updatedAt,
               PaymentStatus,
               CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
@@ -1370,7 +1276,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers,
               PaymentId,
               createdAt,
-              updatedAt,
               PaymentStatus,
               CurrencyDecimalDigit,
               BeforePaymentSAPstatus,
@@ -1417,7 +1322,6 @@ export default function PaymentDetailsUpdateForm(props) {
               InvoiceNumbers,
               PaymentId,
               createdAt,
-              updatedAt,
               PaymentStatus,
               CurrencyDecimalDigit,
               BeforePaymentSAPstatus,

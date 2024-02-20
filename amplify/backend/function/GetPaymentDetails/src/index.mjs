@@ -28,6 +28,7 @@ export const handler = async (event, context) => {
         console.log(`Request EVENT: ${paymentDetails}`);
         let createdPaymentdetails = await createPaymentDetails(paymentDetails);
         console.log("Response of CreatePaymentHistory : ", createdPaymentdetails);
+         console.log("Response of paymentDetails : ", paymentDetails);
             
         // Calculate the HMAC
         let calculatedHMAC =await generateHMAC(createdPaymentdetails,merchantID,paymentDetails.Amount, paymentDetails.Currency,HMacPassword);
@@ -95,7 +96,8 @@ export const handler = async (event, context) => {
                                   AfterPaymentSAPstatus: { S:"" }, 
                                   SAPErrorMessage:{ S:"" },
                                   SAPObjectID:{ S:"" },
-                                  Description:{ S:"" }
+                                  Description:{ S:"" },
+                                  createdAt:{ S:paymentDetails.createdAt}
                     
                   }})
                   );
@@ -143,8 +145,8 @@ export const handler = async (event, context) => {
         //  Uncomment below to enable CORS requests
           headers: {
             "Access-Control-Allow-Headers" : "Content-Type",
-            // "Access-Control-Allow-Origin": "http://localhost:3000",
-            "Access-Control-Allow-Origin": "https://development.d389b8rydflvtl.amplifyapp.com",
+            "Access-Control-Allow-Origin": "http://localhost:3000",
+            // "Access-Control-Allow-Origin": "https://development.d389b8rydflvtl.amplifyapp.com",
             "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
           },
           body: JSON.stringify(responseData),

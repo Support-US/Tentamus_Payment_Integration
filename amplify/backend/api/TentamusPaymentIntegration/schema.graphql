@@ -56,8 +56,7 @@ Amount : String!
 Currency: String!
 InvoiceNumbers :AWSJSON!
 PaymentId: String
-createdAt: AWSDateTime
-updatedAt: AWSDateTime
+createdAt: String
 PaymentStatus : String!
 CurrencyDecimalDigit: String
 BeforePaymentSAPstatus:String

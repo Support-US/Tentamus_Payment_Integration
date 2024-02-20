@@ -36,7 +36,6 @@ export const createPaymentDetails = /* GraphQL */ `
       InvoiceNumbers
       PaymentId
       createdAt
-      updatedAt
       PaymentStatus
       CurrencyDecimalDigit
       BeforePaymentSAPstatus
@@ -44,6 +43,7 @@ export const createPaymentDetails = /* GraphQL */ `
       SAPErrorMessage
       SAPObjectID
       Description
+      updatedAt
       __typename
     }
   }
@@ -71,7 +71,6 @@ export const updatePaymentDetails = /* GraphQL */ `
       InvoiceNumbers
       PaymentId
       createdAt
-      updatedAt
       PaymentStatus
       CurrencyDecimalDigit
       BeforePaymentSAPstatus
@@ -79,6 +78,7 @@ export const updatePaymentDetails = /* GraphQL */ `
       SAPErrorMessage
       SAPObjectID
       Description
+      updatedAt
       __typename
     }
   }
@@ -106,7 +106,6 @@ export const deletePaymentDetails = /* GraphQL */ `
       InvoiceNumbers
       PaymentId
       createdAt
-      updatedAt
       PaymentStatus
       CurrencyDecimalDigit
       BeforePaymentSAPstatus
@@ -114,6 +113,7 @@ export const deletePaymentDetails = /* GraphQL */ `
       SAPErrorMessage
       SAPObjectID
       Description
+      updatedAt
       __typename
     }
   }

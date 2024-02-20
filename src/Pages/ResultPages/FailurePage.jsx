@@ -28,7 +28,6 @@ const FailurePage = () => {
   };
 
   useEffect(() => {
-    showToast(`Your last transaction was Failed!`, "error");
     // Parse URL to get parameters
     const searchParams = new URLSearchParams(location.search);
     console.log("searchparams", searchParams);
