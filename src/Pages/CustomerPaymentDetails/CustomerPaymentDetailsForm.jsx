@@ -332,8 +332,9 @@ const CustomerPaymentDetailsForm = () => {
         const day = currentDate.getDate().toString().padStart(2, '0');
         const hours = currentDate.getHours().toString().padStart(2, '0');
         const minutes = currentDate.getMinutes().toString().padStart(2, '0');
-       
-        const formattedDate = `${year}-${month}-${day} 🕒 ${hours}:${minutes}`;
+        const seconds = currentDate.getSeconds().toString().padStart(2, '0');
+
+        const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`;
         console.log("formattedDate", formattedDate);
 
         const formData = {
@@ -341,7 +342,6 @@ const CustomerPaymentDetailsForm = () => {
           InvoiceNumbers: formattedInvoiceNumbers,
           // InvoiceNumbers: JSON.stringify(formattedInvoiceNumbers)
           createdAt: formattedDate
-
         }
         console.log("formData", formData);
 

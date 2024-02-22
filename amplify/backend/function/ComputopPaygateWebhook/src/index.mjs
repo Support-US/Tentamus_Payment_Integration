@@ -250,7 +250,7 @@ async function UpdateFailurestatus(error,parsedObject,errStatus) {
         UpdateExpression: "SET PaymentStatus = :newStatus, AfterPaymentSAPstatus = :newStatusMessage,SAPErrorMessage = :newErrorMessage",
         ExpressionAttributeValues: {
             ":newStatus": { S: parsedObject.Status === 'OK' ? 'Success' : 'Failed' },
-            ":newStatusMessage": { M: { "FailureStatusCode": { S: (error.status).toString() }, "ErrorMessage": { S: error.body } } },
+            ":newStatusMessage": { S : "Failed" },
             ":newErrorMessage": { M: { "ErrorMessage": { S: error.message } } },
         },
         ReturnValues: "ALL_NEW",
@@ -265,7 +265,7 @@ async function UpdateFailurestatus(error,parsedObject,errStatus) {
         UpdateExpression: "SET PaymentStatus = :newStatus, AfterPaymentSAPstatus = :newStatusMessage,SAPErrorMessage = :newErrorMessage",
         ExpressionAttributeValues: {
             ":newStatus": { S: parsedObject.Status === 'OK' ? 'Success' : 'Failed' },
-            ":newStatusMessage": { M: { "FailureStatusCode": { S: (error.response.status).toString() }, "ErrorMessage": { S: error.message } } },
+            ":newStatusMessage": { S : "Failed" },
             ":newErrorMessage": { M: { "ErrorMessage": { S: error.message } } },
         },
         

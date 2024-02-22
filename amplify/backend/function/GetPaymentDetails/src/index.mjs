@@ -87,7 +87,7 @@ export const handler = async (event, context) => {
                                   PhoneNumber :  { S:paymentDetails.PhoneNumber },
                                   Amount :  { S:amount },
                                   Currency :  { S:paymentDetails.Currency },
-                                  PaymentStatus :  { S:paymentDetails.PaymentStatus },
+                                  PaymentStatus :  { S: paymentDetails.PaymentStatus},
                                   InvoiceNumbers: { M: Object.assign({}, ...invoices) }, 
                                   SuccessURL :  { S:paymentDetails.SuccessURL },
                                   FailureURL :  { S:paymentDetails.FailureURL },
@@ -97,6 +97,8 @@ export const handler = async (event, context) => {
                                   SAPErrorMessage:{ S:"" },
                                   SAPObjectID:{ S:"" },
                                   Description:{ S:"" },
+                                  PaymentMailStatus:{ S:"" },
+                                  SAPMailStatus:{ S:""},
                                   createdAt:{ S:paymentDetails.createdAt}
                     
                   }})
@@ -145,8 +147,8 @@ export const handler = async (event, context) => {
         //  Uncomment below to enable CORS requests
           headers: {
             "Access-Control-Allow-Headers" : "Content-Type",
-            "Access-Control-Allow-Origin": "http://localhost:3000",
-            // "Access-Control-Allow-Origin": "https://development.d389b8rydflvtl.amplifyapp.com",
+            // "Access-Control-Allow-Origin": "http://localhost:3000",
+            "Access-Control-Allow-Origin": "https://development.d389b8rydflvtl.amplifyapp.com",
             "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
           },
           body: JSON.stringify(responseData),

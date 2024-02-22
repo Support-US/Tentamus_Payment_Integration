@@ -43,6 +43,8 @@ export const createPaymentDetails = /* GraphQL */ `
       SAPErrorMessage
       SAPObjectID
       Description
+      PaymentMailStatus
+      SAPMailStatus
       updatedAt
       __typename
     }
@@ -78,6 +80,8 @@ export const updatePaymentDetails = /* GraphQL */ `
       SAPErrorMessage
       SAPObjectID
       Description
+      PaymentMailStatus
+      SAPMailStatus
       updatedAt
       __typename
     }
@@ -113,6 +117,8 @@ export const deletePaymentDetails = /* GraphQL */ `
       SAPErrorMessage
       SAPObjectID
       Description
+      PaymentMailStatus
+      SAPMailStatus
       updatedAt
       __typename
     }

@@ -53,6 +53,8 @@ export default function PaymentDetailsUpdateForm(props) {
     SAPErrorMessage: "",
     SAPObjectID: "",
     Description: "",
+    PaymentMailStatus: "",
+    SAPMailStatus: "",
   };
   const [FirstName, setFirstName] = React.useState(initialValues.FirstName);
   const [LastName, setLastName] = React.useState(initialValues.LastName);
@@ -101,6 +103,12 @@ export default function PaymentDetailsUpdateForm(props) {
   const [Description, setDescription] = React.useState(
     initialValues.Description
   );
+  const [PaymentMailStatus, setPaymentMailStatus] = React.useState(
+    initialValues.PaymentMailStatus
+  );
+  const [SAPMailStatus, setSAPMailStatus] = React.useState(
+    initialValues.SAPMailStatus
+  );
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     const cleanValues = paymentDetailsRecord
@@ -134,6 +142,8 @@ export default function PaymentDetailsUpdateForm(props) {
     setSAPErrorMessage(cleanValues.SAPErrorMessage);
     setSAPObjectID(cleanValues.SAPObjectID);
     setDescription(cleanValues.Description);
+    setPaymentMailStatus(cleanValues.PaymentMailStatus);
+    setSAPMailStatus(cleanValues.SAPMailStatus);
     setErrors({});
   };
   const [paymentDetailsRecord, setPaymentDetailsRecord] = React.useState(
@@ -178,6 +188,8 @@ export default function PaymentDetailsUpdateForm(props) {
     SAPErrorMessage: [],
     SAPObjectID: [],
     Description: [],
+    PaymentMailStatus: [],
+    SAPMailStatus: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -228,6 +240,8 @@ export default function PaymentDetailsUpdateForm(props) {
           SAPErrorMessage: SAPErrorMessage ?? null,
           SAPObjectID: SAPObjectID ?? null,
           Description: Description ?? null,
+          PaymentMailStatus: PaymentMailStatus ?? null,
+          SAPMailStatus: SAPMailStatus ?? null,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -311,6 +325,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage,
               SAPObjectID,
               Description,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.FirstName ?? value;
@@ -357,6 +373,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage,
               SAPObjectID,
               Description,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.LastName ?? value;
@@ -403,6 +421,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage,
               SAPObjectID,
               Description,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.CompanyName ?? value;
@@ -449,6 +469,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage,
               SAPObjectID,
               Description,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.Email ?? value;
@@ -495,6 +517,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage,
               SAPObjectID,
               Description,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.AddressLine1 ?? value;
@@ -541,6 +565,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage,
               SAPObjectID,
               Description,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.AddressLine2 ?? value;
@@ -587,6 +613,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage,
               SAPObjectID,
               Description,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.Country ?? value;
@@ -633,6 +661,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage,
               SAPObjectID,
               Description,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.State ?? value;
@@ -679,6 +709,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage,
               SAPObjectID,
               Description,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.City ?? value;
@@ -725,6 +757,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage,
               SAPObjectID,
               Description,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.PostalCode ?? value;
@@ -771,6 +805,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage,
               SAPObjectID,
               Description,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.PhoneNumber ?? value;
@@ -817,6 +853,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage,
               SAPObjectID,
               Description,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.Amount ?? value;
@@ -863,6 +901,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage,
               SAPObjectID,
               Description,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.Currency ?? value;
@@ -909,6 +949,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage,
               SAPObjectID,
               Description,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.InvoiceNumbers ?? value;
@@ -955,6 +997,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage,
               SAPObjectID,
               Description,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.PaymentId ?? value;
@@ -1001,6 +1045,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage,
               SAPObjectID,
               Description,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.createdAt ?? value;
@@ -1047,6 +1093,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage,
               SAPObjectID,
               Description,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.PaymentStatus ?? value;
@@ -1093,6 +1141,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage,
               SAPObjectID,
               Description,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.CurrencyDecimalDigit ?? value;
@@ -1141,6 +1191,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage,
               SAPObjectID,
               Description,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.BeforePaymentSAPstatus ?? value;
@@ -1189,6 +1241,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage,
               SAPObjectID,
               Description,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.AfterPaymentSAPstatus ?? value;
@@ -1237,6 +1291,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage: value,
               SAPObjectID,
               Description,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.SAPErrorMessage ?? value;
@@ -1283,6 +1339,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage,
               SAPObjectID: value,
               Description,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.SAPObjectID ?? value;
@@ -1329,6 +1387,8 @@ export default function PaymentDetailsUpdateForm(props) {
               SAPErrorMessage,
               SAPObjectID,
               Description: value,
+              PaymentMailStatus,
+              SAPMailStatus,
             };
             const result = onChange(modelFields);
             value = result?.Description ?? value;
@@ -1342,6 +1402,104 @@ export default function PaymentDetailsUpdateForm(props) {
         errorMessage={errors.Description?.errorMessage}
         hasError={errors.Description?.hasError}
         {...getOverrideProps(overrides, "Description")}
+      ></TextField>
+      <TextField
+        label="Payment mail status"
+        isRequired={false}
+        isReadOnly={false}
+        value={PaymentMailStatus}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              FirstName,
+              LastName,
+              CompanyName,
+              Email,
+              AddressLine1,
+              AddressLine2,
+              Country,
+              State,
+              City,
+              PostalCode,
+              PhoneNumber,
+              Amount,
+              Currency,
+              InvoiceNumbers,
+              PaymentId,
+              createdAt,
+              PaymentStatus,
+              CurrencyDecimalDigit,
+              BeforePaymentSAPstatus,
+              AfterPaymentSAPstatus,
+              SAPErrorMessage,
+              SAPObjectID,
+              Description,
+              PaymentMailStatus: value,
+              SAPMailStatus,
+            };
+            const result = onChange(modelFields);
+            value = result?.PaymentMailStatus ?? value;
+          }
+          if (errors.PaymentMailStatus?.hasError) {
+            runValidationTasks("PaymentMailStatus", value);
+          }
+          setPaymentMailStatus(value);
+        }}
+        onBlur={() =>
+          runValidationTasks("PaymentMailStatus", PaymentMailStatus)
+        }
+        errorMessage={errors.PaymentMailStatus?.errorMessage}
+        hasError={errors.PaymentMailStatus?.hasError}
+        {...getOverrideProps(overrides, "PaymentMailStatus")}
+      ></TextField>
+      <TextField
+        label="Sap mail status"
+        isRequired={false}
+        isReadOnly={false}
+        value={SAPMailStatus}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              FirstName,
+              LastName,
+              CompanyName,
+              Email,
+              AddressLine1,
+              AddressLine2,
+              Country,
+              State,
+              City,
+              PostalCode,
+              PhoneNumber,
+              Amount,
+              Currency,
+              InvoiceNumbers,
+              PaymentId,
+              createdAt,
+              PaymentStatus,
+              CurrencyDecimalDigit,
+              BeforePaymentSAPstatus,
+              AfterPaymentSAPstatus,
+              SAPErrorMessage,
+              SAPObjectID,
+              Description,
+              PaymentMailStatus,
+              SAPMailStatus: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.SAPMailStatus ?? value;
+          }
+          if (errors.SAPMailStatus?.hasError) {
+            runValidationTasks("SAPMailStatus", value);
+          }
+          setSAPMailStatus(value);
+        }}
+        onBlur={() => runValidationTasks("SAPMailStatus", SAPMailStatus)}
+        errorMessage={errors.SAPMailStatus?.errorMessage}
+        hasError={errors.SAPMailStatus?.hasError}
+        {...getOverrideProps(overrides, "SAPMailStatus")}
       ></TextField>
       <Flex
         justifyContent="space-between"
