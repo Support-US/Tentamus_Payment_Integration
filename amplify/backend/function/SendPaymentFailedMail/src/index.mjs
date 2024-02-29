@@ -5,7 +5,7 @@ const sesClient = new SESClient({ region: process.env.REGION });
 const dynamoDB = new AWS.DynamoDB.DocumentClient({ region: process.env.REGION });
 const client = new DynamoDBClient({ region: process.env.REGION });
 const PaymentDetailsTableName = `PaymentDetails-4mqwuuijsrbx5p6qtibxxchbsq-dev`;
-
+  
 export const handler = async (event) => {
     console.log(`Request EVENT: ${JSON.stringify(event)}`);
 
@@ -15,9 +15,11 @@ export const handler = async (event) => {
 
         if (!paymentFailedDetails || paymentFailedDetails.length === 0) {
             console.log("No payment failed details in the database.");
-            return { statusCode: 200, body: 'No payment failed details in the database.' };
+            // return { statusCode: 200, body: 'No payment failed details in the database.' };
         }
+        
         try {
+            
             const sendEmailResponse = await sendPaymentFailedEmail(paymentFailedDetails);
             console.log(`Email sent to Response:`, sendEmailResponse);
 
@@ -57,18 +59,24 @@ export const handler = async (event) => {
     }
 
     async function getPaymentFailedDetails() {
-        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0); // Set hours to midnight for accurate date comparison
+        console.log("currentDate",currentDate);
+        const targetDate = new Date(currentDate);
+        targetDate.setDate(currentDate.getDate() - 1); // Set to the previous day 
+        console.log("targetDate",targetDate);
         
         const params = {
             TableName: PaymentDetailsTableName,
-            FilterExpression: "#PaymentStatus = :PaymentStatus AND #createdAt >= :twentyFourHoursAgo",
+            FilterExpression: "#PaymentStatus = :PaymentStatus AND #createdAt >= :targetDate AND #createdAt < :currentDate",
             ExpressionAttributeNames: {
                 "#PaymentStatus": "PaymentStatus",
                 "#createdAt": "createdAt"
             },
             ExpressionAttributeValues: {
                 ":PaymentStatus": "Failed",
-                ":twentyFourHoursAgo": twentyFourHoursAgo.toISOString()
+                ":targetDate": targetDate.toISOString(),
+                ":currentDate": currentDate.toISOString(),
             },
         };
 
@@ -96,17 +104,27 @@ export const handler = async (event) => {
     }
 
     async function getSAPUpdationFailedDetails() {
-        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0); // Set hours to midnight for accurate date comparison
+        console.log("currentDate",currentDate);
+        const targetDate = new Date(currentDate);
+        targetDate.setDate(currentDate.getDate() - 1); // Set to the previous day (23/02/2024)
+        console.log("targetDate",targetDate);
+
+
         const params = {
             TableName: PaymentDetailsTableName,
-            FilterExpression: "attribute_exists(#SAPErrorMessage) AND #SAPErrorMessage <> :Empty AND #createdAt >= :twentyFourHoursAgo",
+             FilterExpression: "attribute_exists(#SAPErrorMessage) AND #SAPErrorMessage <> :Empty AND #createdAt >= :targetDate AND #createdAt < :currentDate",
             ExpressionAttributeNames: {
                 "#SAPErrorMessage": "SAPErrorMessage",
                 "#createdAt": "createdAt",
             },
             ExpressionAttributeValues: {
                 ":Empty": "",
-                ":twentyFourHoursAgo": twentyFourHoursAgo.toISOString(),
+                ":targetDate": targetDate.toISOString(),
+                ":currentDate": currentDate.toISOString(),
+                
             },
         };
 
@@ -146,14 +164,17 @@ export const handler = async (event) => {
                 emailTransactionsMap.get(Email).push({ id, Description, FirstName, LastName, createdAt });
             }
             
-            for (const [email, transactions] of emailTransactionsMap) {
-                const transactionList = transactions
-                    .map(({ id, Description, createdAt }) => `<tr><td>${createdAt}</td><td>${Description}</td><td>${id}</td></tr>`)
-                    .join('');
-
+             for (const [email, transactions] of emailTransactionsMap) {
+                          const transactionList = transactions.map(({ id, Description, createdAt }, index) =>
+                            `<tr style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: ${index % 2 === 0 ? '#f8f9fa' : '#e2e6ea'};">
+                              <td style="padding: 12px;">${createdAt}</td>
+                              <td style="padding: 12px;">${Description}</td>
+                              <td style="padding: 12px;">${id}</td>
+                            </tr>`
+                          ).join('');
                 const firstName = transactions[0].FirstName; // Assuming the same FirstName for all transactions
                 const lastName = transactions[0].LastName;
-
+                
                 const params = {
                     Destination: { ToAddresses: [email] },
                     Message: {
@@ -161,106 +182,43 @@ export const handler = async (event) => {
                             Html: {
                                 Charset: 'UTF-8',
                                 Data: `
-                <html lang="en">
-                  <head>
-                    <meta charset="UTF-8" />
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                    <title>Payment failure summary</title>
-                    <style>
-                      body {
-                        font-family: "Roboto", sans-serif;
-                        margin: 0;
-                        padding: 0;
-                        background-color: #f8f9fa;
-                      }
-                      .container {
-                        max-width: 800px;
-                        margin: 20px auto;
-                        padding: 20px;
-                        background-color: #fff;
-                        border-radius: 8px;
-                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                      }
-                      .heading {
-                        text-align: center;
-                        font-size: 15px;
-                        color: red;
-                        background-color: #fce4ec;
-                        padding: 1px;
-                        border-radius: 8px;
-                      }
-                      table {
-                        width: 100%;
-                        border-collapse: collapse;
-                        margin-top: 20px;
-                      }
-                      th,
-                      td {
-                        padding: 12px;
-                        text-align: left;
-                        border-bottom: 1px solid #dee2e6;
-                      }
-                      th {
-                        background-color: #007bff;
-                        color: #fff;
-                      }
-                      td {
-                        background-color: #f8f9fa;
-                      }
-                      tr:nth-child(even) td {
-                        background-color: #e2e6ea;
-                      }
-                      p {
-                        margin-bottom: 20px;
-                      }
-                      .footer {
-                        text-align: center;
-                        background-color: #fff9c4;
-                        border-radius: 8px;
-                        padding: 20px;
-                        margin-top: 20px;
-                      }
-                      .footer p {
-                        margin: 0;
-                        font-size: 14px;
-                        color: #333;
-                      }
-                    </style>
-                  </head>
-                  <body>
-                    <div class="container">
-                      <div class="heading">
-                        <h2>Payment Failed Summary</h2>
-                      </div>
-                      <p>Hi ${firstName} ${lastName},</p>
-                      <p>
-                        I hope this message finds you well. I wanted to take a moment to provide
-                        you with a summary of recent payment failures in transactions that have
-                        occurred on your end.
-                      </p>
-                      <table>
-                        <thead>
-                          <tr>
-                            <th>Date</th>
-                            <th>Description</th>
-                            <th>Transaction ID</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          ${transactionList}
-                        </tbody>
-                      </table>
-                      <div class="footer">
-                        <p>
-                          If you have any questions or concerns, feel free to contact our
-                          Computop support team at
-                          <a href="mailto:helpdesk@computop.com"> helpdesk@computop.com </a>
-                        </p>
-                      </div>
-                    </div>
-                  </body>
-                </html>
-              `,
+                                    <html lang="en">
+                                        <head>
+                                          <meta charset="UTF-8">
+                                          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                          <title>Payment failure summary</title>
+                                        </head>
+                                        <body style="font-family: 'Roboto', sans-serif; margin: 0; padding: 0; ">
+                                              <div class="container" style="max-width: 600px; margin: 20px auto; padding: 20px; background-color: #f8f9fa; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                                                <div class="heading" style="text-align: center; font-size: 18px; color: red; background-color: #fce4ec; padding: 8px; border-radius: 8px;">
+                                                  <h2 style="margin: 0;">Payment Failed Summary</h2>
+                                                </div>
+                                                    <p style="margin-bottom: 20px;">Hi ${firstName} ${lastName},</p>
+                                                    <p style="margin-bottom: 20px;">
+                                                      hope this mail finds you well. We take a moment to summarise the list of recent payment transaction failures that occurred at your end.
+                                                </p>
+                                                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                                                          <thead>
+                                                            <tr>
+                                                              <th style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: #007bff; color: #fff;">Date</th>
+                                                              <th style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: #007bff; color: #fff;">Description</th>
+                                                              <th style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: #007bff; color: #fff;">Transaction ID</th>
+                                                            </tr>
+                                                          </thead>
+                                                          <tbody>
+                                                            ${transactionList}
+                                                          </tbody>
+                                                            </table>
+                                                            <div class="footer" style="text-align: center; background-color: #fff9c4; border-radius: 8px; padding: 12px; margin-top: 20px;">
+                                                      <p style="margin: 0; font-size: 12px; color: #333;">
+                                                        If you have any questions or concerns, feel free to contact our Computop support team at
+                                                       <a href="mailto:helpdesk@computop.com" style="color:blueviolet; text-decoration: none;">helpdesk@computop.com</a>
+                                                      </p>
+                                                        </div>
+                                                      </div>
+                                                    </body>
+                                                    </html>
+                                                  `,
                             },
                         },
                         Subject: {
@@ -271,7 +229,7 @@ export const handler = async (event) => {
                     Source: 'noreply-procustomer@nipurnait.com',
                 };
 
-                const response = await sesClient.send(new SendEmailCommand(params));
+                const response = await sesClient.send(new SendEmailCommand(params)); 
                 // Store the response in the array
                 emailResponses.push({
                     email: email,
@@ -302,134 +260,73 @@ export const handler = async (event) => {
                 }
                 
                 emailTransactionsMap.get(Email).push({ id, FailureReason , createdAt });
+                console.log("check",id, FailureReason , createdAt);
             }
             
             // Send summary email for each unique email address and transaction ID
             for (const [email, transactions] of emailTransactionsMap) {
-                const transactionList = transactions
-                .map(({ id, FailureReason, createdAt }) => `<tr><td>${createdAt}</td><td>${FailureReason.ErrorMessage}</td><td>${id}</td></tr>`)
-                .join('');
-                    const params = {
+                        const transactionList = transactions .map(({ id, FailureReason, createdAt }, index) =>
+                        `<tr style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: ${index % 2 === 0 ? '#f8f9fa' : '#e2e6ea'};">
+                            <td style="padding: 12px;">${createdAt}</td>
+                            <td style="padding: 12px;">${FailureReason.ErrorMessage}</td>
+                            <td style="padding: 12px;">${id}</td>
+                        </tr>`
+                        ) .join('');
+                
+                    const params = {  
                         Destination: { ToAddresses: [email] },
                         Message: {
                             Body: {
                                 Html: {
                                     Charset: 'UTF-8',
                                     Data: `<html lang="en">
-                                               <head>
-                                                <meta charset="UTF-8" />
-                                                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                                                <title>Document</title>
-                                                <style>
-                                                  body {
-                                                    font-family: "Roboto", sans-serif;
-                                                    margin: 0;
-                                                    padding: 0;
-                                                    background-color: #f2f2f2;
-                                                  }
-                                                        .highlight {
-                                                            color: #007640;
-                                                          }
-                                                        table {
-                                                            width: 100%;
-                                                            border-collapse: collapse;
-                                                            margin-top: 20px;
-                                                          }
-                                                          th,
-                                                          td {
-                                                            padding: 12px;
-                                                            text-align: left;
-                                                            border-bottom: 1px solid #dee2e6;
-                                                          }
-                                                          th {
-                                                            background-color: #007bff;
-                                                            color: #fff;
-                                                          }
-                                                          td {
-                                                            background-color: #f8f9fa;
-                                                          }
-                                                          tr:nth-child(even) td {
-                                                            background-color: #e2e6ea;
-                                                          }
-
-                                                  .error {
-                                                    text-align: center;
-                                                    background-color: #fff9c4;
-                                                    border-radius: 8px;
-                                                    padding: 10px;
-                                                    margin-bottom: 20px;
-                                                  }
-                                            
-                                                  h2 {
-                                                    margin: 0;
-                                                    font-size: 24px;
-                                                    color: red;
-                                                  }
-                                            
-                                                  .footer {
-                                                    text-align: center;
-                                                    background-color: #e3f2fd;
-                                                    border-radius: 8px;
-                                                    padding: 20px;
-                                                    margin-top: 20px;
-                                                  }
-                                            
-                                                  .footer p {
-                                                    margin: 0;
-                                                    font-size: 15px;
-                                                    color: #333;
-                                                  }
-                                                </style>
-                                                <link
-                                                  href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
-                                                  rel="stylesheet"
-                                                />
-                                              </head>
-                                              <body>
-                                                <table
-                                                  role="presentation"
-                                                  cellspacing="0"
-                                                  cellpadding="0"
-                                                  border="0"
-                                                  align="center"
-                                                >
-                                                  <tr>
-                                                    <td>
-                                                      <div class="error">
-                                                        <h2>SAP Updation Failed!</h2>
-                                                      </div>
-                                            
-                                                      <div>
-                                                        <p>
-                                                          Hi,
-                                                          <span class="highlight">Analytical Food Laboratories (AFL)</span>
-                                                        </p>
-                                                        <p>
-                                                    I hope this message finds you well. I wanted to take a moment to
-                                                    provide you with details regarding the failed SAP update.your payment 
-                                                    process is completed but sap updation was failed.
-                                                  </p>
-                                                </div>
-                                                <table>
-                                                  <thead>
-                                                  <tr>
-                                                        <th>Date</th>
-                                                        <th>Failure Reason</th>
-                                                        <th>Transaction ID</th>
-                                                      </tr>
-                                                    </thead>
-                                                  <tbody>
-                                                    ${transactionList}
-                                              </tbody>
-                                            </table>
-                                            <div class="footer">
-                                              <p>
-                                                If you have any questions or concerns, feel free to contact your
-                                                SAP team.
-                                              </p>
+                                      <head>
+                                        <meta charset="UTF-8" />
+                                        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                                        <title>SAP Updation Failed</title>
+                                        </head>
+                                        <body>
+                                        <body style="font-family: 'Roboto', sans-serif; margin: 0; padding: 0;">
+                                            <div class="container" style="max-width: 700px; margin: 20px auto; padding: 20px; background-color: #f8f9fa; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                                            <div class="heading" style="text-align: center; font-size: 18px; color: red; background-color: #fce4ec; padding: 8px; border-radius: 8px;">
+                                                <h2 style="margin: 0;">SAP Updation Failed!</h2>
+                                             </div>      
+                                       
+                                              <div>
+                                                <p>
+                                                  Hi,
+                                                  <span style="color: #007640; font-weight: bold;">Analytical Food Laboratories (AFL)</span>
+                                    
+                                                </p>
+                                                <p>
+                                                  Hope this mail finds you well. We take a moment to provide you the
+                                                  details regarding failed SAP payment update. Your payment process is
+                                                  completed but sap update failed for the listed transaction below
+                                                </p>
                                             </div>
-                                          </body>
-                                        </html>
+                                              
+                                              <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                                                <thead>
+                                                  <tr>
+                                                    <th style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: #007bff; color: #fff;">Date</th>
+                                                    <th style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: #007bff; color: #fff;">Description</th>
+                                                    <th style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: #007bff; color: #fff;">Transaction ID</th>
+                                                  </tr>
+                                                </thead>
+                                                <tbody>
+                                                    ${transactionList}     
+                                                </tbody>
+                                          </table>
+                                    
+                                      <div class="footer" style="text-align: center; background-color: #fff9c4; border-radius: 8px; padding: 15px; margin-top: 20px;">
+                                            <p style="margin: 0; font-size: 15px; color: #333;">
+                                              If you have any questions or concerns, feel free to contact your SAP
+                                              team.
+                                            </p>
+                                          </div>
+                                        </div>
+                                      </body>
+                                    </html>
                                       `,
                                 },
                             },
