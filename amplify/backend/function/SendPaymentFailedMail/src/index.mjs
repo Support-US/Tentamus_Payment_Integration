@@ -5,7 +5,7 @@ const sesClient = new SESClient({ region: process.env.REGION });
 const dynamoDB = new AWS.DynamoDB.DocumentClient({ region: process.env.REGION });
 const client = new DynamoDBClient({ region: process.env.REGION });
 const PaymentDetailsTableName = `PaymentDetails-4mqwuuijsrbx5p6qtibxxchbsq-dev`;
-  
+
 export const handler = async (event) => {
     console.log(`Request EVENT: ${JSON.stringify(event)}`);
 
@@ -17,9 +17,9 @@ export const handler = async (event) => {
             console.log("No payment failed details in the database.");
             // return { statusCode: 200, body: 'No payment failed details in the database.' };
         }
-        
+
         try {
-            
+
             const sendEmailResponse = await sendPaymentFailedEmail(paymentFailedDetails);
             console.log(`Email sent to Response:`, sendEmailResponse);
 
@@ -31,7 +31,7 @@ export const handler = async (event) => {
         } catch (error) {
             console.error(`Error sending email `, error);
         }
-        
+
         const sapUpdationFailedDetails = await getSAPUpdationFailedDetails();
         console.log("SAPUpdationFailedDetails :", sapUpdationFailedDetails);
 
@@ -60,12 +60,12 @@ export const handler = async (event) => {
 
     async function getPaymentFailedDetails() {
         const currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0); // Set hours to midnight for accurate date comparison
-        console.log("currentDate",currentDate);
+        currentDate.setHours(12, 0, 0, 0); // Set hours to midnight for accurate date comparison
+        console.log("currentDate", currentDate);
         const targetDate = new Date(currentDate);
         targetDate.setDate(currentDate.getDate() - 1); // Set to the previous day 
-        console.log("targetDate",targetDate);
-        
+        console.log("targetDate", targetDate);
+
         const params = {
             TableName: PaymentDetailsTableName,
             FilterExpression: "#PaymentStatus = :PaymentStatus AND #createdAt >= :targetDate AND #createdAt < :currentDate",
@@ -104,18 +104,18 @@ export const handler = async (event) => {
     }
 
     async function getSAPUpdationFailedDetails() {
-        
+
         const currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0); // Set hours to midnight for accurate date comparison
-        console.log("currentDate",currentDate);
+        currentDate.setHours(12, 0, 0, 0); // Set hours to midnight for accurate date comparison
+        console.log("currentDate", currentDate);
         const targetDate = new Date(currentDate);
         targetDate.setDate(currentDate.getDate() - 1); // Set to the previous day (23/02/2024)
-        console.log("targetDate",targetDate);
+        console.log("targetDate", targetDate);
 
 
         const params = {
             TableName: PaymentDetailsTableName,
-             FilterExpression: "attribute_exists(#SAPErrorMessage) AND #SAPErrorMessage <> :Empty AND #createdAt >= :targetDate AND #createdAt < :currentDate",
+            FilterExpression: "attribute_exists(#SAPErrorMessage) AND #SAPErrorMessage <> :Empty AND #createdAt >= :targetDate AND #createdAt < :currentDate",
             ExpressionAttributeNames: {
                 "#SAPErrorMessage": "SAPErrorMessage",
                 "#createdAt": "createdAt",
@@ -124,13 +124,13 @@ export const handler = async (event) => {
                 ":Empty": "",
                 ":targetDate": targetDate.toISOString(),
                 ":currentDate": currentDate.toISOString(),
-                
+
             },
         };
 
         try {
             const data = await dynamoDB.scan(params).promise();
-            console.log("Response of SAPUpdationDetails From DynamoDB : ", data.Items.length );
+            console.log("Response of SAPUpdationDetails From DynamoDB : ", data.Items.length);
             // Modify the data to fit your desired format
             const SApUpdationFailedDetails = data.Items.map(item => ({
                 id: item.id,
@@ -149,39 +149,24 @@ export const handler = async (event) => {
     }
 
     async function sendPaymentFailedEmail(paymentFailedDetails) {
-        const emailResponses = [];
         try {
-            // Create a map to aggregate transactions by email
-            const emailTransactionsMap = new Map();
 
-            // Aggregate transactions by email
-            for (const paymentFailedDetail of paymentFailedDetails) {
-                const { id, Description, Email, FirstName, LastName, createdAt } = paymentFailedDetail;
 
-                if (!emailTransactionsMap.has(Email)) {
-                    emailTransactionsMap.set(Email, []);
-                }
-                emailTransactionsMap.get(Email).push({ id, Description, FirstName, LastName, createdAt });
-            }
-            
-             for (const [email, transactions] of emailTransactionsMap) {
-                          const transactionList = transactions.map(({ id, Description, createdAt }, index) =>
-                            `<tr style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: ${index % 2 === 0 ? '#f8f9fa' : '#e2e6ea'};">
+            const transactionList = paymentFailedDetails.map(({ id, Description, createdAt }, index) =>
+                `<tr style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: ${index % 2 === 0 ? '#f8f9fa' : '#e2e6ea'};">
                               <td style="padding: 12px;">${createdAt}</td>
                               <td style="padding: 12px;">${Description}</td>
                               <td style="padding: 12px;">${id}</td>
                             </tr>`
-                          ).join('');
-                const firstName = transactions[0].FirstName; // Assuming the same FirstName for all transactions
-                const lastName = transactions[0].LastName;
-                
-                const params = {
-                    Destination: { ToAddresses: [email] },
-                    Message: {
-                        Body: {
-                            Html: {
-                                Charset: 'UTF-8',
-                                Data: `
+            ).join('');
+
+            const params = {
+                Destination: { ToAddresses: ["meikandan.kg@nipurnait.com"] },
+                Message: {
+                    Body: {
+                        Html: {
+                            Charset: 'UTF-8',
+                            Data: `
                                     <html lang="en">
                                         <head>
                                           <meta charset="UTF-8">
@@ -193,7 +178,7 @@ export const handler = async (event) => {
                                                 <div class="heading" style="text-align: center; font-size: 18px; color: red; background-color: #fce4ec; padding: 8px; border-radius: 8px;">
                                                   <h2 style="margin: 0;">Payment Failed Summary</h2>
                                                 </div>
-                                                    <p style="margin-bottom: 20px;">Hi ${firstName} ${lastName},</p>
+                                                    <p style="margin-bottom: 20px;">Hi Analytical Food Laboratories (AFL)</p>
                                                     <p style="margin-bottom: 20px;">
                                                       hope this mail finds you well. We take a moment to summarise the list of recent payment transaction failures that occurred at your end.
                                                 </p>
@@ -212,33 +197,34 @@ export const handler = async (event) => {
                                                             <div class="footer" style="text-align: center; background-color: #fff9c4; border-radius: 8px; padding: 12px; margin-top: 20px;">
                                                       <p style="margin: 0; font-size: 12px; color: #333;">
                                                         If you have any questions or concerns, feel free to contact our Computop support team at
-                                                       <a href="mailto:helpdesk@computop.com" style="color:blueviolet; text-decoration: none;">helpdesk@computop.com</a>
+                                                      <a href="mailto:helpdesk@computop.com" style="color:blueviolet; text-decoration: none;">helpdesk@computop.com</a>
                                                       </p>
                                                         </div>
                                                       </div>
                                                     </body>
                                                     </html>
                                                   `,
-                            },
-                        },
-                        Subject: {
-                            Charset: 'UTF-8',
-                            Data: 'Failed Payment Summary',
                         },
                     },
-                    Source: 'noreply-procustomer@nipurnait.com',
-                };
+                    Subject: {
+                        Charset: 'UTF-8',
+                        Data: 'Failed Payment Summary',
+                    },
+                },
+                Source: 'noreply-procustomer@nipurnait.com',
+            };
 
-                const response = await sesClient.send(new SendEmailCommand(params)); 
-                // Store the response in the array
-                emailResponses.push({
-                    email: email,
-                    TransID: transactions,
-                    response: response.$metadata.httpStatusCode,
-                });
-            }
+            console.log("Email Params : ", params);
+
+
+            const response = await sesClient.send(new SendEmailCommand(params));
+            const updatedArray = paymentFailedDetails.map(item => ({
+                ...item,
+                statusCode: response.$metadata.httpStatusCode
+            }));
+
             console.log('All summary emails sent successfully.');
-            return emailResponses;
+            return updatedArray;
         } catch (error) {
             console.error('Error sending summary emails:', error);
             throw error;
@@ -246,40 +232,23 @@ export const handler = async (event) => {
     }
 
     async function sendSAPUpdateFailedEmail(sapUpdationFailedDetails) {
-        const emailResponses = [];
+
         try {
-            // Create a map to aggregate transactions by email and transaction ID
-            const emailTransactionsMap = new Map();
+            const transactionList = sapUpdationFailedDetails.map(({ id, FailureReason, createdAt }, index) =>
+                `<tr style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: ${index % 2 === 0 ? '#f8f9fa' : '#e2e6ea'};">
+                              <td style="padding: 12px;">${createdAt}</td>
+                              <td style="padding: 12px;">${FailureReason.ErrorMessage}</td>
+                              <td style="padding: 12px;">${id}</td>
+                            </tr>`
+            ).join('');
 
-            // Aggregate transactions by email and transaction ID
-            for (const SAPUpdationFailedDetail of sapUpdationFailedDetails) {
-                const { id, FailureReason, Email, createdAt } = SAPUpdationFailedDetail;
-
-                if (!emailTransactionsMap.has(Email)) {
-                    emailTransactionsMap.set(Email, [] );
-                }
-                
-                emailTransactionsMap.get(Email).push({ id, FailureReason , createdAt });
-                console.log("check",id, FailureReason , createdAt);
-            }
-            
-            // Send summary email for each unique email address and transaction ID
-            for (const [email, transactions] of emailTransactionsMap) {
-                        const transactionList = transactions .map(({ id, FailureReason, createdAt }, index) =>
-                        `<tr style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: ${index % 2 === 0 ? '#f8f9fa' : '#e2e6ea'};">
-                            <td style="padding: 12px;">${createdAt}</td>
-                            <td style="padding: 12px;">${FailureReason.ErrorMessage}</td>
-                            <td style="padding: 12px;">${id}</td>
-                        </tr>`
-                        ) .join('');
-                
-                    const params = {  
-                        Destination: { ToAddresses: [email] },
-                        Message: {
-                            Body: {
-                                Html: {
-                                    Charset: 'UTF-8',
-                                    Data: `<html lang="en">
+            const params = {
+                Destination: { ToAddresses: ["meikandan.kg@nipurnait.com"] },
+                Message: {
+                    Body: {
+                        Html: {
+                            Charset: 'UTF-8',
+                            Data: `<html lang="en">
                                       <head>
                                         <meta charset="UTF-8" />
                                         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -328,35 +297,30 @@ export const handler = async (event) => {
                                       </body>
                                     </html>
                                       `,
-                                },
-                            },
-                            Subject: {
-                                Charset: 'UTF-8',
-                                Data: 'SAP Updation Failed',
-                            },
                         },
-                        Source: 'noreply-procustomer@nipurnait.com',
-                    };
-    
-                    try {
-                        let response = await sesClient.send(new SendEmailCommand(params));
-    
-                        // Store the response in the array
-                        emailResponses.push({
-                            email: email,
-                            TransID: transactions,
-                            response: response.$metadata.httpStatusCode,
-                        });
-                        
-                    } catch (error) {
-                        console.error("Error sending SAP Updation Failed email:", error);
-                        // Handle the error as needed
-                    }
-            }
-        
+                    },
+                    Subject: {
+                        Charset: 'UTF-8',
+                        Data: 'Failed Payment Summary',
+                    },
+                },
+                Source: 'noreply-procustomer@nipurnait.com',
+            };
+
+            console.log("Email Params : ", params);
+
+
+            const response = await sesClient.send(new SendEmailCommand(params));
+            const updatedArray = sapUpdationFailedDetails.map(item => ({
+                ...item,
+                statusCode: response.$metadata.httpStatusCode
+            }));
+
 
             console.log("All SAP emails sent successfully.");
-            return emailResponses;
+            return updatedArray;
+
+
         } catch (error) {
             console.error("Error processing SAP Updation Failed details:", error);
             throw error;
@@ -365,62 +329,57 @@ export const handler = async (event) => {
 
     async function UpdateMailStatustoDB(sendEmailResponse) {
         for (let i = 0; i < sendEmailResponse.length; i++) {
-            let transactionsID = sendEmailResponse[i].TransID;
-            for (let j = 0; j < transactionsID.length; j++) {
-                let params;
-                if (sendEmailResponse[i].response == 200) {
+            let params;
+            if (sendEmailResponse[i].statusCode == 200) {
 
-                    params = {
-                        TableName: PaymentDetailsTableName,
-                        Key: {
-                            id: { S: transactionsID[j].id },
-                        },
-                        UpdateExpression: "SET PaymentMailStatus = :newStatus",
-                        ExpressionAttributeValues: {
-                            ":newStatus": { S: "Mail sent Successfully" },
-                        },
-                        ReturnValues: "ALL_NEW",
-                    };
+                params = {
+                    TableName: PaymentDetailsTableName,
+                    Key: {
+                        id: { S: sendEmailResponse[i].id },
+                    },
+                    UpdateExpression: "SET PaymentMailStatus = :newStatus",
+                    ExpressionAttributeValues: {
+                        ":newStatus": { S: "Mail sent Successfully" },
+                    },
+                    ReturnValues: "ALL_NEW",
+                };
 
-                }
-                else {
-                    params = {
-                        TableName: PaymentDetailsTableName,
-                        Key: {
-                            id: { S: transactionsID[j].id },
-                        },
-                        UpdateExpression: "SET PaymentMailStatus = :newStatus",
-                        ExpressionAttributeValues: {
-                            ":newStatus": { S: "Mail sent failed!" },
-                        },
-                        ReturnValues: "ALL_NEW",
-                    };
-
-                }
-
-                const command = new UpdateItemCommand(params);
-                const DBResponse = await client.send(command);
-                console.log("UpdatedDBResponse :", DBResponse);
             }
+            else {
+                params = {
+                    TableName: PaymentDetailsTableName,
+                    Key: {
+                        id: { S: sendEmailResponse[i].id },
+                    },
+                    UpdateExpression: "SET PaymentMailStatus = :newStatus",
+                    ExpressionAttributeValues: {
+                        ":newStatus": { S: "Mail sent failed!" },
+                    },
+                    ReturnValues: "ALL_NEW",
+                };
+
+            }
+
+            const command = new UpdateItemCommand(params);
+            const DBResponse = await client.send(command);
+            console.log("UpdatedDBResponse :", DBResponse);
 
         }
         return sendEmailResponse;
     }
 
     async function UpdateSAPMailStatustoDB(sendEmailResponse) {
-        console.log("DB Send",sendEmailResponse);
-        try{
-            for(let i=0; i< sendEmailResponse.length; i++){
-            let transaction = sendEmailResponse[i].TransID;
-            for(let j=0 ; j< transaction.length ; j++){
+        try {
+            for (let i = 0; i < sendEmailResponse.length; i++) {
+
                 let params;
-                
-                if (sendEmailResponse[i].response == 200) {
+
+                if (sendEmailResponse[i].statusCode == 200) {
 
                     params = {
                         TableName: PaymentDetailsTableName,
                         Key: {
-                            id: { S: transaction[j].id },
+                            id: { S: sendEmailResponse[i].id },
                         },
                         UpdateExpression: "SET SAPMailStatus = :newStatus",
                         ExpressionAttributeValues: {
@@ -434,7 +393,7 @@ export const handler = async (event) => {
                     params = {
                         TableName: PaymentDetailsTableName,
                         Key: {
-                            id: { S: transaction[j].id },
+                            id: { S: sendEmailResponse[i].id },
                         },
                         UpdateExpression: "SET SAPMailStatus = :newStatus",
                         ExpressionAttributeValues: {
@@ -442,24 +401,23 @@ export const handler = async (event) => {
                         },
                         ReturnValues: "ALL_NEW",
                     };
-                    
+
                 }
-                
+
                 const command = new UpdateItemCommand(params);
                 const DBResponse = await client.send(command);
                 console.log("UpdatedDBResponse :", DBResponse);
 
+
             }
+
+            return sendEmailResponse;
         }
-          
-        return sendEmailResponse;     
-        }
-        catch(err){
-            console.error("Error ",err);
+        catch (err) {
+            console.error("Error ", err);
             return err;
         }
     }
-
 
 };
 
