@@ -6,7 +6,7 @@ import { unmarshall } from '@aws-sdk/util-dynamodb';
 
 import axios from 'axios';
 import pkg from 'crypto-js';
-const { HmacSHA256, enc } = pkg;
+const { HmacSHA256, enc } = pkg;  
 
 
 const secretsManager = new AWS.SecretsManager();
@@ -51,7 +51,11 @@ export const handler = async (event) => {
         if (Hmac.trim() === calculatedHMAC.trim()) {
             let response = await CreateData(parsedObject,getObjectID);
             console.log("response :",response); 
-            return response;
+            
+             return {
+            statusCode: 200,
+            body: JSON.stringify({ success: true, message: 'Request processed successfully' }),
+        };
         }
         else{
             console.log("Error : '⚠️HMAC validation failed' ");
@@ -59,15 +63,17 @@ export const handler = async (event) => {
                 statusCode: 403,
                 body: JSON.stringify({ success: false, message: '⚠️HMAC validation failed' }),
             };
-        }         
+        }   
+        
             
     } catch (error) {
         console.error('Error:', error);
 
         return {
-            statusCode: 500,
+            statusCode: 200,
             body: JSON.stringify({ error: 'Internal Server Error' }),
         };
+        
         
     } 
 
@@ -283,6 +289,7 @@ async function UpdateFailurestatus(error,parsedObject,errStatus) {
         throw error;
     }
 } 
+
 };
 
    

@@ -174,8 +174,8 @@ export const handler = async (event) => {
                                           <title>Payment failure summary</title>
                                         </head>
                                         <body style="font-family: 'Roboto', sans-serif; margin: 0; padding: 0; ">
-                                              <div class="container" style="max-width: 600px; margin: 20px auto; padding: 20px; background-color: #f8f9fa; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                                                <div class="heading" style="text-align: center; font-size: 18px; color: red; background-color: #fce4ec; padding: 8px; border-radius: 8px;">
+                                              <div style="max-width: 600px; margin: 20px auto; padding: 20px; background-color: #f8f9fa; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                                                <div style="text-align: center; font-size: 18px; color: red; background-color: #fce4ec; padding: 8px; border-radius: 8px;">
                                                   <h2 style="margin: 0;">Payment Failed Summary</h2>
                                                 </div>
                                                     <p style="margin-bottom: 20px;">Hi Analytical Food Laboratories (AFL)</p>
@@ -194,7 +194,7 @@ export const handler = async (event) => {
                                                             ${transactionList}
                                                           </tbody>
                                                             </table>
-                                                            <div class="footer" style="text-align: center; background-color: #fff9c4; border-radius: 8px; padding: 12px; margin-top: 20px;">
+                                                            <div  style="text-align: center; background-color: #fff9c4; border-radius: 8px; padding: 12px; margin-top: 20px;">
                                                       <p style="margin: 0; font-size: 12px; color: #333;">
                                                         If you have any questions or concerns, feel free to contact our Computop support team at
                                                       <a href="mailto:helpdesk@computop.com" style="color:blueviolet; text-decoration: none;">helpdesk@computop.com</a>
@@ -256,8 +256,8 @@ export const handler = async (event) => {
                                         </head>
                                         <body>
                                         <body style="font-family: 'Roboto', sans-serif; margin: 0; padding: 0;">
-                                            <div class="container" style="max-width: 700px; margin: 20px auto; padding: 20px; background-color: #f8f9fa; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                                            <div class="heading" style="text-align: center; font-size: 18px; color: red; background-color: #fce4ec; padding: 8px; border-radius: 8px;">
+                                            <div  style="max-width: 700px; margin: 20px auto; padding: 20px; background-color: #f8f9fa; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                                            <div  style="text-align: center; font-size: 18px; color: red; background-color: #fce4ec; padding: 8px; border-radius: 8px;">
                                                 <h2 style="margin: 0;">SAP Updation Failed!</h2>
                                              </div>      
                                        
@@ -287,7 +287,7 @@ export const handler = async (event) => {
                                                 </tbody>
                                           </table>
                                     
-                                      <div class="footer" style="text-align: center; background-color: #fff9c4; border-radius: 8px; padding: 15px; margin-top: 20px;">
+                                      <div style="text-align: center; background-color: #fff9c4; border-radius: 8px; padding: 15px; margin-top: 20px;">
                                             <p style="margin: 0; font-size: 15px; color: #333;">
                                               If you have any questions or concerns, feel free to contact your SAP
                                               team.
