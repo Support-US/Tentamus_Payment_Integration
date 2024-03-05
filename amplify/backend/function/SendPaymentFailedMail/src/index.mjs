@@ -11,41 +11,52 @@ export const handler = async (event) => {
 
     try {
         const paymentFailedDetails = await getPaymentFailedDetails();
-        // console.log("PaymentFailedDetails :", paymentFailedDetails);
+       
 
-        if (!paymentFailedDetails || paymentFailedDetails.length === 0) {
+        if (paymentFailedDetails.length != 0) {
+            try {
+        
+                const sendEmailResponse = await sendPaymentFailedEmail(paymentFailedDetails);
+                console.log(`Email sent to Response:`, sendEmailResponse);
+    
+    
+                // update mailsent status
+                const UpdateMailStatus = await UpdateMailStatustoDB(sendEmailResponse);
+                console.log(`Successfully Update MailStatus to DB: `, UpdateMailStatus);
+    
+            } catch (error) {
+                console.error(`Error sending email `, error);
+                return error;
+            }
+        }
+        else{
             console.log("No payment failed details in the database.");
-            // return { statusCode: 200, body: 'No payment failed details in the database.' };
         }
 
-        try {
-
-            const sendEmailResponse = await sendPaymentFailedEmail(paymentFailedDetails);
-            console.log(`Email sent to Response:`, sendEmailResponse);
-
-
-            // update mailsent status
-            const UpdateMailStatus = await UpdateMailStatustoDB(sendEmailResponse);
-            console.log(`Successfully Update MailStatus to DB: `, UpdateMailStatus);
-
-        } catch (error) {
-            console.error(`Error sending email `, error);
-        }
+        
 
         const sapUpdationFailedDetails = await getSAPUpdationFailedDetails();
         console.log("SAPUpdationFailedDetails :", sapUpdationFailedDetails);
 
-        if (!sapUpdationFailedDetails || sapUpdationFailedDetails.length === 0) {
-            console.log("No SAP Updation failed details in the database.");
-            return { statusCode: 200, body: 'No SAP Updation failed details in the database.' };
+        if (sapUpdationFailedDetails.length != 0) {
+            try{
+                const sapUpdateEmailResponse = await sendSAPUpdateFailedEmail(sapUpdationFailedDetails);
+                console.log(`SAP Update Email sent to Response:`, sapUpdateEmailResponse);
+        
+                // update mailsent status
+                const SAPUpdateMailStatus = await UpdateSAPMailStatustoDB(sapUpdateEmailResponse);
+                console.log(`Successfully Update SAPMailStatus to DB: `, SAPUpdateMailStatus);
+            }
+            catch (error) {
+                console.error(`Error sending email `, error);
+                return error;
+            }
+        }
+        else{
+             console.log("No SAP Updation failed details in the database.");
         }
 
-        const sapUpdateEmailResponse = await sendSAPUpdateFailedEmail(sapUpdationFailedDetails);
-        console.log(`SAP Update Email sent to Response:`, sapUpdateEmailResponse);
-
-        // update mailsent status
-        const SAPUpdateMailStatus = await UpdateSAPMailStatustoDB(sapUpdateEmailResponse);
-        console.log(`Successfully Update SAPMailStatus to DB: `, SAPUpdateMailStatus);
+       
 
 
         return { statusCode: 200, body: 'Emails sent successfully.' };
@@ -148,7 +159,8 @@ export const handler = async (event) => {
         }
     }
 
-    async function sendPaymentFailedEmail(paymentFailedDetails) {
+    async function sendPaymentFailedEmail(paymentFailedDetails) { 
+        console.log('paymentFailedDetails:', paymentFailedDetails);
         try {
 
 
@@ -301,7 +313,7 @@ export const handler = async (event) => {
                     },
                     Subject: {
                         Charset: 'UTF-8',
-                        Data: 'Failed Payment Summary',
+                        Data: 'SAP Updation Failed',
                     },
                 },
                 Source: 'noreply-procustomer@nipurnait.com',
