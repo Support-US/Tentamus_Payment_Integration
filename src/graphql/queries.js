@@ -30,6 +30,7 @@ export const getPaymentDetails = /* GraphQL */ `
       Description
       PaymentMailStatus
       SAPMailStatus
+      ClientName
       updatedAt
       __typename
     }
@@ -69,6 +70,7 @@ export const listPaymentDetails = /* GraphQL */ `
         Description
         PaymentMailStatus
         SAPMailStatus
+        ClientName
         updatedAt
         __typename
       }

@@ -20,7 +20,8 @@ export const handler = async (event) => {
 
          let returnData ={
            Amount: getData.Amount,
-           Currency:getData.Currency
+           Currency:getData.Currency,
+           ClientName:getData.ClientName
          }
          return {
              statusCode  : 200,

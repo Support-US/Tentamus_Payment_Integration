@@ -1,5 +1,6 @@
 import awsExports from './aws-exports'
 import CustomerPaymentDetailsForm from './Pages/CustomerPaymentDetails/CustomerPaymentDetailsForm';
+import Landingpage from './Pages/Landingpage/Landingpage';
 import { Amplify } from 'aws-amplify';
 import FailurePage from './Pages/ResultPages/FailurePage';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -17,15 +18,23 @@ function App() {
       children: [
         {
           index: true,
+          element: <Landingpage />,
+        },
+        {
+          path: "/AnalyticalFoodLaboratories",
           element: <CustomerPaymentDetailsForm />,
         },
         {
-          path: "success",
+          path: "/ColumbiaLaboratories",
+          element: <CustomerPaymentDetailsForm />,
+        },
+        {
+          path: "/success",
           element: <SuccessPage />,
         },
         {
-          path: "error",
-          element: <FailurePage />
+          path: "/error",
+          element: <FailurePage />,
         }
       ]
     }

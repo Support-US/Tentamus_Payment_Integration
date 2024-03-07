@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ToastContainer } from 'react-toastify';
 import AFLLogo from "../../images/AFL_Logo.png";
+import CFLLogo from "../../images/CFL_Logo.png"
 import ConfettiEffect from './ConfettiEffect';
 import { showToast } from '../../Components/ToastUtils';
 import CurrencyFormat from '../../Components/CurrencyFormat';
@@ -16,8 +17,14 @@ const SuccessPage = () => {
     payID: "",
     amount: "",
     currency: "",
-    description: ""
+    description: "",
+    clientname: ""
   });
+  const [srcLogo, setSrcLogo] = useState(null);
+  const [companyName, setCompanyName] = useState(null);
+  const [logoStyle, setLogoStyle] = useState({ width: '50px', height: 'auto' });
+
+
   const location = useLocation();
 
   useEffect(() => {
@@ -44,7 +51,17 @@ const SuccessPage = () => {
               description: searchParams.get('Description'),
               amount: responseData.Amount,
               currency: responseData.Currency,
+              clientname: responseData.ClientName
             });
+
+            if (responseData.ClientName === 'Analytical Food Laboratories') {
+              setSrcLogo(AFLLogo);
+              setCompanyName('Analytical Food Laboratories');
+            } else if (responseData.ClientName === 'Columbia Food Laboratories') {
+              setSrcLogo(CFLLogo);
+              setCompanyName('Columbia Food Laboratories');
+              setLogoStyle({ width: '100px', height: 'auto' });
+            }
 
           });
       }
@@ -55,6 +72,8 @@ const SuccessPage = () => {
       console.log("pay", paymentDetails);
     }
   }, [location.search]);
+
+
 
   return (
     <>
@@ -117,7 +136,7 @@ const SuccessPage = () => {
                       disabled
                       style={{ textTransform: "capitalize", fontWeight: 600 }}
                     >
-                      Forwarding to AFL ...
+                      Forwarding to {paymentDetails.clientname === 'Analytical Food Laboratories' ? 'AFL' : paymentDetails.clientname === 'Columbia Food Laboratories' ? 'CFL' : undefined} ...
                     </Button>
                   </>
                   :
@@ -129,20 +148,24 @@ const SuccessPage = () => {
                       startIcon={<ArrowBackOutlined />}
                       style={{ textTransform: "capitalize", fontWeight: 600 }}
                       onClick={() => {
-                        (window.location.href = 'https://www.afltexas.com');
+                        (window.location.href = paymentDetails.clientname === 'Analytical Food Laboratories' ? 'https://www.afltexas.com': paymentDetails.clientname === 'Columbia Food Laboratories' ?'https://www.columbialaboratories.com':undefined);
                         setLoading(true);
                       }
                       }
                     >
-                      Back to AFL
+                      Back to {paymentDetails.clientname === 'Analytical Food Laboratories' ? 'AFL' : paymentDetails.clientname === 'Columbia Food Laboratories' ? 'CFL' : undefined}
                     </Button>
                   </>
               }
             </div>
 
             <div className='mt-5 flex justify-content-center align-items-center gap-3 sm:gap-5' style={{ textAlign: 'center' }}>
-              <img src={AFLLogo} alt="AFL Logo" style={{ width: '50px', height: 'auto' }} />
+              {srcLogo && <img src={srcLogo} style={logoStyle} alt={companyName} />}
             </div>
+
+            {/* <div className='mt-5 flex justify-content-center align-items-center gap-3 sm:gap-5' style={{ textAlign: 'center' }}>
+                <img src={AFLLogo} alt="AFL Logo" style={{ width: '50px', height: 'auto' }} />
+              </div> */}
 
             <div>
               <span style={{
@@ -154,7 +177,7 @@ const SuccessPage = () => {
                 color: '#007640',
                 fontSize: '15px',
               }}>
-                Analytical Food Laboratories
+                {companyName}
               </span>
 
             </div>
@@ -179,3 +202,6 @@ const SuccessPage = () => {
 }
 
 export default SuccessPage;
+
+
+

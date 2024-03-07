@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AFLLogo from "../../images/AFL_Logo.png";
+import CFLLogo from "../../images/CFL_Logo.png"
 import { showToast } from '../../Components/ToastUtils';
 import CurrencyFormat from '../../Components/CurrencyFormat';
 import { Button } from '@mui/material';
@@ -17,17 +18,29 @@ const FailurePage = () => {
     payID: "",
     amount: "",
     currency: "",
-    description: ""
+    description: "",
+    clientname: ""
   });
-  const location = useLocation();
+  const [srcLogo, setSrcLogo] = useState(null);
+  const [companyName, setCompanyName] = useState(null);
+  const [logoStyle, setLogoStyle] = useState({ width: '50px', height: 'auto' });
+
 
   const navigate = useNavigate();
 
   const navigateToCustomerPaymentDetailsForm = () => {
-    navigate('/');
+    if (paymentDetails.clientname === 'Analytical Food Laboratories') {
+      navigate('/AnalyticalFoodLaboratories');
+    } else if (paymentDetails.clientname === 'Columbia Food Laboratories') {
+      navigate('/ColumbiaLaboratories');
+    }
   };
 
+
+  const location = useLocation();
+
   useEffect(() => {
+    console.log("location.search",location.search);
     // Parse URL to get parameters
     const searchParams = new URLSearchParams(location.search);
     console.log("searchparams", searchParams);
@@ -51,7 +64,17 @@ const FailurePage = () => {
               description: searchParams.get('Description'),
               amount: responseData.Amount,
               currency: responseData.Currency,
+              clientname: responseData.ClientName
             });
+
+            if (responseData.ClientName === 'Analytical Food Laboratories') {
+              setSrcLogo(AFLLogo);
+              setCompanyName('Analytical Food Laboratories');
+            } else if (responseData.ClientName === 'Columbia Food Laboratories') {
+              setSrcLogo(CFLLogo);
+              setCompanyName('Columbia Food Laboratories');
+              setLogoStyle({ width: '100px', height: 'auto' });
+            }
 
           });
       }
@@ -84,7 +107,7 @@ const FailurePage = () => {
               </svg>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '-15rem', marginBottom: '3rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '-13rem', marginBottom: '3rem' }}>
               <Button
                 variant='outlined'
                 color='error'
@@ -135,7 +158,7 @@ const FailurePage = () => {
                       disabled
                       style={{ textTransform: "capitalize", fontWeight: 600 }}
                     >
-                      Forwarding to AFL ...
+                      Forwarding to {paymentDetails.clientname === 'Analytical Food Laboratories' ? 'AFL' : paymentDetails.clientname === 'Columbia Food Laboratories' ? 'CFL' : undefined} ...
                     </Button>
                   </>
                   :
@@ -147,22 +170,25 @@ const FailurePage = () => {
                       startIcon={<ArrowBackOutlined />}
                       style={{ textTransform: "capitalize", fontWeight: 600 }}
                       onClick={() => {
-                        (window.location.href = 'https://www.afltexas.com');
+                        (window.location.href = paymentDetails.clientname === 'Analytical Food Laboratories' ? 'https://www.afltexas.com': paymentDetails.clientname === 'Columbia Food Laboratories' ?'https://www.columbialaboratories.com':undefined);
                         setLoading(true);
                       }
                       }
                     >
-                      Back to AFL
+                     Back to {paymentDetails.clientname === 'Analytical Food Laboratories' ? 'AFL' : paymentDetails.clientname === 'Columbia Food Laboratories' ? 'CFL' : undefined}
                     </Button>
                   </>
               }
             </div>
 
-
-
             <div className='mt-5 flex justify-content-center align-items-center gap-3 sm:gap-5' style={{ textAlign: 'center' }}>
-              <img src={AFLLogo} alt="AFL Logo" style={{ width: '50px', height: 'auto' }} />
+              {srcLogo && <img src={srcLogo} style={logoStyle} alt={companyName} />}
             </div>
+
+
+            {/* <div className='mt-5 flex justify-content-center align-items-center gap-3 sm:gap-5' style={{ textAlign: 'center' }}>
+              <img src={AFLLogo} alt="AFL Logo" style={{ width: '50px', height: 'auto' }} />
+            </div> */}
 
             <div>
               <span style={{
@@ -174,7 +200,7 @@ const FailurePage = () => {
                 color: '#007640',
                 fontSize: '15px',
               }}>
-                Analytical Food Laboratories
+              {companyName} 
               </span>
 
             </div>

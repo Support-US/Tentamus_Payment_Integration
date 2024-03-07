@@ -13,7 +13,7 @@ import { selectFormData, updateFormData } from '../../Store/Slice/formSlice';
 // import CryptoJS from 'crypto-js';
 import MuiPhoneNumber from 'mui-phone-number';
 import AFLLogo from "../../images/AFL_Logo.png";
-// import mylogo from "../../images/3.png";
+import CFLLogo from "../../images/CFL_Logo.png"
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { showToast } from '../../Components/ToastUtils';
@@ -94,6 +94,31 @@ const CustomerPaymentDetailsForm = () => {
       );
     }
   }, [paymentDetails]);
+
+  const [srcLogo, setSrcLogo] = useState(null);
+  const [companyName, setCompanyName] = useState(null);
+  const [logoStyle, setLogoStyle] = useState({ width: '50px', height: 'auto' });
+  const [textStyle, setTextStyle] = useState({});
+  const [clientname,setClientName]= useState("");
+
+  useEffect(() => {
+    const path = window.location.pathname;
+    console.log("path", path);
+    const companyNameParam = path.split("/")[1];
+
+    if (companyNameParam === 'AnalyticalFoodLaboratories') {
+      setSrcLogo(AFLLogo);
+      setCompanyName('Analytical Food Laboratories');
+      setTextStyle({ marginTop: '0.5rem', textAlign: 'center' });
+      setClientName("Analytical Food Laboratories");
+    } else if (companyNameParam === 'ColumbiaLaboratories') {
+      setSrcLogo(CFLLogo);
+      setCompanyName('Columbia Food Laboratories');
+      setLogoStyle({ width: '100px', height: 'auto' });
+      setTextStyle({ marginTop: '1rem', textAlign: 'center' });
+      setClientName("Columbia Food Laboratories");
+    }
+  }, []);
 
   const validateFirstName = (value) => {
 
@@ -233,9 +258,17 @@ const CustomerPaymentDetailsForm = () => {
     const { MerchantID, EncryptedString, TransactionID, dataLength } = paymentDetails;
     const { FirstName, LastName, Currency, AddressLine1, City, State, PhoneNumber, PostalCode } = initialValues;
     // const backgroundURL = 'https://www.tentamus.com/wp-content/uploads/2021/03/about_us_tentamus_fahnen_IMG_0722-2799x1679.jpg';
-
     setLoading(false);
-    window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataLength}&Data=${EncryptedString}&CustomField1=${CurrencyFormat(amountInUSD)} ${Currency}&CustomField3=https://www.afltexas.com/wp-content/uploads/2022/07/AFL_GroupTag.svg&CustomField4=${combinedInvoices}&CustomField5=${FirstName} ${LastName}%0A ${AddressLine1}%0A ${City}%0A ${State}%0A ${PostalCode}%0A ${countryName}%0A ${PhoneNumber}&CustomField7=${TransactionID}`;
+
+    const customField3 =
+      companyName === 'Analytical Food Laboratories'
+        ? 'https://www.afltexas.com/wp-content/uploads/2022/07/AFL_GroupTag.svg'
+        : companyName === 'Columbia Food Laboratories'
+          ? 'https://www.columbialaboratories.com/wp-content/uploads/2022/09/CL_GroupTag_horizontal.svg'
+          : undefined;
+
+    window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataLength}&Data=${EncryptedString}&CustomField1=${CurrencyFormat(amountInUSD)} ${Currency}&CustomField3=${customField3}&CustomField4=${combinedInvoices}&CustomField5=${FirstName} ${LastName}%0A ${AddressLine1}%0A ${City}%0A ${State}%0A ${PostalCode}%0A ${countryName}%0A ${PhoneNumber}&CustomField7=${TransactionID}`;
+    // window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataLength}&Data=${EncryptedString}&CustomField1=${CurrencyFormat(amountInUSD)} ${Currency}&CustomField3=https://www.afltexas.com/wp-content/uploads/2022/07/AFL_GroupTag.svg&CustomField4=${combinedInvoices}&CustomField5=${FirstName} ${LastName}%0A ${AddressLine1}%0A ${City}%0A ${State}%0A ${PostalCode}%0A ${countryName}%0A ${PhoneNumber}&CustomField7=${TransactionID}`;
   }
 
   const postPaymentDetails = async (data, resetForm) => {
@@ -337,421 +370,430 @@ const CustomerPaymentDetailsForm = () => {
         const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`;
         console.log("formattedDate", formattedDate);
 
-        const formData = {
-          ...values,
-          InvoiceNumbers: formattedInvoiceNumbers,
-          // InvoiceNumbers: JSON.stringify(formattedInvoiceNumbers)
-          createdAt: formattedDate
-        }
-        console.log("formData", formData);
+          const formData = {
+            ...values,
+            InvoiceNumbers: formattedInvoiceNumbers,
+            // InvoiceNumbers: JSON.stringify(formattedInvoiceNumbers)
+            createdAt: formattedDate,
+            ClientName:clientname
+          }
+          console.log("formData", formData);
 
-        try {
-          // Multiplying amount based on smallest unit of currency
-          const currencyDetails = currencyDecimalDigit.currency(values.Currency);
-          const factor = Math.pow(10, currencyDetails.decimalDigits);
-          const multipliedAmount = formData.Amount * factor;
+          try {
+            // Multiplying amount based on smallest unit of currency
+            const currencyDetails = currencyDecimalDigit.currency(values.Currency);
+            const factor = Math.pow(10, currencyDetails.decimalDigits);
+            const multipliedAmount = formData.Amount * factor;
 
-          setAmountInUSD(formData.Amount);
+            setAmountInUSD(formData.Amount);
 
-          // Updating initialvalues
-          const updatedFormData = {
-            ...formData,
-            Amount: multipliedAmount,
-            CurrencyDecimalDigit: currencyDetails.decimalDigits
-          };
+            // Updating initialvalues
+            const updatedFormData = {
+              ...formData,
+              Amount: multipliedAmount,
+              CurrencyDecimalDigit: currencyDetails.decimalDigits
+            };
 
-          dispatch(updateFormData(updatedFormData));
+            dispatch(updateFormData(updatedFormData));
 
-          // Graphql API for creating payment details
-          await postPaymentDetails(updatedFormData, resetForm);
-        }
-        catch (error) {
-          console.error("Create Payment Details error", error);
-          throw error;
+            // Graphql API for creating payment details
+            await postPaymentDetails(updatedFormData, resetForm);
+          }
+          catch (error) {
+            console.error("Create Payment Details error", error);
+            throw error;
+          }
         }
       }
+
     }
 
-  }
+    const handleTotalResetForm = (handleReset) => {
+      handleReset();
+      setTextFields(['']);
+      setTouchedFields([false]);
+    };
 
-  const handleTotalResetForm = (handleReset) => {
-    handleReset();
-    setTextFields(['']);
-    setTouchedFields([false]);
-  };
-
-  const [textFields, setTextFields] = useState(['']);
-  const [touchedFields, setTouchedFields] = useState([false]);
+    const [textFields, setTextFields] = useState(['']);
+    const [touchedFields, setTouchedFields] = useState([false]);
 
 
-  const handleAddTextField = () => {
-    setTextFields([...textFields, '']);
-    setTouchedFields([...touchedFields, false]);
-  };
+    const handleAddTextField = () => {
+      setTextFields([...textFields, '']);
+      setTouchedFields([...touchedFields, false]);
+    };
 
-  const handleRemoveTextField = (index) => {
-    const updatedTextFields = [...textFields];
-    updatedTextFields.splice(index, 1);
-    setTextFields(updatedTextFields);
+    const handleRemoveTextField = (index) => {
+      const updatedTextFields = [...textFields];
+      updatedTextFields.splice(index, 1);
+      setTextFields(updatedTextFields);
 
-    const updatedTouchedFields = [...touchedFields];
-    updatedTouchedFields.splice(index, 1);
-    setTouchedFields(updatedTouchedFields);
-  };
+      const updatedTouchedFields = [...touchedFields];
+      updatedTouchedFields.splice(index, 1);
+      setTouchedFields(updatedTouchedFields);
+    };
 
-  const handleTextFieldChange = (index, value, handleChange) => {
-    // console.log("HANDLE", value);
-    // handleChange(`invoice[${index}]`, value);
-    // if (value) {
-    //   validateInvoice(`invoice[${index}]`, value);
-    // }
-    const updatedTextFields = [...textFields];
-    updatedTextFields[index] = value;
-    setTextFields(updatedTextFields);
-  }
+    const handleTextFieldChange = (index, value, handleChange) => {
+      // console.log("HANDLE", value);
+      // handleChange(`invoice[${index}]`, value);
+      // if (value) {
+      //   validateInvoice(`invoice[${index}]`, value);
+      // }
+      const updatedTextFields = [...textFields];
+      updatedTextFields[index] = value;
+      setTextFields(updatedTextFields);
+    }
 
-  const handleTextFieldBlur = (index) => {
-    const updatedTouchedFields = [...touchedFields];
-    updatedTouchedFields[index] = true;
-    setTouchedFields(updatedTouchedFields);
-  };
+    const handleTextFieldBlur = (index) => {
+      const updatedTouchedFields = [...touchedFields];
+      updatedTouchedFields[index] = true;
+      setTouchedFields(updatedTouchedFields);
+    };
 
-  return (
-    <>
-      <div>
-        <ToastContainer />
+    return (
+      <>
+        <div>
+          <ToastContainer />
 
-        {loading && (
-          <div className="overlay">
-            <div className="overlay__inner">
-              <div className="overlay__content"><span className="spinner"></span></div>
+          {loading && (
+            <div className="overlay">
+              <div className="overlay__inner">
+                <div className="overlay__content"><span className="spinner"></span></div>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <div className='card-container'>
-          <div>
-            <Formik onSubmit={handleFormSubmit} initialValues={initialValues}>
-              {({ values, handleSubmit, handleReset, handleChange, errors, touched, setFieldValue }) => (
+          <div className='card-container'>
+            <div>
+              <Formik onSubmit={handleFormSubmit} initialValues={initialValues}>
+                {({ values, handleSubmit, handleReset, handleChange, errors, touched, setFieldValue }) => (
 
-                <form className='form-container'>
-                  <Grid>
-                    {/* Heading */}
-                    <div className='flex justify-content-center align-items-center gap-3 sm:gap-5' style={{ textAlign: 'center' }}>
+                  <form className='form-container'>
+                    <Grid>
+                      {/* Heading */}
+                      <div className='flex justify-content-center align-items-center gap-3 sm:gap-5' style={{ textAlign: 'center' }}>
+                        {srcLogo && <img src={srcLogo} style={logoStyle} alt={`${companyName} Logo`} />}
+                        <span style={textStyle} className='text-center'>
+                          {companyName}
+                        </span>
+                      </div>
+
+                      {/* <div className='flex justify-content-center align-items-center gap-3 sm:gap-5' style={{ textAlign: 'center' }}>
                       <img src={AFLLogo} style={{ width: '50px', height: 'auto' }} alt='AFL Logo' />
                       <span className='text-center'>
                         Analytical Food Laboratories
                       </span>
-                    </div>
-                    <div>
-                      <span className='text-xs sm:text-lg font-semibold'>
-                        Payment Details
-                      </span>
-                    </div>
-                    <Grid container spacing={2} style={{ marginTop: "1px" }}>
+                    </div> */}
 
-                      {/* First Name */}
-                      <Grid item xs={6}>
-                        <FormControl fullWidth>
-                          <Field
-                            size="small"
-                            name="FirstName"
-                            type="text"
-                            as={TextField}
-                            placeholder={!values.FirstName ? " First Name *" : ""}
-                            label={values.FirstName ? "First Name *" : ""}
-                            helperText={(touched.FirstName && errors.FirstName)}
-                            error={touched.FirstName && Boolean(errors.FirstName)}
-                            value={values.FirstName}
-                            validate={validateFirstName}
-                          />
-                        </FormControl>
-                      </Grid>
+                      <div>
+                        <span className='text-xs sm:text-lg font-semibold'>
+                          Payment Details
+                        </span>
+                      </div>
+                      <Grid container spacing={2} style={{ marginTop: "1px" }}>
 
-                      {/* last Name */}
-                      <Grid item xs={6}>
-                        <FormControl fullWidth>
-                          <Field
-                            size="small"
-                            name="LastName"
-                            type="text"
-                            as={TextField}
-                            placeholder={!values.LastName ? "Last Name *" : ""}
-                            label={values.LastName ? "Last Name *" : ""}
-                            helperText={(touched.LastName && errors.LastName)}
-                            error={touched.LastName && Boolean(errors.LastName)}
-                            value={values.LastName}
-                            validate={validateLastName}
-                          />
-                        </FormControl>
-                      </Grid>
-
-                      {/* Company Name*/}
-                      <Grid item xs={6}>
-                        <FormControl fullWidth>
-                          <Field
-                            size="small"
-                            name="CompanyName"
-                            type="text"
-                            as={TextField}
-                            placeholder={!values.CompanyName ? "Company Name *" : ""}
-                            label={values.CompanyName ? "Company Name *" : ""}
-                            helperText={(touched.CompanyName && errors.CompanyName)}
-                            error={touched.CompanyName && Boolean(errors.CompanyName)}
-                            value={values.CompanyName}
-                            validate={validateCompanyName}
-                          />
-                        </FormControl>
-                      </Grid>
-
-                      {/* Email */}
-                      <Grid item xs={6}>
-                        <FormControl fullWidth>
-                          <Field
-                            size="small"
-                            name="Email"
-                            type="text"
-                            as={TextField}
-                            placeholder={!values.Email ? "Email *" : ""}
-                            label={values.Email ? "Email *" : ""}
-                            helperText={(touched.Email && errors.Email)}
-                            error={touched.Email && Boolean(errors.Email)}
-                            value={values.Email}
-                            validate={validateEmail}
-                          />
-                        </FormControl>
-                      </Grid>
-
-                      {/* address Line 1 */}
-                      <Grid item xs={12}>
-                        <FormControl fullWidth>
-                          <Field
-                            size="small"
-                            name="AddressLine1"
-                            type="text"
-                            as={TextField}
-                            placeholder={!values.AddressLine1 ? "Address Line1 *" : ""}
-                            label={values.AddressLine1 ? "Address Line1 *" : ""}
-                            helperText={(touched.AddressLine1 && errors.AddressLine1)}
-                            error={touched.AddressLine1 && Boolean(errors.AddressLine1)}
-                            value={values.AddressLine1}
-                            validate={validateAddressLine1}
-                          />
-                        </FormControl>
-                      </Grid>
-
-                      {/* address Line 2 */}
-                      <Grid item xs={12}>
-                        <FormControl fullWidth>
-                          <Field
-                            size="small"
-                            name="AddressLine2"
-                            type="text"
-                            as={TextField}
-                            placeholder={!values.AddressLine2 ? "Address Line2" : ""}
-                            label={values.AddressLine2 ? "Address Line2" : ""}
-                          />
-                        </FormControl>
-                      </Grid>
-
-                      {/* Country */}
-                      <Grid item xs={4}>
-                        <div className='field-container'>
+                        {/* First Name */}
+                        <Grid item xs={6}>
                           <FormControl fullWidth>
-                            <Field name="Country"
-                              validate={validateCountry}
+                            <Field
+                              size="small"
+                              name="FirstName"
+                              type="text"
+                              as={TextField}
+                              placeholder={!values.FirstName ? " First Name *" : ""}
+                              label={values.FirstName ? "First Name *" : ""}
+                              helperText={(touched.FirstName && errors.FirstName)}
+                              error={touched.FirstName && Boolean(errors.FirstName)}
+                              value={values.FirstName}
+                              validate={validateFirstName}
+                            />
+                          </FormControl>
+                        </Grid>
+
+                        {/* last Name */}
+                        <Grid item xs={6}>
+                          <FormControl fullWidth>
+                            <Field
+                              size="small"
+                              name="LastName"
+                              type="text"
+                              as={TextField}
+                              placeholder={!values.LastName ? "Last Name *" : ""}
+                              label={values.LastName ? "Last Name *" : ""}
+                              helperText={(touched.LastName && errors.LastName)}
+                              error={touched.LastName && Boolean(errors.LastName)}
+                              value={values.LastName}
+                              validate={validateLastName}
+                            />
+                          </FormControl>
+                        </Grid>
+
+                        {/* Company Name*/}
+                        <Grid item xs={6}>
+                          <FormControl fullWidth>
+                            <Field
+                              size="small"
+                              name="CompanyName"
+                              type="text"
+                              as={TextField}
+                              placeholder={!values.CompanyName ? "Company Name *" : ""}
+                              label={values.CompanyName ? "Company Name *" : ""}
+                              helperText={(touched.CompanyName && errors.CompanyName)}
+                              error={touched.CompanyName && Boolean(errors.CompanyName)}
+                              value={values.CompanyName}
+                              validate={validateCompanyName}
+                            />
+                          </FormControl>
+                        </Grid>
+
+                        {/* Email */}
+                        <Grid item xs={6}>
+                          <FormControl fullWidth>
+                            <Field
+                              size="small"
+                              name="Email"
+                              type="text"
+                              as={TextField}
+                              placeholder={!values.Email ? "Email *" : ""}
+                              label={values.Email ? "Email *" : ""}
+                              helperText={(touched.Email && errors.Email)}
+                              error={touched.Email && Boolean(errors.Email)}
+                              value={values.Email}
+                              validate={validateEmail}
+                            />
+                          </FormControl>
+                        </Grid>
+
+                        {/* address Line 1 */}
+                        <Grid item xs={12}>
+                          <FormControl fullWidth>
+                            <Field
+                              size="small"
+                              name="AddressLine1"
+                              type="text"
+                              as={TextField}
+                              placeholder={!values.AddressLine1 ? "Address Line1 *" : ""}
+                              label={values.AddressLine1 ? "Address Line1 *" : ""}
+                              helperText={(touched.AddressLine1 && errors.AddressLine1)}
+                              error={touched.AddressLine1 && Boolean(errors.AddressLine1)}
+                              value={values.AddressLine1}
+                              validate={validateAddressLine1}
+                            />
+                          </FormControl>
+                        </Grid>
+
+                        {/* address Line 2 */}
+                        <Grid item xs={12}>
+                          <FormControl fullWidth>
+                            <Field
+                              size="small"
+                              name="AddressLine2"
+                              type="text"
+                              as={TextField}
+                              placeholder={!values.AddressLine2 ? "Address Line2" : ""}
+                              label={values.AddressLine2 ? "Address Line2" : ""}
+                            />
+                          </FormControl>
+                        </Grid>
+
+                        {/* Country */}
+                        <Grid item xs={4}>
+                          <div className='field-container'>
+                            <FormControl fullWidth>
+                              <Field name="Country"
+                                validate={validateCountry}
+                                onChange={handleChange}
+                                validateOnBlur
+                                validateOnChange
+                              >
+                                {({ field, form }) => (
+                                  <Autocomplete
+                                    size="small"
+                                    options={dropdowncountries}
+                                    getOptionLabel={(option) => option.countryName}
+                                    value={dropdowncountries.find(
+                                      (option) => option.countryCode === field.value
+                                    ) || null
+                                    }
+                                    onChange={(event, value) => {
+                                      if (value !== null) {
+                                        setStates(State.getStatesOfCountry(value.countryCode));
+                                        setCountryName(value.countryName);
+                                      }
+                                      form.setFieldValue(
+                                        "Country",
+                                        value?.countryCode || "");
+                                    }}
+                                    onBlur={() => form.setFieldTouched("Country", true)}
+                                    renderInput={(params) => (
+                                      <TextField
+                                        {...params}
+                                        placeholder={!values.Country ? "Country *" : ""}
+                                        label={values.Country ? "Country *" : ""}
+                                        variant="outlined"
+                                        helperText={(touched.Country && errors.Country)}
+                                        error={touched.Country && Boolean(errors.Country)} />
+                                    )}
+                                  >
+                                  </Autocomplete>
+                                )}
+                              </Field>
+                            </FormControl>
+                          </div>
+                        </Grid>
+
+                        {/* State */}
+                        <Grid item xs={4}>
+                          <div className='field-container'>
+                            <FormControl fullWidth>
+                              <Field name="State"
+                                validate={validateState}
+                                onChange={handleChange}
+                                validateOnBlur
+                                validateOnChange
+                              >
+                                {({ field, form }) => (
+                                  <Autocomplete
+                                    size="small"
+                                    options={states}
+                                    getOptionLabel={(option) => option.name}
+                                    value={states.find(
+                                      (option) => option.name === field.value)
+                                      || null
+                                    }
+                                    onChange={(event, newValue) => {
+                                      form.setFieldValue("State", newValue ? newValue.name : "");
+                                    }}
+                                    onBlur={() => form.setFieldTouched("State", true)}
+                                    renderInput={(params) => (
+                                      <TextField
+                                        {...params}
+                                        placeholder={!values.State ? "State *" : ""}
+                                        label={values.State ? "State *" : ""}
+                                        variant="outlined"
+                                        helperText={form.touched.State && form.errors.State}
+                                        error={form.touched.State && Boolean(form.errors.State)}
+                                      />
+                                    )}
+                                  />
+
+                                )}
+                              </Field>
+                            </FormControl>
+                          </div>
+                        </Grid>
+
+                        {/* City */}
+                        <Grid item xs={4}>
+                          <FormControl fullWidth>
+                            <Field
+                              size="small"
+                              name="City"
+                              type="text"
+                              as={TextField}
+                              placeholder={!values.City ? "City" : ""}
+                              label={values.City ? "City" : ""}
+                            />
+                          </FormControl>
+                        </Grid>
+
+                        {/* Postal Code */}
+                        <Grid item xs={6}>
+                          <FormControl fullWidth>
+                            <Field
+                              size="small"
+                              name="PostalCode"
+                              type="text"
+                              as={TextField}
+                              placeholder={!values.PostalCode ? "PostalCode *" : ""}
+                              label={values.PostalCode ? "PostalCode *" : ""}
+                              helperText={(touched.PostalCode && errors.PostalCode)}
+                              error={touched.PostalCode && Boolean(errors.PostalCode)}
+                              value={values.PostalCode}
+                              validate={validatePostalCode}
+                            />
+                          </FormControl>
+                        </Grid>
+
+                        {/* Phone Number */}
+                        <Grid item xs={6}>
+                          <FormControl fullWidth>
+                            <Field
+                              size="small"
+                              name="PhoneNumber"
+                              type="text"
+                              as={MuiPhoneNumber}
+                              variant="outlined"
+                              placeholder={!values.PhoneNumber ? "PhoneNumber *" : ""}
+                              label={values.PhoneNumber ? "PhoneNumber *" : ""}
+                              onChange={(value) => setFieldValue("PhoneNumber", value)}
+                              helperText={(touched.PhoneNumber && errors.PhoneNumber)}
+                              error={touched.PhoneNumber && Boolean(errors.PhoneNumber)}
+                              validate={validatePhoneNumber}
+
+
+                            />
+                          </FormControl>
+                        </Grid>
+
+                        {/* Amount */}
+                        <Grid item xs={6}>
+                          <FormControl fullWidth>
+                            <Field
+                              size="small"
+                              name="Amount"
+                              type="number"
+                              as={TextField}
+                              placeholder={!values.Amount ? "Amount *" : ""}
+                              label={values.Amount ? "Amount *" : ""}
+                              helperText={(touched.Amount && errors.Amount)}
+                              error={touched.Amount && Boolean(errors.Amount)}
+                              value={values.Amount}
+                              validate={validateAmount}
+                            />
+                          </FormControl>
+                        </Grid>
+
+                        {/* Currency */}
+                        <Grid item xs={6}>
+                          <FormControl fullWidth>
+                            <Field name="Currency"
+                              validate={validateCurrency}
                               onChange={handleChange}
-                              validateOnBlur
-                              validateOnChange
                             >
                               {({ field, form }) => (
                                 <Autocomplete
-                                  size="small"
-                                  options={dropdowncountries}
-                                  getOptionLabel={(option) => option.countryName}
-                                  value={dropdowncountries.find(
-                                    (option) => option.countryCode === field.value
+                                  size="small" options={dropdownCurrencies}
+                                  getOptionLabel={(option) => option.label}
+                                  value={dropdownCurrencies.find(
+                                    (option) => option.value === field.value
                                   ) || null
                                   }
                                   onChange={(event, value) => {
-                                    if (value !== null) {
-                                      setStates(State.getStatesOfCountry(value.countryCode));
-                                      setCountryName(value.countryName);
-                                    }
                                     form.setFieldValue(
-                                      "Country",
-                                      value?.countryCode || "");
+                                      "Currency",
+                                      value?.value || ""
+                                    );
                                   }}
-                                  onBlur={() => form.setFieldTouched("Country", true)}
                                   renderInput={(params) => (
                                     <TextField
                                       {...params}
-                                      placeholder={!values.Country ? "Country *" : ""}
-                                      label={values.Country ? "Country *" : ""}
-                                      variant="outlined"
-                                      helperText={(touched.Country && errors.Country)}
-                                      error={touched.Country && Boolean(errors.Country)} />
+                                      placeholder={!values.Currency ? "Currency *" : ""}
+                                      label={values.Currency ? "Currency *" : ""}
+                                      variant='outlined'
+                                      helperText={(touched.Currency && errors.Currency)}
+                                      error={touched.Currency && Boolean(errors.Currency)}
+                                    />
                                   )}
                                 >
                                 </Autocomplete>
                               )}
                             </Field>
                           </FormControl>
-                        </div>
-                      </Grid>
+                        </Grid>
 
-                      {/* State */}
-                      <Grid item xs={4}>
-                        <div className='field-container'>
-                          <FormControl fullWidth>
-                            <Field name="State"
-                              validate={validateState}
-                              onChange={handleChange}
-                              validateOnBlur
-                              validateOnChange
-                            >
-                              {({ field, form }) => (
-                                <Autocomplete
-                                  size="small"
-                                  options={states}
-                                  getOptionLabel={(option) => option.name}
-                                  value={states.find(
-                                    (option) => option.name === field.value)
-                                    || null
-                                  }
-                                  onChange={(event, newValue) => {
-                                    form.setFieldValue("State", newValue ? newValue.name : "");
-                                  }}
-                                  onBlur={() => form.setFieldTouched("State", true)}
-                                  renderInput={(params) => (
-                                    <TextField
-                                      {...params}
-                                      placeholder={!values.State ? "State *" : ""}
-                                      label={values.State ? "State *" : ""}
-                                      variant="outlined"
-                                      helperText={form.touched.State && form.errors.State}
-                                      error={form.touched.State && Boolean(form.errors.State)}
-                                    />
-                                  )}
-                                />
-
-                              )}
-                            </Field>
-                          </FormControl>
-                        </div>
-                      </Grid>
-
-                      {/* City */}
-                      <Grid item xs={4}>
-                        <FormControl fullWidth>
-                          <Field
-                            size="small"
-                            name="City"
-                            type="text"
-                            as={TextField}
-                            placeholder={!values.City ? "City" : ""}
-                            label={values.City ? "City" : ""}
-                          />
-                        </FormControl>
-                      </Grid>
-
-                      {/* Postal Code */}
-                      <Grid item xs={6}>
-                        <FormControl fullWidth>
-                          <Field
-                            size="small"
-                            name="PostalCode"
-                            type="text"
-                            as={TextField}
-                            placeholder={!values.PostalCode ? "PostalCode *" : ""}
-                            label={values.PostalCode ? "PostalCode *" : ""}
-                            helperText={(touched.PostalCode && errors.PostalCode)}
-                            error={touched.PostalCode && Boolean(errors.PostalCode)}
-                            value={values.PostalCode}
-                            validate={validatePostalCode}
-                          />
-                        </FormControl>
-                      </Grid>
-
-                      {/* Phone Number */}
-                      <Grid item xs={6}>
-                        <FormControl fullWidth>
-                          <Field
-                            size="small"
-                            name="PhoneNumber"
-                            type="text"
-                            as={MuiPhoneNumber}
-                            variant="outlined"
-                            placeholder={!values.PhoneNumber ? "PhoneNumber *" : ""}
-                            label={values.PhoneNumber ? "PhoneNumber *" : ""}
-                            onChange={(value) => setFieldValue("PhoneNumber", value)}
-                            helperText={(touched.PhoneNumber && errors.PhoneNumber)}
-                            error={touched.PhoneNumber && Boolean(errors.PhoneNumber)}
-                            validate={validatePhoneNumber}
-
-
-                          />
-                        </FormControl>
-                      </Grid>
-
-                      {/* Amount */}
-                      <Grid item xs={6}>
-                        <FormControl fullWidth>
-                          <Field
-                            size="small"
-                            name="Amount"
-                            type="number"
-                            as={TextField}
-                            placeholder={!values.Amount ? "Amount *" : ""}
-                            label={values.Amount ? "Amount *" : ""}
-                            helperText={(touched.Amount && errors.Amount)}
-                            error={touched.Amount && Boolean(errors.Amount)}
-                            value={values.Amount}
-                            validate={validateAmount}
-                          />
-                        </FormControl>
-                      </Grid>
-
-                      {/* Currency */}
-                      <Grid item xs={6}>
-                        <FormControl fullWidth>
-                          <Field name="Currency"
-                            validate={validateCurrency}
-                            onChange={handleChange}
-                          >
-                            {({ field, form }) => (
-                              <Autocomplete
-                                size="small" options={dropdownCurrencies}
-                                getOptionLabel={(option) => option.label}
-                                value={dropdownCurrencies.find(
-                                  (option) => option.value === field.value
-                                ) || null
-                                }
-                                onChange={(event, value) => {
-                                  form.setFieldValue(
-                                    "Currency",
-                                    value?.value || ""
-                                  );
-                                }}
-                                renderInput={(params) => (
-                                  <TextField
-                                    {...params}
-                                    placeholder={!values.Currency ? "Currency *" : ""}
-                                    label={values.Currency ? "Currency *" : ""}
-                                    variant='outlined'
-                                    helperText={(touched.Currency && errors.Currency)}
-                                    error={touched.Currency && Boolean(errors.Currency)}
-                                  />
-                                )}
-                              >
-                              </Autocomplete>
-                            )}
-                          </Field>
-                        </FormControl>
-                      </Grid>
-
-                      {/* Invoice */}
-                      {/* <Grid item xs={8}>
+                        {/* Invoice */}
+                        {/* <Grid item xs={8}>
                       <div className='invoice-container'>
                         <div className='invoiceDetails'>
                           Invoice Details
@@ -796,101 +838,101 @@ const CustomerPaymentDetailsForm = () => {
 
                     </Grid> */}
 
-                      {/* Invoice */}
-                      <Grid item xs={6}>
-                        <div className='invoice-container'>
-                          <div className='text-xs sm:text-lg font-semibold'>
-                            Invoice Details
-                          </div>
-                          <div>
-                            <IconButton
-                              size='small'
-                              onClick={handleAddTextField}>
-                              <AddIcon />
-                            </IconButton>
-                          </div>
-                        </div>
-                        {textFields.map((value, index) => (
-                          <div key={index} className='textFieldContainer fadeindown animation-duration-200'>
-                            <TextField
-                              style={{ marginBottom: '10px' }}
-                              size="small"
-                              value={value}
-                              placeholder={!value ? "Invoice No *" : ""}
-                              label={value ? "Invoice No *" : ""}
-                              // placeholder={!value[index] ? "Invoice No *" : ""}
-                              // label={value[index] ? "Invoice No *" : ""}
-                              onChange={(e) => handleTextFieldChange(index, e.target.value)}
-                              onBlur={() => handleTextFieldBlur(index)}
-                              error={touchedFields[index] && value.trim() === ''}
-                              helperText={touchedFields[index] && value.trim() === '' ? 'Field is required' : ''}
-                            />
-
-                            {textFields.length > 1 && (
-                              <IconButton size='small' onClick={() => handleRemoveTextField(index)}>
-                                <RemoveIcon />
+                        {/* Invoice */}
+                        <Grid item xs={6}>
+                          <div className='invoice-container'>
+                            <div className='text-xs sm:text-lg font-semibold'>
+                              Invoice Details
+                            </div>
+                            <div>
+                              <IconButton
+                                size='small'
+                                onClick={handleAddTextField}>
+                                <AddIcon />
                               </IconButton>
-                            )}
+                            </div>
                           </div>
-                        ))}
+                          {textFields.map((value, index) => (
+                            <div key={index} className='textFieldContainer fadeindown animation-duration-200'>
+                              <TextField
+                                style={{ marginBottom: '10px' }}
+                                size="small"
+                                value={value}
+                                placeholder={!value ? "Invoice No *" : ""}
+                                label={value ? "Invoice No *" : ""}
+                                // placeholder={!value[index] ? "Invoice No *" : ""}
+                                // label={value[index] ? "Invoice No *" : ""}
+                                onChange={(e) => handleTextFieldChange(index, e.target.value)}
+                                onBlur={() => handleTextFieldBlur(index)}
+                                error={touchedFields[index] && value.trim() === ''}
+                                helperText={touchedFields[index] && value.trim() === '' ? 'Field is required' : ''}
+                              />
+
+                              {textFields.length > 1 && (
+                                <IconButton size='small' onClick={() => handleRemoveTextField(index)}>
+                                  <RemoveIcon />
+                                </IconButton>
+                              )}
+                            </div>
+                          ))}
+                        </Grid>
+
+                        {/* Submit Button */}
+                        <Grid item xs={12} sm={12} container justifyContent="flex-end">
+                          <div className='field-container' style={{ display: 'flex', gap: '10px' }}>
+                            <FormControl>
+                              <Button
+                                variant="outlined"
+                                color="success"
+                                size='small'
+                                onClick={() => handleTotalResetForm(handleReset)}
+                                style={{ textTransform: "capitalize", fontWeight: 600 }}
+                              >
+                                Cancel
+                              </Button>
+                            </FormControl>
+                            <FormControl>
+                              {
+                                loading === true ?
+                                  <>
+                                    <Button
+                                      variant="contained"
+                                      color="success"
+                                      size='small'
+                                      disableElevation
+                                      disabled
+                                      style={{ textTransform: "capitalize", fontWeight: 600 }}
+                                    >
+                                      Submitting...
+                                    </Button>
+                                  </>
+                                  :
+                                  <>
+                                    <Button
+                                      variant="contained"
+                                      color="success"
+                                      size='small'
+                                      disableElevation
+                                      onClick={handleSubmit}
+                                      style={{ textTransform: "capitalize", fontWeight: 600 }}
+                                    >
+                                      Submit
+                                    </Button>
+                                  </>
+                              }
+
+                            </FormControl>
+                          </div>
+                        </Grid>
                       </Grid>
 
-                      {/* Submit Button */}
-                      <Grid item xs={12} sm={12} container justifyContent="flex-end">
-                        <div className='field-container' style={{ display: 'flex', gap: '10px' }}>
-                          <FormControl>
-                            <Button
-                              variant="outlined"
-                              color="success"
-                              size='small'
-                              onClick={() => handleTotalResetForm(handleReset)}
-                              style={{ textTransform: "capitalize", fontWeight: 600 }}
-                            >
-                              Cancel
-                            </Button>
-                          </FormControl>
-                          <FormControl>
-                            {
-                              loading === true ?
-                                <>
-                                  <Button
-                                    variant="contained"
-                                    color="success"
-                                    size='small'
-                                    disableElevation
-                                    disabled
-                                    style={{ textTransform: "capitalize", fontWeight: 600 }}
-                                  >
-                                    Submitting...
-                                  </Button>
-                                </>
-                                :
-                                <>
-                                  <Button
-                                    variant="contained"
-                                    color="success"
-                                    size='small'
-                                    disableElevation
-                                    onClick={handleSubmit}
-                                    style={{ textTransform: "capitalize", fontWeight: 600 }}
-                                  >
-                                    Submit
-                                  </Button>
-                                </>
-                            }
-
-                          </FormControl>
-                        </div>
-                      </Grid>
                     </Grid>
-
-                  </Grid>
-                </form>
-              )}
-            </Formik>
+                  </form>
+                )}
+              </Formik>
+            </div>
           </div>
-        </div>
-        {/* <div>
+          {/* <div>
         <footer className="footer gap-1">
           <div style={{ fontSize: '12px' }}>
             Powered by
@@ -898,9 +940,9 @@ const CustomerPaymentDetailsForm = () => {
           <img height={"20px"} width={"80px"} src={Nipurna}  alt="NipurnaImage" />
         </footer>
       </div> */}
-      </div>
-    </>
-  );
-};
+        </div>
+      </>
+    );
+  };
 
-export default CustomerPaymentDetailsForm;
+  export default CustomerPaymentDetailsForm;

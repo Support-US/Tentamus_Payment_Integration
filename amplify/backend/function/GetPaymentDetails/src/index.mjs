@@ -99,7 +99,8 @@ export const handler = async (event, context) => {
                                   Description:{ S:"" },
                                   PaymentMailStatus:{ S:"" },
                                   SAPMailStatus:{ S:""},
-                                  createdAt:{ S:paymentDetails.createdAt}
+                                  createdAt:{ S:paymentDetails.createdAt},
+                                  ClientName:{ S:paymentDetails.ClientName}
                     
                   }})
                   );
