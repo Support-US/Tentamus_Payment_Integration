@@ -1,18 +1,6 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const PaymentDetailsCreate = /* GraphQL */ `
-  mutation PaymentDetailsCreate($input: PaymentDetailsInput!) {
-    PaymentDetailsCreate(input: $input) {
-      EncryptedString
-      Length
-      MerchantID
-      CalculatedHMAC
-      TransactionID
-      __typename
-    }
-  }
-`;
 export const createPaymentDetails = /* GraphQL */ `
   mutation CreatePaymentDetails(
     $input: CreatePaymentDetailsInput!

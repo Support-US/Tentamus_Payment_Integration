@@ -1,42 +1,6 @@
 # This "input" configures a global authorization rule to enable public access to
 # all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
 
-type Mutation {
-PaymentDetailsCreate(
-    input: PaymentDetailsInput!
-  ): CreatePaymentDetailsResponse
-    @function(name: "GetPaymentDetails-${env}") 
-}
-
-input PaymentDetailsInput {
-FirstName: String!
-LastName : String!
-CompanyName :String!
-Email : String!
-AddressLine1: String!
-AddressLine2: String
-Country:String!
-State:String!
-City:String
-PostalCode:String!
-PhoneNumber :String!
-Amount : String!
-Currency: String!
-PaymentStatus : String!
-InvoiceNumbers :AWSJSON!
-SuccessURL:String!
-FailureURL:String!
-CurrencyDecimalDigit: String
-}
-
-type CreatePaymentDetailsResponse {
-EncryptedString: String!
-Length:String!
-MerchantID: String!
-CalculatedHMAC:String!
-TransactionID:String!
-}
-
 type PaymentDetails
 @model 
 {
