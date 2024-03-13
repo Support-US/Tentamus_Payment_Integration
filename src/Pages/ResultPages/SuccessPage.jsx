@@ -71,7 +71,7 @@ const SuccessPage = () => {
       }
       console.log("pay", paymentDetails);
     }
-  }, [location.search]);
+  }, []);
 
 
 
