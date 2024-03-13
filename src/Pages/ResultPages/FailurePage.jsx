@@ -85,7 +85,7 @@ const FailurePage = () => {
       }
       console.log("pay", paymentDetails);
     }
-  }, [location.search]);
+  }, []);
 
   return (
     <>
