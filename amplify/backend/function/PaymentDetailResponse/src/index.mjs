@@ -81,7 +81,10 @@ async function CreateData(DynamoDBdata){
                     Amount: JsonDBData.Amount,
                     TransactionID: JsonDBData.id,
                     Zip_PostalCode: JsonDBData.PostalCode,
-                    ZPaymentAdviceItem: invoices
+                    ZPaymentAdviceItem: invoices,
+                    ClientName: JsonDBData.ClientName,
+                    CompanyID :JsonDBData.ClientCompanyID,
+                    
                 };
     console.log("Postdata:", JSON.stringify(postData));
     const postdata = JSON.stringify(postData);

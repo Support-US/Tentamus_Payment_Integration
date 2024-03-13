@@ -31,4 +31,5 @@ Description:String
 PaymentMailStatus:String
 SAPMailStatus:String
 ClientName:String
+ClientCompanyID:String
 }

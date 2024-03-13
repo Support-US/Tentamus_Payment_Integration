@@ -100,7 +100,8 @@ export const handler = async (event, context) => {
                                   PaymentMailStatus:{ S:"" },
                                   SAPMailStatus:{ S:""},
                                   createdAt:{ S:paymentDetails.createdAt},
-                                  ClientName:{ S:paymentDetails.ClientName}
+                                  ClientName:{ S:paymentDetails.ClientName},
+                                  ClientCompanyID:{ S:paymentDetails.ClientCompanyID}
                     
                   }})
                   );
@@ -148,8 +149,8 @@ export const handler = async (event, context) => {
         //  Uncomment below to enable CORS requests
           headers: {
             "Access-Control-Allow-Headers" : "Content-Type",
-            "Access-Control-Allow-Origin": "http://localhost:3000",
-            // "Access-Control-Allow-Origin": "https://development.d389b8rydflvtl.amplifyapp.com",
+            // "Access-Control-Allow-Origin": "http://localhost:3000",
+            "Access-Control-Allow-Origin": "https://development.d389b8rydflvtl.amplifyapp.com",
             "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
           },
           body: JSON.stringify(responseData),

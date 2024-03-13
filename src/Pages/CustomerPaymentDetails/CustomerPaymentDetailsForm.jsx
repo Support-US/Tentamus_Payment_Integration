@@ -100,6 +100,7 @@ const CustomerPaymentDetailsForm = () => {
   const [logoStyle, setLogoStyle] = useState({ width: '50px', height: 'auto' });
   const [textStyle, setTextStyle] = useState({});
   const [clientname,setClientName]= useState("");
+  const [clientcompanyid,setClientCompanyId]= useState("");
 
   useEffect(() => {
     const path = window.location.pathname;
@@ -111,12 +112,15 @@ const CustomerPaymentDetailsForm = () => {
       setCompanyName('Analytical Food Laboratories');
       setTextStyle({ marginTop: '0.5rem', textAlign: 'center' });
       setClientName("Analytical Food Laboratories");
+      setClientCompanyId("C1304");
     } else if (companyNameParam === 'ColumbiaLaboratories') {
       setSrcLogo(CFLLogo);
       setCompanyName('Columbia Food Laboratories');
       setLogoStyle({ width: '100px', height: 'auto' });
       setTextStyle({ marginTop: '1rem', textAlign: 'center' });
       setClientName("Columbia Food Laboratories");
+      setClientCompanyId("C1301");
+
     }
   }, []);
 
@@ -375,7 +379,8 @@ const CustomerPaymentDetailsForm = () => {
             InvoiceNumbers: formattedInvoiceNumbers,
             // InvoiceNumbers: JSON.stringify(formattedInvoiceNumbers)
             createdAt: formattedDate,
-            ClientName:clientname
+            ClientName:clientname,
+            ClientCompanyID:clientcompanyid
           }
           console.log("formData", formData);
 
