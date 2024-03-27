@@ -6,8 +6,17 @@ import FailurePage from './Pages/ResultPages/FailurePage';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Layout from './Layout/Layout';
 import SuccessPage from './Pages/ResultPages/SuccessPage';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 Amplify.configure(awsExports)
+
+
+const theme = createTheme({
+  typography: {
+    fontFamily: 'Barlow, sans-serif',
+  },
+});
+
 
 function App() {
 
@@ -41,11 +50,13 @@ function App() {
   ])
 
   return (
+    <ThemeProvider theme={theme}>
     <>
       <div className='App'>
         <RouterProvider router={router} />
       </div>
     </>
+    </ThemeProvider>
   );
 }
 

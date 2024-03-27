@@ -34,6 +34,7 @@ export const createPaymentDetails = /* GraphQL */ `
       PaymentMailStatus
       SAPMailStatus
       ClientName
+      ClientCompanyID
       updatedAt
       __typename
     }
@@ -72,6 +73,7 @@ export const updatePaymentDetails = /* GraphQL */ `
       PaymentMailStatus
       SAPMailStatus
       ClientName
+      ClientCompanyID
       updatedAt
       __typename
     }
@@ -110,6 +112,7 @@ export const deletePaymentDetails = /* GraphQL */ `
       PaymentMailStatus
       SAPMailStatus
       ClientName
+      ClientCompanyID
       updatedAt
       __typename
     }

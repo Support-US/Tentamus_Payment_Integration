@@ -34,10 +34,6 @@ export const handler = async (event, context) => {
         let calculatedHMAC =await generateHMAC(createdPaymentdetails,merchantID,paymentDetails.Amount, paymentDetails.Currency,HMacPassword);
         console.log("calculatedHMAC :", calculatedHMAC);
         
-        
-        // let CalculatedAmount = (parseInt(paymentDetails.Amount*100)).toString();
-        // console.log("CalculatedAmount :", CalculatedAmount);
-         
         let dataToEncrypt = `MerchantID=${merchantID}&TransID=${createdPaymentdetails}&Currency=${paymentDetails.Currency}&Amount=${paymentDetails.Amount}&MAC=${calculatedHMAC}&URLNotify=${notifyURL}&URLSuccess=${paymentDetails.SuccessURL}&URLFailure=${paymentDetails.FailureURL}`;
         console.log("dataToEncrypt :", dataToEncrypt);
         // Encrypt the string
@@ -47,7 +43,6 @@ export const handler = async (event, context) => {
           EncryptedString: EncryptedString,
           Length: EncryptedString.length,
           MerchantID: merchantID,
-          CalculatedHMAC: calculatedHMAC,
           TransactionID: createdPaymentdetails
         };
 
@@ -99,6 +94,7 @@ export const handler = async (event, context) => {
                                   Description:{ S:"" },
                                   PaymentMailStatus:{ S:"" },
                                   SAPMailStatus:{ S:""},
+                                  PaymentId:{ S:""},
                                   createdAt:{ S:paymentDetails.createdAt},
                                   ClientName:{ S:paymentDetails.ClientName},
                                   ClientCompanyID:{ S:paymentDetails.ClientCompanyID}
@@ -149,8 +145,8 @@ export const handler = async (event, context) => {
         //  Uncomment below to enable CORS requests
           headers: {
             "Access-Control-Allow-Headers" : "Content-Type",
-            // "Access-Control-Allow-Origin": "http://localhost:3000",
-            "Access-Control-Allow-Origin": "https://development.d389b8rydflvtl.amplifyapp.com",
+            "Access-Control-Allow-Origin": "http://localhost:3000",
+            // "Access-Control-Allow-Origin": "https://development.d389b8rydflvtl.amplifyapp.com",
             "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
           },
           body: JSON.stringify(responseData),

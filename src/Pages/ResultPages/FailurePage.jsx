@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AFLLogo from "../../images/AFL_Logo.png";
@@ -7,73 +6,90 @@ import CFLLogo from "../../images/CFL_Logo.png"
 import { showToast } from '../../Components/ToastUtils';
 import CurrencyFormat from '../../Components/CurrencyFormat';
 import { Button } from '@mui/material';
-import { ArrowBackOutlined } from '@mui/icons-material';
+import { ArrowBackOutlined, ChargingStationSharp } from '@mui/icons-material';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
+import { BlowfishEncryption } from '../../Components/BlowfishEncryption';
+
 
 const FailurePage = () => {
   const [loading, setLoading] = useState(false);
+  const [amountInUSD, setAmountInUSD] = useState(0);
   const [paymentDetails, setPaymentDetails] = useState({
-    merchantID: "",
+    description: "",
     payID: "",
+    merchantID: "",
+    clientname: "",
     amount: "",
     currency: "",
-    description: "",
-    clientname: ""
+  });
+  const [computopdetails, setComputopDetails] = useState({
+    MerchantID: "",
+    datalength: "",
+    encryptedstring: "",
+    amount: "",
+    currency: "",
+    invoicenumbers: "",
+    firstname: "",
+    clientname: "",
+    lastname: "",
+    phonenumber: "",
+    addressline1: "",
+    city: "",
+    state: "",
+    postalcode: "",
+    country: "",
+    transid: "",
   });
   const [srcLogo, setSrcLogo] = useState(null);
   const [companyName, setCompanyName] = useState(null);
-  const [logoStyle, setLogoStyle] = useState({ width: '50px', height: 'auto' });
-
-
-  const navigate = useNavigate();
-
-  const navigateToCustomerPaymentDetailsForm = () => {
-    if (paymentDetails.clientname === 'Analytical Food Laboratories') {
-      navigate('/AnalyticalFoodLaboratories');
-    } else if (paymentDetails.clientname === 'Columbia Food Laboratories') {
-      navigate('/ColumbiaLaboratories');
-    }
-  };
-
+  const [logoStyle, setLogoStyle] = useState({ width: '80px', height: 'auto' });
+  const [websiteURL, setWebsiteURL] = useState("");
 
   const location = useLocation();
 
-  useEffect(() => {
-    console.log("location.search",location.search);
-    // Parse URL to get parameters
+
+  useEffect(async () => {
     const searchParams = new URLSearchParams(location.search);
-    console.log("searchparams", searchParams);
     const transId = searchParams.get('TransID');
-    console.log("transid", transId);
+    const payId = searchParams.get('PayID');
+    const mac = searchParams.get('MAC');
+    const code = searchParams.get('Code');
+    const status = searchParams.get('Status');
 
-    if (transId) {
-      // Set the TransID as id
-      const id = transId;
+    if (transId && payId && mac && code && status) {
 
-      // Make a GET request using Axios
+      const data = { id: transId, payId: payId, mac: mac, code: code, status: status };
+
       try {
-        axios.get(`https://8gc7cikm63.execute-api.us-east-2.amazonaws.com/dev/items?id=${id}`)
+        await axios.post(`https://8gc7cikm63.execute-api.us-east-2.amazonaws.com/dev/items`,
+          JSON.stringify(data), {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        })
           .then(response => {
             const responseData = response.data;
             console.log("responseData", responseData);
 
             setPaymentDetails({
+              description: searchParams.get('Description'),
               merchantID: searchParams.get('mid'),
               payID: searchParams.get('PayID'),
-              description: searchParams.get('Description'),
+              clientname: responseData.ClientName,
               amount: responseData.Amount,
               currency: responseData.Currency,
-              clientname: responseData.ClientName
             });
 
             if (responseData.ClientName === 'Analytical Food Laboratories') {
               setSrcLogo(AFLLogo);
               setCompanyName('Analytical Food Laboratories');
+              setWebsiteURL("https://www.afltexas.com");
             } else if (responseData.ClientName === 'Columbia Food Laboratories') {
               setSrcLogo(CFLLogo);
               setCompanyName('Columbia Food Laboratories');
-              setLogoStyle({ width: '100px', height: 'auto' });
+              setLogoStyle({ width: '170px', height: 'auto' });
+              setWebsiteURL("https://www.columbialaboratories.com");
             }
 
           });
@@ -83,9 +99,101 @@ const FailurePage = () => {
         showToast("Data fetch error", "error");
 
       }
-      console.log("pay", paymentDetails);
+
     }
   }, []);
+
+
+
+  useEffect(() => {
+    if (computopdetails.MerchantID !== "") {
+      handleComputopRedirection();
+    }
+  }, [computopdetails])
+
+  const getformdetails = async () => {
+    setLoading(true);
+    const searchParams = new URLSearchParams(location.search);
+    const transId = searchParams.get('TransID');
+    const payId = searchParams.get('PayID');
+    const mac = searchParams.get('MAC');
+    const code = searchParams.get('Code');
+    const status = searchParams.get('Status');
+
+    if (transId && payId && mac && code && status) {
+
+      const data = { id: transId, payId: payId, mac: mac, code: code, status: status };
+      const customHeaders = {
+        'X-Retry': 'true'
+      };
+
+      try {
+        const failureresponse = await axios.post(
+          `https://8gc7cikm63.execute-api.us-east-2.amazonaws.com/dev/items`,
+          JSON.stringify(data),
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              ...customHeaders
+            }
+          }
+        );
+
+        const responseData = failureresponse.data;
+        console.log("failureresponse", responseData);
+
+        setComputopDetails({
+          MerchantID: responseData.MerchantID,
+          datalength: responseData.Length,
+          encryptedstring: responseData.EncryptedString,
+          amount: responseData.Amount,
+          currency: responseData.Currency,
+          clientname: responseData.ClientName,
+          invoicenumbers: responseData.InvoiceNumbers,
+          firstname: responseData.FirstName,
+          lastname: responseData.LastName,
+          addressline1: responseData.AddressLine1,
+          city: responseData.City,
+          state: responseData.State,
+          postalcode: responseData.PostalCode,
+          country: responseData.Country,
+          phonenumber: responseData.PhoneNumber,
+          transID: responseData.TransID
+        });
+
+        setLoading(false);
+
+      } catch (error) {
+        console.log("fetchFormDetails error", error);
+        showToast("Data fetch error", "error");
+        setLoading(false);
+
+      }
+    }
+  }
+
+
+  const handleComputopRedirection = () => {
+    const { MerchantID, datalength, encryptedstring, transID, firstname, lastname, addressline1, city, state, postalcode, country, phonenumber, currency } = computopdetails;
+
+    const customField1 = CurrencyFormat(computopdetails.amount);
+
+    const customField3 =
+      computopdetails.clientname === 'Analytical Food Laboratories'
+        ? 'https://www.afltexas.com/wp-content/uploads/2022/07/AFL_GroupTag.svg'
+        : computopdetails.clientname === 'Columbia Food Laboratories'
+          ? 'https://www.columbialaboratories.com/wp-content/uploads/2022/09/CL_GroupTag_horizontal.svg'
+          : undefined;
+
+    const combinedInvoices = Object.values(computopdetails.invoicenumbers);
+    const customField4 = combinedInvoices.join("%0A");
+
+    console.log("handleComputopRedirection", computopdetails);
+
+    window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${datalength}&Data=${encryptedstring}&CustomField1=${customField1} ${currency}&CustomField3=${customField3}&CustomField4=${customField4}&CustomField5=${firstname}%20${lastname}%0A${addressline1}%0A${city}%0A${state}%0A${postalcode}%0A${country}%0A${phonenumber}&CustomField7=${transID}`;
+
+  }
+
 
   return (
     <>
@@ -107,20 +215,9 @@ const FailurePage = () => {
               </svg>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '-13rem', marginBottom: '3rem' }}>
-              <Button
-                variant='outlined'
-                color='error'
-                size='small'
-                style={{ textTransform: "capitalize", fontWeight: 600 }}
-                onClick={navigateToCustomerPaymentDetailsForm}
-              >
-                Try Again
-              </Button>
-            </div>
 
             <div className='flex justify-content-center gap-2'
-              style={{ color: "var(--primary-color)", marginTop: '-2.5rem', marginBottom: '3rem', marginLeft: "10rem" }}
+              style={{ color: "var(--primary-color)", marginTop: "-12rem", marginBottom: "2rem", marginLeft: "10rem" }}
             >
 
               <table>
@@ -147,7 +244,7 @@ const FailurePage = () => {
             </div>
 
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '1rem', marginBottom: '4rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '2rem', marginBottom: '4rem' }}>
               {
                 loading === true ?
                   <>
@@ -158,7 +255,7 @@ const FailurePage = () => {
                       disabled
                       style={{ textTransform: "capitalize", fontWeight: 600 }}
                     >
-                      Forwarding to {paymentDetails.clientname === 'Analytical Food Laboratories' ? 'AFL' : paymentDetails.clientname === 'Columbia Food Laboratories' ? 'CFL' : undefined} ...
+                      Forwading to payment...
                     </Button>
                   </>
                   :
@@ -169,26 +266,21 @@ const FailurePage = () => {
                       size='small'
                       startIcon={<ArrowBackOutlined />}
                       style={{ textTransform: "capitalize", fontWeight: 600 }}
-                      onClick={() => {
-                        (window.location.href = paymentDetails.clientname === 'Analytical Food Laboratories' ? 'https://www.afltexas.com': paymentDetails.clientname === 'Columbia Food Laboratories' ?'https://www.columbialaboratories.com':undefined);
-                        setLoading(true);
-                      }
-                      }
+                      onClick={getformdetails}
                     >
-                     Back to {paymentDetails.clientname === 'Analytical Food Laboratories' ? 'AFL' : paymentDetails.clientname === 'Columbia Food Laboratories' ? 'CFL' : undefined}
+                      Return to Payment
                     </Button>
                   </>
               }
             </div>
 
             <div className='mt-5 flex justify-content-center align-items-center gap-3 sm:gap-5' style={{ textAlign: 'center' }}>
-              {srcLogo && <img src={srcLogo} style={logoStyle} alt={companyName} />}
+              {srcLogo && (
+                <a href={websiteURL} target="_blank" rel="noopener noreferrer">
+                  <img src={srcLogo} style={logoStyle} alt={`${companyName} Logo`} />
+                </a>
+              )}
             </div>
-
-
-            {/* <div className='mt-5 flex justify-content-center align-items-center gap-3 sm:gap-5' style={{ textAlign: 'center' }}>
-              <img src={AFLLogo} alt="AFL Logo" style={{ width: '50px', height: 'auto' }} />
-            </div> */}
 
             <div>
               <span style={{
@@ -200,7 +292,7 @@ const FailurePage = () => {
                 color: '#007640',
                 fontSize: '15px',
               }}>
-              {companyName} 
+                {companyName}
               </span>
 
             </div>
@@ -210,11 +302,9 @@ const FailurePage = () => {
           <>
             <div className="overlays mb-3">
               <div className="overlay__inner">
-                {/* <span class="processing-text">Payment Processing...</span> */}
                 <div className="overlay__content">
                   <span className="spinner"></span>
                 </div>
-                {/* <span className='flex justify-content-center align-items-center h-screen mt-5'>Please don't refresh the page</span> */}
                 <span className='flex justify-content-center align-items-center h-screen mt-5'>Payment Processing...</span>
               </div>
             </div>

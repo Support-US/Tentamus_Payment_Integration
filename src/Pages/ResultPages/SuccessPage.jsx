@@ -22,25 +22,33 @@ const SuccessPage = () => {
   });
   const [srcLogo, setSrcLogo] = useState(null);
   const [companyName, setCompanyName] = useState(null);
-  const [logoStyle, setLogoStyle] = useState({ width: '50px', height: 'auto' });
+  const [logoStyle, setLogoStyle] = useState({ width: '80px', height: 'auto' });
+  const [websiteURL, setWebsiteURL] = useState("");
 
 
   const location = useLocation();
 
-  useEffect(() => {
-    // Parse URL to get parameters
+  useEffect(async() => {
     const searchParams = new URLSearchParams(location.search);
-    console.log("searchparams", searchParams);
     const transId = searchParams.get('TransID');
-    console.log("transid", transId);
+    const payId = searchParams.get('PayID');
+    const mac = searchParams.get('MAC');
+    const code = searchParams.get('Code');
+    const status = searchParams.get('Status');
+   
 
-    if (transId) {
-      // Set the TransID as id
-      const id = transId;
+    if (transId && payId && mac && code && status) {
 
-      // Make a GET request using Axios
+      const data = { id: transId ,payId:payId, mac:mac, code:code, status:status};
+
       try {
-        axios.get(`https://8gc7cikm63.execute-api.us-east-2.amazonaws.com/dev/items?id=${id}`)
+        await axios.post(`https://8gc7cikm63.execute-api.us-east-2.amazonaws.com/dev/items`,
+          JSON.stringify(data), {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        })
+
           .then(response => {
             const responseData = response.data;
             console.log("responseData", responseData);
@@ -57,10 +65,12 @@ const SuccessPage = () => {
             if (responseData.ClientName === 'Analytical Food Laboratories') {
               setSrcLogo(AFLLogo);
               setCompanyName('Analytical Food Laboratories');
+              setWebsiteURL("https://www.afltexas.com");
             } else if (responseData.ClientName === 'Columbia Food Laboratories') {
               setSrcLogo(CFLLogo);
               setCompanyName('Columbia Food Laboratories');
-              setLogoStyle({ width: '100px', height: 'auto' });
+              setLogoStyle({ width: '170px', height: 'auto' });
+              setWebsiteURL("https://www.columbialaboratories.com");
             }
 
           });
@@ -69,7 +79,6 @@ const SuccessPage = () => {
         console.log("fetchPaymentDetails error", error);
         showToast("Data fetch error, but your transaction was successful.", "error");
       }
-      console.log("pay", paymentDetails);
     }
   }, []);
 
@@ -125,7 +134,7 @@ const SuccessPage = () => {
               </>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '1rem', marginBottom: '4rem' }}>
+            {/* <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '1rem', marginBottom: '4rem' }}>
               {
                 loading === true ?
                   <>
@@ -157,15 +166,16 @@ const SuccessPage = () => {
                     </Button>
                   </>
               }
+            </div> */}
+
+            <div className='flex justify-content-center align-items-center gap-3 sm:gap-5' style={{ textAlign: 'center',marginTop:'5rem' }}>
+              {srcLogo && (
+                <a href={websiteURL} target="_blank" rel="noopener noreferrer">
+                  <img src={srcLogo} style={logoStyle} alt={`${companyName} Logo`} />
+                </a>
+              )}
             </div>
 
-            <div className='mt-5 flex justify-content-center align-items-center gap-3 sm:gap-5' style={{ textAlign: 'center' }}>
-              {srcLogo && <img src={srcLogo} style={logoStyle} alt={companyName} />}
-            </div>
-
-            {/* <div className='mt-5 flex justify-content-center align-items-center gap-3 sm:gap-5' style={{ textAlign: 'center' }}>
-                <img src={AFLLogo} alt="AFL Logo" style={{ width: '50px', height: 'auto' }} />
-              </div> */}
 
             <div>
               <span style={{
@@ -179,7 +189,6 @@ const SuccessPage = () => {
               }}>
                 {companyName}
               </span>
-
             </div>
           </>
           :
@@ -198,6 +207,7 @@ const SuccessPage = () => {
       }
 
     </>
+    
   )
 }
 
