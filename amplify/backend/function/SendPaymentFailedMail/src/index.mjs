@@ -6,17 +6,34 @@ const dynamoDB = new AWS.DynamoDB.DocumentClient({ region: process.env.REGION })
 const client = new DynamoDBClient({ region: process.env.REGION });
 const PaymentDetailsTableName = `PaymentDetails-4mqwuuijsrbx5p6qtibxxchbsq-dev`;
 
+const secretsManager = new AWS.SecretsManager();
+const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration`}).promise();
+let AdminMail;
+const secretValue = JSON.parse(data.SecretString);
+// console.log("secretValue : ", secretValue);     
+
 export const handler = async (event) => {
     console.log(`Request EVENT: ${JSON.stringify(event)}`);
 
     try {
         const paymentFailedDetails = await getPaymentFailedDetails();
-       
-
+        console.log("paymentFailedDetails : ", paymentFailedDetails); 
         if (paymentFailedDetails.length != 0) {
             try {
-        
-                const sendEmailResponse = await sendPaymentFailedEmail(paymentFailedDetails);
+                 for (const details of paymentFailedDetails) {
+        if (details.ClientCompanyID === "C1301") {
+            AdminMail = secretValue['CFL Admin Mail'];
+        } else if (details.ClientCompanyID === "C1303") {
+            AdminMail = secretValue['TNAV Admin Mail'];
+        } else if (details.ClientCompanyID === "C1302") {
+            AdminMail = secretValue['AAL Admin Mail'];
+        } else {
+            return {
+                statusCode: 404,
+                body: "Data Not Found"
+            };
+        }}
+                const sendEmailResponse = await sendPaymentFailedEmail(paymentFailedDetails,AdminMail);
                 console.log(`Email sent to Response:`, sendEmailResponse);
     
     
@@ -40,7 +57,24 @@ export const handler = async (event) => {
 
         if (sapUpdationFailedDetails.length != 0) {
             try{
-                const sapUpdateEmailResponse = await sendSAPUpdateFailedEmail(sapUpdationFailedDetails);
+                 if(sapUpdationFailedDetails.ClientCompanyID == "C1301"){
+                      AdminMail = secretValue['CFL Admin Mail'];
+                    }
+                    else if(sapUpdationFailedDetails.ClientCompanyID == "C1303"){
+                      AdminMail = secretValue['TNAV Admin Mail'];
+                      
+                    }
+                    else if(sapUpdationFailedDetails.ClientCompanyID == "C1302"){
+                      AdminMail = secretValue['AAL Admin Mail'];
+                    
+                    }
+                    else{
+                      return {
+                        statusCode : 404,
+                        body: "Data Not Found"
+                      };
+                    }
+                const sapUpdateEmailResponse = await sendSAPUpdateFailedEmail(sapUpdationFailedDetails,AdminMail);
                 console.log(`SAP Update Email sent to Response:`, sapUpdateEmailResponse);
         
                 // update mailsent status
@@ -55,9 +89,6 @@ export const handler = async (event) => {
         else{
              console.log("No SAP Updation failed details in the database.");
         }
-
-       
-
 
         return { statusCode: 200, body: 'Emails sent successfully.' };
     } catch (error) {
@@ -103,7 +134,8 @@ export const handler = async (event) => {
                 Email: item.Email,
                 FirstName: item.FirstName,
                 LastName: item.LastName,
-                createdAt: item.createdAt
+                createdAt: item.createdAt,
+                ClientCompanyID:item.ClientCompanyID
 
             }));
 
@@ -150,6 +182,7 @@ export const handler = async (event) => {
                 createdAt: item.createdAt,
                 AfterPaymentSAPstatus: item.AfterPaymentSAPstatus,
                 BeforePaymentSAPstatus: item.BeforePaymentSAPstatus,
+                ClientCompanyID:item.ClientCompanyID
 
             }));
             return SApUpdationFailedDetails;
@@ -159,7 +192,7 @@ export const handler = async (event) => {
         }
     }
 
-    async function sendPaymentFailedEmail(paymentFailedDetails) { 
+    async function sendPaymentFailedEmail(paymentFailedDetails,AdminMail) { 
         console.log('paymentFailedDetails:', paymentFailedDetails);
         try {
 
@@ -173,7 +206,7 @@ export const handler = async (event) => {
             ).join('');
 
             const params = {
-                Destination: { ToAddresses: ["meikandan.kg@nipurnait.com"] },
+                Destination: { ToAddresses:[AdminMail] },
                 Message: {
                     Body: {
                         Html: {
@@ -243,7 +276,7 @@ export const handler = async (event) => {
         }
     }
 
-    async function sendSAPUpdateFailedEmail(sapUpdationFailedDetails) {
+    async function sendSAPUpdateFailedEmail(sapUpdationFailedDetails,AdminMail) {
 
         try {
             const transactionList = sapUpdationFailedDetails.map(({ id, FailureReason, createdAt }, index) =>
@@ -255,7 +288,7 @@ export const handler = async (event) => {
             ).join('');
 
             const params = {
-                Destination: { ToAddresses: ["meikandan.kg@nipurnait.com"] },
+                Destination: { ToAddresses: [AdminMail] },
                 Message: {
                     Body: {
                         Html: {

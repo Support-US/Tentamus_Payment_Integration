@@ -13,7 +13,7 @@ export const BlowfishEncryption = (data, password) => {
     console.log("ENCODED TEXT", encodedText);
 
     const newhex = Uint8Array.from(Buffer.from(encodedText, 'hex'));
-    const decoded = bf.decode(newhex, Blowfish.TYPE.STRING);
+    // const decoded = bf.decode(newhex, Blowfish.TYPE.STRING);
     // console.log("DECODED TEXT", decoded);
 
     return encodedText;

@@ -2,6 +2,15 @@
   {
     "Effect": "Allow",
     "Action": [
+      "secretsmanager:*"
+    ],
+    "Resource": [
+      "arn:aws:secretsmanager:us-east-2:988839728996:secret:*"
+    ]
+  },
+  {
+    "Effect": "Allow",
+    "Action": [
       "dynamodb:*"
     ],
     "Resource": [

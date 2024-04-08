@@ -7,6 +7,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Layout from './Layout/Layout';
 import SuccessPage from './Pages/ResultPages/SuccessPage';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import ErrorPage from './Pages/ErrorPage/ErrorPage';
 
 Amplify.configure(awsExports)
 
@@ -29,12 +30,20 @@ function App() {
           index: true,
           element: <Landingpage />,
         },
+        // {
+        //   path: "/AnalyticalFoodLaboratories",
+        //   element: <CustomerPaymentDetailsForm />,
+        // },
         {
-          path: "/AnalyticalFoodLaboratories",
+          path: "/ColumbiaLaboratories",
           element: <CustomerPaymentDetailsForm />,
         },
         {
-          path: "/ColumbiaLaboratories",
+          path: "/AdamsonAnalyticalLabs",
+          element: <CustomerPaymentDetailsForm />,
+        },
+        {
+          path: "/TentamusNorthAmericaVirginia",
           element: <CustomerPaymentDetailsForm />,
         },
         {
@@ -44,6 +53,10 @@ function App() {
         {
           path: "/error",
           element: <FailurePage />,
+        },
+        {
+          path: "*",
+          element: <ErrorPage />,
         }
       ]
     }
@@ -51,11 +64,11 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-    <>
-      <div className='App'>
-        <RouterProvider router={router} />
-      </div>
-    </>
+      <>
+        <div className='App'>
+          <RouterProvider router={router} />
+        </div>
+      </>
     </ThemeProvider>
   );
 }

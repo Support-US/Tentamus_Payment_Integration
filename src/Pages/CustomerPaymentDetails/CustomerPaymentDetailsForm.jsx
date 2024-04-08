@@ -1,29 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, TextField, FormControl, Typography, Autocomplete, IconButton, Button } from '@mui/material';
+import { Grid, TextField, FormControl, Autocomplete, IconButton, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { Field, Formik } from 'formik';
 import './CustomerPaymentDetailsForm.css';
-import { API } from 'aws-amplify';
-import cc from 'currency-codes'
+// import { API } from 'aws-amplify';
+// import cc from 'currency-codes'
 // import { PaymentDetailsCreate } from '../../graphql/mutations';
 import { Country, State } from 'country-state-city';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectFormData, updateFormData } from '../../Store/Slice/formSlice';
 // import CryptoJS from 'crypto-js';
 import MuiPhoneNumber from 'mui-phone-number';
-import AFLLogo from "../../images/AFL_Logo.png";
-import CFLLogo from "../../images/CFL_Logo.png"
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { showToast } from '../../Components/ToastUtils';
 import axios from 'axios';
 import CurrencyFormat from '../../Components/CurrencyFormat';
+
+import AFLLogo from "../../images/AFL_Logo.png";
+import CFLLogo from "../../images/CFL_Logo.png";
+import AdamsonLogo from "../../images/AdamsonLogo.png";
+import TentamusLogo from "../../images/tentamus.png";
+
 const currencyDecimalDigit = require('@mreduar/iso-4217-currencies');
 
-
 const newcountries = Country.getAllCountries();
-const currency = cc.codes();
+// const currency = cc.codes();
 
 const CustomerPaymentDetailsForm = () => {
   const [dropdowncountries, setDropdowncountries] = useState([]);
@@ -106,22 +109,47 @@ const CustomerPaymentDetailsForm = () => {
     const path = window.location.pathname;
     const companyNameParam = path.split("/")[1];
 
-    if (companyNameParam === 'AnalyticalFoodLaboratories') {
-      setSrcLogo(AFLLogo);
-      setCompanyName('Analytical Food Laboratories');
-      setTextStyle({ marginTop: '0.5rem', textAlign: 'center' });
-      setClientName("Analytical Food Laboratories");
-      setClientCompanyId("C1304");
-      setWebsiteURL("https://www.afltexas.com");
-    } else if (companyNameParam === 'ColumbiaLaboratories') {
-      setSrcLogo(CFLLogo);
-      setCompanyName('Columbia Food Laboratories');
-      setLogoStyle({ width: '170px', height: 'auto' });
-      setTextStyle({ marginTop: '1rem', textAlign: 'center' });
-      setClientName("Columbia Food Laboratories");
-      setClientCompanyId("C1301");
-      setWebsiteURL("https://www.columbialaboratories.com");
+    switch (companyNameParam) {
+      case 'AnalyticalFoodLaboratories':
+        setSrcLogo(AFLLogo);
+        setCompanyName('Analytical Food Laboratories');
+        setTextStyle({ marginTop: '0.5rem', textAlign: 'center' });
+        setClientName("Analytical Food Laboratories");
+        setClientCompanyId("C1304");
+        setWebsiteURL("https://www.afltexas.com");
+        break;
+
+      case 'ColumbiaLaboratories':
+        setSrcLogo(CFLLogo);
+        setCompanyName('Columbia Food Laboratories');
+        setLogoStyle({ width: '170px', height: 'auto' });
+        setTextStyle({ marginTop: '1rem', textAlign: 'center' });
+        setClientName("Columbia Food Laboratories");
+        setClientCompanyId("C1301");
+        setWebsiteURL("https://www.columbialaboratories.com");
+        break;
+
+      case 'TentamusNorthAmericaVirginia':
+        setSrcLogo(TentamusLogo);
+        setCompanyName('Tentamus North America Virginia');
+        setLogoStyle({ width: '170px', height: 'auto' });
+        setTextStyle({ marginTop: '1rem', textAlign: 'center' });
+        setClientName("Tentamus North America Virginia");
+        setClientCompanyId("C1303");
+        setWebsiteURL("https://www.tentamus-va.com/");
+        break;
+
+      case 'AdamsonAnalyticalLabs':
+        setSrcLogo(AdamsonLogo);
+        setCompanyName('Adamson Analytical Labs');
+        setLogoStyle({ width: '170px', height: 'auto' });
+        setTextStyle({ marginTop: '1rem', textAlign: 'center' });
+        setClientName("Adamson Analytical Labs");
+        setClientCompanyId("C1302");
+        setWebsiteURL("https://www.adamsonlab.com/");
+        break;
     }
+
   }, []);
 
   const validateFirstName = (value) => {
@@ -158,9 +186,10 @@ const CustomerPaymentDetailsForm = () => {
 
     if (!value || value.trim().length === 0) {
       error = "Field is required";
-    } else if (!lettersOnlyRegex.test(value)) {
-      error = " Enter a valid name with only letters"
-    }
+    } 
+    // else if (!lettersOnlyRegex.test(value)) {
+    //   error = " Enter a valid name with only letters"
+    // }
     return error;
   }
 
@@ -269,7 +298,11 @@ const CustomerPaymentDetailsForm = () => {
         ? 'https://www.afltexas.com/wp-content/uploads/2022/07/AFL_GroupTag.svg'
         : companyName === 'Columbia Food Laboratories'
           ? 'https://www.columbialaboratories.com/wp-content/uploads/2022/09/CL_GroupTag_horizontal.svg'
-          : undefined;
+          : companyName === 'Adamson Analytical Labs'
+            ? 'https://www.adamsonlab.com/wp-content/uploads/2023/06/logo.svg'
+            : companyName === 'Tentamus North America Virginia'
+              ? 'https://www.tentamus.com/wp-content/uploads/2021/07/tentamus-group-logo.svg'
+              : undefined;
 
     window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataLength}&Data=${EncryptedString}&CustomField1=${CurrencyFormat(amountInUSD)} ${Currency}&CustomField3=${customField3}&CustomField4=${combinedInvoices}&CustomField5=${FirstName} ${LastName}%0A ${AddressLine1}%0A ${City}%0A ${State}%0A ${PostalCode}%0A ${countryName}%0A ${PhoneNumber}&CustomField7=${TransactionID}`;
     // window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataLength}&Data=${EncryptedString}&CustomField1=${CurrencyFormat(amountInUSD)} ${Currency}&CustomField3=https://www.afltexas.com/wp-content/uploads/2022/07/AFL_GroupTag.svg&CustomField4=${combinedInvoices}&CustomField5=${FirstName} ${LastName}%0A ${AddressLine1}%0A ${City}%0A ${State}%0A ${PostalCode}%0A ${countryName}%0A ${PhoneNumber}&CustomField7=${TransactionID}`;

@@ -63,17 +63,49 @@
   "function": {
     "ComputopPaygateWebhook": {
       "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput",
+            "GraphQLAPIKeyOutput"
+          ],
+          "category": "api",
+          "resourceName": "TentamusPaymentIntegration"
+        }
+      ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
     "GetAmountDetails": {
       "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput",
+            "GraphQLAPIKeyOutput"
+          ],
+          "category": "api",
+          "resourceName": "TentamusPaymentIntegration"
+        }
+      ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
     "GetPaymentDetails": {
       "build": true,
-      "dependsOn": [],
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput",
+            "GraphQLAPIKeyOutput"
+          ],
+          "category": "api",
+          "resourceName": "TentamusPaymentIntegration"
+        }
+      ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
@@ -83,7 +115,8 @@
         {
           "attributes": [
             "GraphQLAPIIdOutput",
-            "GraphQLAPIEndpointOutput"
+            "GraphQLAPIEndpointOutput",
+            "GraphQLAPIKeyOutput"
           ],
           "category": "api",
           "resourceName": "TentamusPaymentIntegration"
@@ -94,7 +127,17 @@
     },
     "SendPaymentFailedMail": {
       "build": true,
-      "dependsOn": [],
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput",
+            "GraphQLAPIKeyOutput"
+          ],
+          "category": "api",
+          "resourceName": "TentamusPaymentIntegration"
+        }
+      ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     }

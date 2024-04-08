@@ -4,36 +4,62 @@ import { unmarshall } from '@aws-sdk/util-dynamodb';
 import { v4 as uuidv4 } from 'uuid';
 import { Blowfish } from 'egoroof-blowfish';
 import { Buffer } from 'buffer';
-import pkg from 'crypto-js';
+import pkg from 'crypto-js';  
 const { HmacSHA256, enc } = pkg;
+const client = new DynamoDBClient({ region: process.env.REGION });
 
 const secretsManager = new AWS.SecretsManager();
 const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration`}).promise(); 
+const PaymentDetailsTableName = `PaymentDetails-4mqwuuijsrbx5p6qtibxxchbsq-dev`;            
+let HMacPassword,blowfishKey,merchantID,CompanyName;
 const secretValue = JSON.parse(data.SecretString);
-const HMacPassword = secretValue.HMacPassword;
-const blowfishKey = secretValue.blowfishKey;
-const merchantID  = secretValue.MerchantID;
+console.log("secretValue : ", secretValue);       
 const notifyURL   =secretValue.APIGatewayURL;
-
-const client = new DynamoDBClient({ region: process.env.REGION });
-const PaymentDetailsTableName = `PaymentDetails-4mqwuuijsrbx5p6qtibxxchbsq-dev`;
+let TableID,PayId,Status,Code,MerchantID;
+let Headers = secretValue.headers;
 
 export const handler = async (event) => {
 
     console.log(`EVENT: ${JSON.stringify(event)}`);
     
-    const body = JSON.parse(event.body);
+    const body = JSON.parse(event.body);  
         
-         let TableID =body.id;
-         let PayId =body.payId ;
-         let Status =body.status;
-         let Code =body.code;
+          TableID =body.id;
+          PayId =body.payId ;
+          Status =body.status;
+          Code =body.code;
+          MerchantID=body.mid;
          
-         console.log("TableID",TableID);
-         console.log("PayId",PayId);
-         console.log("Status",Status);
-         console.log("Code",Code);
+         console.log("ClientMerchantID",MerchantID);
+         
     try{
+         if(MerchantID == "Tentamus_Adamson_test"){
+          HMacPassword = secretValue['Columbia Food Laboratories HMacPassword'];
+          blowfishKey = secretValue['Columbia Food Laboratories blowfishKey'];
+          merchantID  = secretValue['Columbia Food Laboratories MerchantID'];
+        }
+        else if(MerchantID == "Tentamus_Adamson_test"){
+          HMacPassword = secretValue['Tentamus North America Virginia HMacPassword'];
+          blowfishKey = secretValue['Tentamus North America Virginia blowfishKey'];
+          merchantID  = secretValue['Tentamus North America Virginia MerchantID'];
+        }
+        else if(MerchantID == "Tentamus_Adamson_test"){
+          HMacPassword = secretValue['Adamson Analytical Labs HMacPassword'];
+          blowfishKey = secretValue['Adamson Analytical Labs blowfishKey'];
+          merchantID  = secretValue['Adamson Analytical Labs MerchantID'];
+        }
+        else{
+          return {
+                                statusCode: 200,
+                                headers: {
+                                        "Access-Control-Allow-Headers" : "*",
+                                        "Access-Control-Allow-Origin": Headers,
+                                        "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+                                         },
+                                    body: "Data Not Found",
+                                 };
+        }
+        
          // Calculate the HMAC
         const calculatedHMAC =await RetrygenerateHMAC(PayId ,TableID, merchantID , Status ,Code,HMacPassword);
         console.log("calculatedHMAC :", calculatedHMAC);
@@ -59,8 +85,7 @@ export const handler = async (event) => {
                                 statusCode: 200,
                                 headers: {
                                         "Access-Control-Allow-Headers" : "Content-Type",
-                                        "Access-Control-Allow-Origin": "http://localhost:3000",
-                                        // "Access-Control-Allow-Origin": "https://development.d389b8rydflvtl.amplifyapp.com",
+                                        "Access-Control-Allow-Origin": Headers,
                                         "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
                                          },
                                 body: JSON.stringify(returnData),
@@ -74,15 +99,34 @@ export const handler = async (event) => {
                     
                     //Get ObjectID
                      const GetDBData =await getDBData(TableID);
-                     console.log("getObjectID :", GetDBData);
+                     console.log("GetDBData :", GetDBData);
                      
                      let getData = unmarshall(GetDBData);
-                     console.log("getData",getData );     
-                    
+                     console.log("getData",getData );   
                     
                     let createdPaymentdetails = await createPaymentDetails(getData,id);
                     console.log("Response of CreatePaymentHistory : ", createdPaymentdetails);
-                 
+                    
+                    if(getData.ClientName == "Columbia Food Laboratories"){
+                      CompanyName = 'Columbia Food Laboratories';
+                    }
+                    else if(getData.ClientName == "Tentamus North America Virginia"){
+                      CompanyName = 'Tentamus North America Virginia';
+                     
+                    }else if(getData.ClientName == "Adamson Analytical Labs"){
+                      CompanyName = 'Adamson Analytical Labs';
+                    }
+                    else{
+                      return {
+                                            statusCode: 200,
+                                            headers: {
+                                                    "Access-Control-Allow-Headers" : "*",
+                                                    "Access-Control-Allow-Origin": Headers,
+                                                    "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+                                                     },
+                                                body: "Data not Found",
+                               };
+                    }
                     // Parse CurrencyDecimalDigit as an integer
                     const decimalDigits = Number(getData.CurrencyDecimalDigit);
                     console.log("decimalDigits",decimalDigits);
@@ -96,7 +140,7 @@ export const handler = async (event) => {
                     let calculatedHMAC =await generateHMAC(createdPaymentdetails,merchantID,multipliedAmount, getData.Currency,HMacPassword);
                     console.log("calculatedHMAC :", calculatedHMAC);
                      
-                    let dataToEncrypt = `MerchantID=${merchantID}&TransID=${createdPaymentdetails}&Currency=${getData.Currency}&Amount=${multipliedAmount}&MAC=${calculatedHMAC}&URLNotify=${notifyURL}&URLSuccess=${getData.SuccessURL}&URLFailure=${getData.FailureURL}`;
+                    let dataToEncrypt = `MerchantID=${merchantID}&TransID=${createdPaymentdetails}&Currency=${getData.Currency}&Amount=${multipliedAmount}&MAC=${calculatedHMAC}&URLNotify=${notifyURL}?q=${CompanyName}&URLSuccess=${getData.SuccessURL}&URLFailure=${getData.FailureURL}`;
                     console.log("dataToEncrypt :", dataToEncrypt);
                     // Encrypt the string
                     let EncryptedString  = await  BlowfishEncryption(dataToEncrypt, blowfishKey,);
@@ -125,8 +169,7 @@ export const handler = async (event) => {
                                 statusCode: 200,
                                 headers: {
                                         "Access-Control-Allow-Headers" : "*",
-                                        "Access-Control-Allow-Origin": "http://localhost:3000",
-                                        // "Access-Control-Allow-Origin": "https://development.d389b8rydflvtl.amplifyapp.com",
+                                        "Access-Control-Allow-Origin": Headers,
                                         "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
                                          },
                                     body: JSON.stringify(returnData),
@@ -138,8 +181,7 @@ export const handler = async (event) => {
                 statusCode: 403,
                 headers: {
                         "Access-Control-Allow-Headers" : "Content-Type",
-                        "Access-Control-Allow-Origin": "http://localhost:3000",
-                        // "Access-Control-Allow-Origin": "https://development.d389b8rydflvtl.amplifyapp.com",
+                        "Access-Control-Allow-Origin": Headers,
                         "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
                       },
                 body: JSON.stringify({ success: false, message: '⚠️HMAC validation failed' }),
@@ -193,31 +235,32 @@ export const handler = async (event) => {
         async function createPaymentDetails(paymentDetails,id){ 
              
             try{ 
+                // Create a new Date object with the provided date
+                var currentDate = new Date();
                 
-                    // Create a new Date object with the provided date
-                    var currentDate = new Date();
-                    
-                    // Current date with time
-                    var Currenttime =
-                      currentDate.getFullYear() +
-                      "-" +
-                      ((currentDate.getMonth() + 1) < 10 ? "0" : "") +
-                      (currentDate.getMonth() + 1) +
-                      "-" +
-                      (currentDate.getDate() < 10 ? "0" : "") +
-                      currentDate.getDate() +
-                      " " +
-                      (currentDate.getHours() < 10 ? "0" : "") +
-                      currentDate.getHours() +
-                      ":" +
-                      (currentDate.getMinutes() < 10 ? "0" : "") +
-                      currentDate.getMinutes() +
-                      ":" +
-                      (currentDate.getSeconds() < 10 ? "0" : "") +
-                      currentDate.getSeconds();
-                    
-                    console.log("Today with time: ", Currenttime);
-          
+                // Options for formatting the date and time
+                var options = {
+                  timeZone: 'Asia/Kolkata', // Indian Standard Time
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  second: '2-digit',
+                  hour12: false // 24-hour format
+                };
+                
+                // Format the date and time in Indian Standard Time (IST)
+                var indianDateTime = currentDate.toLocaleString('en-IN', options);
+                
+                // Convert the formatted date and time to ISO 8601 format
+                var isoDateTime = indianDateTime.replace(/(\d+)\/(\d+)\/(\d+),\s+(\d+):(\d+):(\d+)/, '$3-$2-$1T$4:$5:$6');
+                
+                // Append 'Z' to indicate Zulu time zone
+                isoDateTime += 'Z';
+                
+                console.log("Indian Date and Time in desired format: ", isoDateTime);
+                          
           
                 console.log("paymentDetails.InvoiceNumbers :", paymentDetails.InvoiceNumbers);
 
@@ -260,7 +303,7 @@ export const handler = async (event) => {
                                   PaymentMailStatus:{ S:"" },
                                   PaymentId:{ S:""},
                                   SAPMailStatus:{ S:""},
-                                  createdAt:{ S:Currenttime},
+                                  createdAt:{ S:indianDateTime},
                                   ClientName:{ S:paymentDetails.ClientName},
                                   ClientCompanyID:{ S:paymentDetails.ClientCompanyID}
                     

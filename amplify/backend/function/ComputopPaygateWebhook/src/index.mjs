@@ -7,29 +7,46 @@ import { unmarshall } from '@aws-sdk/util-dynamodb';
 import axios from 'axios';
 import pkg from 'crypto-js';
 const { HmacSHA256, enc } = pkg;  
-
-
-const secretsManager = new AWS.SecretsManager();
 const client = new DynamoDBClient({ region: process.env.REGION });
-const PaymentDetailsTableName = `PaymentDetails-4mqwuuijsrbx5p6qtibxxchbsq-dev`;
-
+const secretsManager = new AWS.SecretsManager();
+const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration`}).promise(); 
+const PaymentDetailsTableName = `PaymentDetails-4mqwuuijsrbx5p6qtibxxchbsq-dev`;            
+let HMacPassword,blowfishKey,merchantID;
+const secretValue = JSON.parse(data.SecretString);
+console.log("secretValue : ", secretValue);    
 export const handler = async (event) => {
             console.log(`Request EVENT: ${JSON.stringify(event)}`);
-            const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration`}).promise(); 
-            const secretValue = JSON.parse(data.SecretString);
-            const HMacPassword = secretValue.HMacPassword;
-            const blowfishKey = secretValue.blowfishKey;
-            const merchantID  = secretValue.MerchantID;
-            // console.log('Secret value:', data);  
-    
+           
     try {
+         if(event.queryStringParameters.q == "Columbia Food Laboratories"){
+          HMacPassword = secretValue['Columbia Food Laboratories HMacPassword'];
+          blowfishKey = secretValue['Columbia Food Laboratories blowfishKey'];
+          merchantID  = secretValue['Columbia Food Laboratories MerchantID'];
+        }
+        else if(event.queryStringParameters.q == "Tentamus North America Virginia"){ 
+          HMacPassword = secretValue['Tentamus North America Virginia HMacPassword'];
+          blowfishKey = secretValue['Tentamus North America Virginia blowfishKey'];
+          merchantID  = secretValue['Tentamus North America Virginia MerchantID'];
+        }
+        else if(event.queryStringParameters.q == "Adamson Analytical Labs"){
+          HMacPassword = secretValue['Adamson Analytical Labs HMacPassword'];
+          blowfishKey = secretValue['Adamson Analytical Labs blowfishKey'];
+          merchantID  = secretValue['Adamson Analytical Labs MerchantID'];
+        }
+        else{
+          return {
+                    statusCode: 200,
+                    body: "Data Not Found",
+                     };
+                   }
+        
         
         let encryptedString = event.body;
         encryptedString = encryptedString.split('Data=').pop();
 
         // Base64 encode the encrypted text before sending it to AWS Lambda
         const base64EncodedString = Buffer.from(encryptedString, 'hex').toString('base64');
-
+        
         // Decrypt the string
         const decryptedString =await  BlowfishDecryption(base64EncodedString, blowfishKey);
 
@@ -289,6 +306,7 @@ async function UpdateFailurestatus(error,parsedObject,errStatus) {
         throw error;
     }
 } 
+
 
 };
 

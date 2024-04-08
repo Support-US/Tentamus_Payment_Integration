@@ -3,38 +3,81 @@ import { Blowfish } from 'egoroof-blowfish';
 import { Buffer } from 'buffer';
 import pkg from 'crypto-js';
 const { HmacSHA256, enc } = pkg;
-
 import { DynamoDBClient,PutItemCommand } from "@aws-sdk/client-dynamodb";
-
 const client = new DynamoDBClient({ region: "us-east-2" });
 import { v4 as uuidv4 } from 'uuid';
  
-
 const secretsManager = new AWS.SecretsManager();
 const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration`}).promise(); 
-const secretValue = JSON.parse(data.SecretString);
-const HMacPassword = secretValue.HMacPassword;
-const blowfishKey = secretValue.blowfishKey;
-const merchantID  = secretValue.MerchantID;
-const notifyURL   =secretValue.APIGatewayURL;
-            
 const PaymentDetailsTableName = `PaymentDetails-4mqwuuijsrbx5p6qtibxxchbsq-dev`;            
-            
-            
+let HMacPassword,blowfishKey,merchantID,CompanyName;
+const secretValue = JSON.parse(data.SecretString);
+console.log("secretValue : ", secretValue);       
+const notifyURL   =secretValue.APIGatewayURL;
+let Headers = secretValue.headers;
+           
 export const handler = async (event, context) => {
     
         console.log(`Request EVENT: ${JSON.stringify(event)}`);
         let paymentDetails = JSON.parse(event.body);
-        console.log(`Request EVENT: ${paymentDetails}`);
+        
+        if(paymentDetails.ClientCompanyID == "C1301"){
+          HMacPassword = secretValue['Columbia Food Laboratories HMacPassword'];
+          blowfishKey = secretValue['Columbia Food Laboratories blowfishKey'];
+          merchantID  = secretValue['Columbia Food Laboratories MerchantID'];
+        }
+        else if(paymentDetails.ClientCompanyID == "C1303"){
+          HMacPassword = secretValue['Tentamus North America Virginia HMacPassword'];
+          blowfishKey = secretValue['Tentamus North America Virginia blowfishKey'];
+          merchantID  = secretValue['Tentamus North America Virginia MerchantID'];
+        }
+        else if(paymentDetails.ClientCompanyID == "C1302"){
+          HMacPassword = secretValue['Adamson Analytical Labs HMacPassword'];
+          blowfishKey = secretValue['Adamson Analytical Labs blowfishKey'];
+          merchantID  = secretValue['Adamson Analytical Labs MerchantID'];
+        }
+        else{
+          return {
+                                statusCode: 200,
+                                headers: {
+                                        "Access-Control-Allow-Headers" : "*",
+                                        "Access-Control-Allow-Origin": Headers,
+                                        "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+                                         },
+                                    body: "Data not Found",
+                                 };
+        }
+        
         let createdPaymentdetails = await createPaymentDetails(paymentDetails);
         console.log("Response of CreatePaymentHistory : ", createdPaymentdetails);
-         console.log("Response of paymentDetails : ", paymentDetails);
+        console.log("Response of paymentDetails : ", paymentDetails);
             
+        if(paymentDetails.ClientName == "Columbia Food Laboratories"){
+          CompanyName = 'Columbia Food Laboratories';
+         
+        }
+        else if(paymentDetails.ClientName == "Tentamus North America Virginia"){
+          CompanyName = 'Tentamus North America Virginia';
+         
+        }else if(paymentDetails.ClientName == "Adamson Analytical Labs"){
+          CompanyName = 'Adamson Analytical Labs';
+        }
+        else{
+          return {
+                                statusCode: 200,
+                                headers: {
+                                        "Access-Control-Allow-Headers" : "*",
+                                        "Access-Control-Allow-Origin": Headers,
+                                        "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+                                         },
+                                    body: "Data not Found",
+                   };
+        }
         // Calculate the HMAC
         let calculatedHMAC =await generateHMAC(createdPaymentdetails,merchantID,paymentDetails.Amount, paymentDetails.Currency,HMacPassword);
         console.log("calculatedHMAC :", calculatedHMAC);
         
-        let dataToEncrypt = `MerchantID=${merchantID}&TransID=${createdPaymentdetails}&Currency=${paymentDetails.Currency}&Amount=${paymentDetails.Amount}&MAC=${calculatedHMAC}&URLNotify=${notifyURL}&URLSuccess=${paymentDetails.SuccessURL}&URLFailure=${paymentDetails.FailureURL}`;
+        let dataToEncrypt = `MerchantID=${merchantID}&TransID=${createdPaymentdetails}&Currency=${paymentDetails.Currency}&Amount=${paymentDetails.Amount}&MAC=${calculatedHMAC}&URLNotify=${notifyURL}?q=${CompanyName}&URLSuccess=${paymentDetails.SuccessURL}&URLFailure=${paymentDetails.FailureURL}`;
         console.log("dataToEncrypt :", dataToEncrypt);
         // Encrypt the string
         let EncryptedString  = await  BlowfishEncryption(dataToEncrypt, blowfishKey,);
@@ -145,8 +188,7 @@ export const handler = async (event, context) => {
         //  Uncomment below to enable CORS requests
           headers: {
             "Access-Control-Allow-Headers" : "Content-Type",
-            "Access-Control-Allow-Origin": "http://localhost:3000",
-            // "Access-Control-Allow-Origin": "https://development.d389b8rydflvtl.amplifyapp.com",
+            "Access-Control-Allow-Origin": Headers,
             "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
           },
           body: JSON.stringify(responseData),
