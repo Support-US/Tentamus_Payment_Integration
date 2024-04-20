@@ -18,10 +18,10 @@ export const handler = async (event) => {
             console.log(`Request EVENT: ${JSON.stringify(event)}`);
            
     try {
-         if(event.queryStringParameters.q == "Columbia Food Laboratories"){
-          HMacPassword = secretValue['Columbia Food Laboratories HMacPassword'];
-          blowfishKey = secretValue['Columbia Food Laboratories blowfishKey'];
-          merchantID  = secretValue['Columbia Food Laboratories MerchantID'];
+         if(event.queryStringParameters.q == "Columbia Laboratories"){
+          HMacPassword = secretValue['Columbia Laboratories HMacPassword'];
+          blowfishKey = secretValue['Columbia Laboratories blowfishKey'];
+          merchantID  = secretValue['Columbia Laboratories MerchantID'];
         }
         else if(event.queryStringParameters.q == "Tentamus North America Virginia"){ 
           HMacPassword = secretValue['Tentamus North America Virginia HMacPassword'];

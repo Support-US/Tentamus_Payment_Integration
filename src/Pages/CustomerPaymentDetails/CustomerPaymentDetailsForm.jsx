@@ -121,10 +121,10 @@ const CustomerPaymentDetailsForm = () => {
 
       case 'ColumbiaLaboratories':
         setSrcLogo(CFLLogo);
-        setCompanyName('Columbia Food Laboratories');
+        setCompanyName('Columbia Laboratories');
         setLogoStyle({ width: '170px', height: 'auto' });
         setTextStyle({ marginTop: '1rem', textAlign: 'center' });
-        setClientName("Columbia Food Laboratories");
+        setClientName("Columbia Laboratories");
         setClientCompanyId("C1301");
         setWebsiteURL("https://www.columbialaboratories.com");
         break;
@@ -296,7 +296,7 @@ const CustomerPaymentDetailsForm = () => {
     const customField3 =
       companyName === 'Analytical Food Laboratories'
         ? 'https://www.afltexas.com/wp-content/uploads/2022/07/AFL_GroupTag.svg'
-        : companyName === 'Columbia Food Laboratories'
+        : companyName === 'Columbia Laboratories'
           ? 'https://www.columbialaboratories.com/wp-content/uploads/2022/09/CL_GroupTag_horizontal.svg'
           : companyName === 'Adamson Analytical Labs'
             ? 'https://www.adamsonlab.com/wp-content/uploads/2023/06/logo.svg'

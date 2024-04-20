@@ -22,9 +22,9 @@ export const handler = async (event, context) => {
         let paymentDetails = JSON.parse(event.body);
         
         if(paymentDetails.ClientCompanyID == "C1301"){
-          HMacPassword = secretValue['Columbia Food Laboratories HMacPassword'];
-          blowfishKey = secretValue['Columbia Food Laboratories blowfishKey'];
-          merchantID  = secretValue['Columbia Food Laboratories MerchantID'];
+          HMacPassword = secretValue['Columbia Laboratories HMacPassword'];
+          blowfishKey = secretValue['Columbia Laboratories blowfishKey'];
+          merchantID  = secretValue['Columbia Laboratories MerchantID'];
         }
         else if(paymentDetails.ClientCompanyID == "C1303"){
           HMacPassword = secretValue['Tentamus North America Virginia HMacPassword'];
@@ -52,8 +52,8 @@ export const handler = async (event, context) => {
         console.log("Response of CreatePaymentHistory : ", createdPaymentdetails);
         console.log("Response of paymentDetails : ", paymentDetails);
             
-        if(paymentDetails.ClientName == "Columbia Food Laboratories"){
-          CompanyName = 'Columbia Food Laboratories';
+        if(paymentDetails.ClientName == "Columbia Laboratories"){
+          CompanyName = 'Columbia Laboratories';
          
         }
         else if(paymentDetails.ClientName == "Tentamus North America Virginia"){
