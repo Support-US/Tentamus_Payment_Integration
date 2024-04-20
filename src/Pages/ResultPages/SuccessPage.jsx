@@ -78,9 +78,9 @@ const SuccessPage = () => {
                 //   setWebsiteURL("https://www.afltexas.com");
                 //   break;
 
-                case 'Columbia Food Laboratories':
+                case 'Columbia Laboratories':
                   setSrcLogo(CFLLogo);
-                  setCompanyName('Columbia Food Laboratories');
+                  setCompanyName('Columbia Laboratories');
                   setLogoStyle({ width: '170px', height: 'auto' });
                   setWebsiteURL("https://www.columbialaboratories.com");
                   break;
