@@ -50,6 +50,7 @@ const FailurePage = () => {
   const [loading, setLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [showError, setShowError] = useState(false);
+  const apiUrl = process.env.REACT_APP_GET_PAYMENT_DETAILS_API;
 
   const location = useLocation();
 
@@ -70,7 +71,7 @@ const FailurePage = () => {
         const data = { id: transId, payId: payId, mac: mac, code: code, status: status, mid: mid };
 
         try {
-          await axios.post(`https://8gc7cikm63.execute-api.us-east-2.amazonaws.com/dev/items`,
+          await axios.post(apiUrl,
             JSON.stringify(data), {
             headers: {
               'Content-Type': 'application/json'
@@ -78,7 +79,7 @@ const FailurePage = () => {
           })
             .then(response => {
               const responseData = response.data;
-              console.log("responseData", responseData);
+              // console.log("responseData", responseData);
 
               setPaymentDetails({
                 description: searchParams.get('Description'),
@@ -161,7 +162,7 @@ const FailurePage = () => {
 
       try {
         const failureresponse = await axios.post(
-          `https://8gc7cikm63.execute-api.us-east-2.amazonaws.com/dev/items`,
+          apiUrl,
           JSON.stringify(data),
           {
             headers: {
@@ -172,7 +173,7 @@ const FailurePage = () => {
         )
           .then(response => {
             const responseData = response.data;
-            console.log("failureresponse", responseData);
+            // console.log("failureresponse", responseData);
 
             setComputopDetails({
               MerchantID: responseData.MerchantID,
@@ -222,12 +223,12 @@ const FailurePage = () => {
               ? 'https://www.tentamus.com/wp-content/uploads/2021/07/tentamus-group-logo.svg'
               : undefined;
 
-    console.log("customField3", customField3);
+    // console.log("customField3", customField3);
 
     const combinedInvoices = Object.values(computopdetails.invoicenumbers);
     const customField4 = combinedInvoices.join("%0A");
 
-    console.log("handleComputopRedirection", computopdetails);
+    // console.log("handleComputopRedirection", computopdetails);
 
     window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${datalength}&Data=${encryptedstring}&CustomField1=${customField1} ${currency}&CustomField3=${customField3}&CustomField4=${customField4}&CustomField5=${firstname}%20${lastname}%0A${addressline1}%0A${city}%0A${state}%0A${postalcode}%0A${country}%0A${phonenumber}&CustomField7=${transID}`;
 

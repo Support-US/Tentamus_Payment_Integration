@@ -6,7 +6,7 @@ const Landingpage = () => {
     const navigate = useNavigate();
 
     const navigateToForm = (params) => {
-        console.log("navigateToForm", params);
+        // console.log("navigateToForm", params);
 
         switch (params) {
             case "ColumbiaLaboratories":

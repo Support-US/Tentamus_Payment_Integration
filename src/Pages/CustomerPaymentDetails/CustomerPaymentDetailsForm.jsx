@@ -45,6 +45,7 @@ const CustomerPaymentDetailsForm = () => {
   const [loading, setLoading] = useState(false);
   const [amountInUSD, setAmountInUSD] = useState(0);
   const [countryName, setCountryName] = useState("United States");
+  const apiUrl = process.env.REACT_APP_SAVE_PAYMENT_API;
 
   useEffect(() => {
     const usStates = State.getStatesOfCountry('US');
@@ -186,7 +187,7 @@ const CustomerPaymentDetailsForm = () => {
 
     if (!value || value.trim().length === 0) {
       error = "Field is required";
-    } 
+    }
     // else if (!lettersOnlyRegex.test(value)) {
     //   error = " Enter a valid name with only letters"
     // }
@@ -309,17 +310,17 @@ const CustomerPaymentDetailsForm = () => {
   }
 
   const postPaymentDetails = async (data, resetForm) => {
-    console.log("data", data);
+    // console.log("data", data);
     setLoading(true);
 
     try {
-      const response = await axios.post('https://42cjoeluv3.execute-api.us-east-2.amazonaws.com/dev/paymentDetails',
+      const response = await axios.post(apiUrl,
         JSON.stringify(data), {
         headers: {
           'Content-Type': 'application/json'
         },
       });
-      console.log(" API Response:", response)
+      // console.log(" API Response:", response)
 
       // const response = await API.graphql(
       //   {
@@ -364,10 +365,10 @@ const CustomerPaymentDetailsForm = () => {
     // console.log("textFields", textFields);
 
     const currencyDetails = currencyDecimalDigit.currency(values.Currency).decimalDigits;
-    console.log("currencyDetails", currencyDetails);
+    // console.log("currencyDetails", currencyDetails);
 
     const amountEntered = values.Amount;
-    console.log("amountEntered", amountEntered);
+    // console.log("amountEntered", amountEntered);
 
     // Extract the number of decimal digits entered
     const numberOfDecimalsEntered = (amountEntered.toString().split('.')[1] || []).length;
@@ -406,7 +407,7 @@ const CustomerPaymentDetailsForm = () => {
         const seconds = currentDate.getSeconds().toString().padStart(2, '0');
 
         const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`;
-        console.log("formattedDate", formattedDate);
+        // console.log("formattedDate", formattedDate);
 
         const formData = {
           ...values,
@@ -416,7 +417,7 @@ const CustomerPaymentDetailsForm = () => {
           ClientName: clientname,
           ClientCompanyID: clientcompanyid
         }
-        console.log("formData", formData);
+        // console.log("formData", formData);
 
         try {
           // Multiplying amount based on smallest unit of currency
