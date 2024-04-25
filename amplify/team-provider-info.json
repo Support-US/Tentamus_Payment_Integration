@@ -1,5 +1,5 @@
 {
-  "master": {
+  "dev": {
     "awscloudformation": {
       "AuthRoleName": "amplify-tentamuspaymentinteg-master-e1056-authRole",
       "UnauthRoleArn": "arn:aws:iam::988839728996:role/amplify-tentamuspaymentinteg-master-e1056-unauthRole",
