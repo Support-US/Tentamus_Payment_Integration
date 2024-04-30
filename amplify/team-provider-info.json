@@ -1,5 +1,5 @@
 {
-  "dev": {
+  "master": {
     "awscloudformation": {
       "AuthRoleName": "amplify-tentamuspaymentinteg-master-e1056-authRole",
       "UnauthRoleArn": "arn:aws:iam::988839728996:role/amplify-tentamuspaymentinteg-master-e1056-unauthRole",
@@ -15,23 +15,23 @@
       "function": {
         "ComputopPaygateWebhook": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-master-e1056-deployment",
-          "s3Key": "amplify-builds/ComputopPaygateWebhook-5056554e764565744e6f-build.zip"
+          "s3Key": "amplify-builds/ComputopPaygateWebhook-66726e49334a75337441-build.zip"
         },
         "GetAmountDetails": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-master-e1056-deployment",
-          "s3Key": "amplify-builds/GetAmountDetails-4a565653516a43345272-build.zip"
+          "s3Key": "amplify-builds/GetAmountDetails-363861516d6a2b2b3639-build.zip"
         },
         "GetPaymentDetails": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-master-e1056-deployment",
-          "s3Key": "amplify-builds/GetPaymentDetails-57353533704863367257-build.zip"
+          "s3Key": "amplify-builds/GetPaymentDetails-4e48534c71683475677a-build.zip"
         },
         "PaymentDetailResponse": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-master-e1056-deployment",
-          "s3Key": "amplify-builds/PaymentDetailResponse-314f6a39674365625338-build.zip"
+          "s3Key": "amplify-builds/PaymentDetailResponse-2f537055785649536d77-build.zip"
         },
         "SendPaymentFailedMail": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-master-e1056-deployment",
-          "s3Key": "amplify-builds/SendPaymentFailedMail-71486c712b4a42756a58-build.zip"
+          "s3Key": "amplify-builds/SendPaymentFailedMail-37614446616635537274-build.zip"
         }
       }
     }

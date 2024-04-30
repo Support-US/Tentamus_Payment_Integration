@@ -4,14 +4,14 @@ import { DynamoDBClient, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 const sesClient = new SESClient({ region: process.env.REGION });
 const dynamoDB = new AWS.DynamoDB.DocumentClient({ region: process.env.REGION });
 const client = new DynamoDBClient({ region: process.env.REGION });
-const PaymentDetailsTableName = `PaymentDetails-4mqwuuijsrbx5p6qtibxxchbsq-dev`;
 
 const secretsManager = new AWS.SecretsManager();
-const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration`}).promise();
+const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration-Master`}).promise();
 let AdminMail;
 let ClientName;
 const secretValue = JSON.parse(data.SecretString);
 // console.log("secretValue : ", secretValue);     
+const PaymentDetailsTableName = secretValue.DBTable;
 
 export const handler = async (event) => {
     console.log(`Request EVENT: ${JSON.stringify(event)}`);
@@ -22,13 +22,13 @@ export const handler = async (event) => {
         if (paymentFailedDetails.length != 0) {
             try {
                  for (const details of paymentFailedDetails) {
-        if (details.ClientCompanyID === "C1301") {
+        if (details.ClientCompanyID === secretValue.CFLCID) {
             AdminMail = secretValue['CFL Admin Mail'];
             ClientName = 'Columbia Laboratories';
-        } else if (details.ClientCompanyID === "C1303") {
+        } else if (details.ClientCompanyID === secretValue.TNAVCID) {
             AdminMail = secretValue['TNAV Admin Mail'];
             ClientName = 'Tentamus North America Virginia';
-        } else if (details.ClientCompanyID === "C1302") {
+        } else if (details.ClientCompanyID === secretValue.AALCID) {
             AdminMail = secretValue['AAL Admin Mail'];
             ClientName='Adamson Analytical Labs';
         } else {
@@ -62,13 +62,13 @@ export const handler = async (event) => {
         if (sapUpdationFailedDetails.length != 0) {
             try {
                  for (const details of paymentFailedDetails) {
-        if (details.ClientCompanyID === "C1301") {
+        if (details.ClientCompanyID === secretValue.CFLCID) {
             AdminMail = secretValue['CFL Admin Mail'];
             ClientName = 'Columbia Laboratories';
-        } else if (details.ClientCompanyID === "C1303") {
+        } else if (details.ClientCompanyID === secretValue.TNAVCID) {
             AdminMail = secretValue['TNAV Admin Mail'];
             ClientName = 'Tentamus North America Virginia';
-        } else if (details.ClientCompanyID === "C1302") {
+        } else if (details.ClientCompanyID === secretValue.AALCID) {
             AdminMail = secretValue['AAL Admin Mail'];
             ClientName='Adamson Analytical Labs';
         } else {
@@ -481,183 +481,3 @@ export const handler = async (event) => {
 };
 
 
-    // async function sendPaymentFailedEmail(paymentFailedDetails,AdminMail) { 
-    //     console.log('paymentFailedDetails:', paymentFailedDetails);
-    //     try {
-
-
-    //         const transactionList = paymentFailedDetails.map(({ id, Description, createdAt }, index) =>
-    //             `<tr style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: ${index % 2 === 0 ? '#f8f9fa' : '#e2e6ea'};">
-    //                           <td style="padding: 12px;">${createdAt}</td>
-    //                           <td style="padding: 12px;">${Description}</td>
-    //                           <td style="padding: 12px;">${id}</td>
-    //                         </tr>`
-    //         ).join('');
-
-    //         const params = {
-    //             Destination: { ToAddresses:[AdminMail] },
-    //             Message: {
-    //                 Body: {
-    //                     Html: {
-    //                         Charset: 'UTF-8',
-    //                         Data: `
-    //                                 <html lang="en">
-    //                                     <head>
-    //                                       <meta charset="UTF-8">
-    //                                       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    //                                       <title>Computop Failed Payment Transactions</title>
-    //                                     </head>
-    //                                     <body style="font-family: 'Roboto', sans-serif; margin: 0; padding: 0; ">
-    //                                           <div style="max-width: 600px; margin: 20px auto; padding: 20px; background-color: #f8f9fa; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-    //                                             <div style="text-align: center; font-size: 18px; color: red; background-color: #fce4ec; padding: 8px; border-radius: 8px;">
-    //                                               <h2 style="margin: 0;">Computop Failed Payment Transactions</h2>
-    //                                             </div>
-    //                                                 <p style="margin-bottom: 20px;">Hi ${ClientName}</p>
-    //                                                 <p style="margin-bottom: 20px;">
-    //                                                   Hope this mail finds you well.
-    //                                                   We take a moment to summarise the list of recent payment transaction failures that occurred.
-    //                                             </p>
-    //                                                 <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-    //                                                       <thead>
-    //                                                         <tr>
-    //                                                           <th style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: #007bff; color: #fff;">Date(UTC)</th>
-    //                                                           <th style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: #007bff; color: #fff;">Description</th>
-    //                                                           <th style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: #007bff; color: #fff;">Transaction ID</th>
-    //                                                         </tr>
-    //                                                       </thead>
-    //                                                       <tbody>
-    //                                                         ${transactionList}
-    //                                                       </tbody>
-    //                                                         </table>
-    //                                                         <div  style="text-align: center; background-color: #fff9c4; border-radius: 8px; padding: 12px; margin-top: 20px;">
-    //                                                   <p style="margin: 0; font-size: 12px; color: #333;">
-    //                                                     If you have any questions or concerns, feel free to contact our Computop support team at
-    //                                                   <a href="mailto:helpdesk@computop.com" style="color:blueviolet; text-decoration: none;">helpdesk@computop.com</a>
-    //                                                   </p>
-    //                                                     </div>
-    //                                                   </div>
-    //                                                 </body>
-    //                                                 </html>
-    //                                               `,
-    //                     },
-    //                 },
-    //                 Subject: {
-    //                     Charset: 'UTF-8',
-    //                     Data: 'Computop Failed Payment Transactions',
-    //                 },
-    //             },
-    //             Source: 'meikandan.kg@nipurnait.com', 
-    //         };
-
-    //         console.log("Email Params : ", params);
-
-
-    //         const response = await sesClient.send(new SendEmailCommand(params));
-    //         const updatedArray = paymentFailedDetails.map(item => ({
-    //             ...item,
-    //             statusCode: response.$metadata.httpStatusCode
-    //         }));
-
-    //         console.log('All summary emails sent successfully.');
-    //         return updatedArray;
-    //     } catch (error) {
-    //         console.error('Error sending summary emails:', error);
-    //         throw error;
-    //     }
-    // }
-    
-    // async function sendSAPUpdateFailedEmail(sapUpdationFailedDetails,AdminMail,ClientName) {
-
-    //     try {
-    //         const transactionList = sapUpdationFailedDetails.map(({ id, FailureReason, createdAt }, index) =>
-    //             `<tr style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: ${index % 2 === 0 ? '#f8f9fa' : '#e2e6ea'};">
-    //                           <td style="padding: 12px;">${createdAt}</td>
-    //                           <td style="padding: 12px;">${FailureReason}</td>
-    //                           <td style="padding: 12px;">${id}</td>
-    //                         </tr>`
-    //         ).join('');
-
-    //         const params = {
-    //             Destination: { ToAddresses: [AdminMail] },
-    //             Message: {
-    //                 Body: {
-    //                     Html: {
-    //                         Charset: 'UTF-8',
-    //                         Data: `<html lang="en">
-    //                                   <head>
-    //                                     <meta charset="UTF-8" />
-    //                                     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    //                                     <title>Payment Update Failed in SAP System</title>
-    //                                     </head>
-    //                                     <body>
-    //                                     <body style="font-family: 'Roboto', sans-serif; margin: 0; padding: 0;">
-    //                                         <div  style="max-width: 700px; margin: 20px auto; padding: 20px; background-color: #f8f9fa; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-    //                                         <div  style="text-align: center; font-size: 18px; color: red; background-color: #fce4ec; padding: 8px; border-radius: 8px;">
-    //                                             <h2 style="margin: 0;">Payment Update Failed in SAP System</h2>
-    //                                          </div>      
-                                       
-    //                                           <div>
-    //                                             <p>
-    //                                               Hi,
-    //                                               <span style="color: #007640; font-weight: bold;">${ClientName}</span>
-                                    
-    //                                             </p>
-    //                                             <p>
-    //                                             We hope this mail finds you well. 
-    //                                             Kindly find the below successful payment transactions that failed while updating in the SAP system. Your payment process is
-    //                                             completed but sap update failed for the listed transaction below
-    //                                             </p>
-    //                                         </div>
-                                              
-    //                                           <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-    //                                             <thead>
-    //                                               <tr>
-    //                                                 <th style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: #007bff; color: #fff;">Date(UTC)</th>
-    //                                                 <th style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: #007bff; color: #fff;">Description</th>
-    //                                                 <th style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: #007bff; color: #fff;">Transaction ID</th>
-    //                                               </tr>
-    //                                             </thead>
-    //                                             <tbody>
-    //                                                 ${transactionList}     
-    //                                             </tbody>
-    //                                       </table>
-                                    
-    //                                   <div style="text-align: center; background-color: #fff9c4; border-radius: 8px; padding: 15px; margin-top: 20px;">
-    //                                         <p style="margin: 0; font-size: 15px; color: #333;">
-    //                                           If you have any questions or concerns, feel free to contact your SAP
-    //                                           team.
-    //                                         </p>
-    //                                       </div>
-    //                                     </div>
-    //                                   </body>
-    //                                 </html>
-    //                                   `,
-    //                     },
-    //                 },
-    //                 Subject: {
-    //                     Charset: 'UTF-8',
-    //                     Data: 'Payment Update Failed in SAP System',
-    //                 },
-    //             },
-    //             Source: 'meikandan.kg@nipurnait.com',
-    //         };
-
-    //         console.log("Email Params : ", params);
-
-
-    //         const response = await sesClient.send(new SendEmailCommand(params));
-    //         const updatedArray = sapUpdationFailedDetails.map(item => ({
-    //             ...item,
-    //             statusCode: response.$metadata.httpStatusCode
-    //         }));
-
-
-    //         console.log("All SAP emails sent successfully.");
-    //         return updatedArray;
-
-
-    //     } catch (error) {
-    //         console.error("Error processing SAP Updation Failed details:", error);
-    //         throw error;
-    //     }
-    // }

@@ -9,11 +9,12 @@ import pkg from 'crypto-js';
 const { HmacSHA256, enc } = pkg;  
 const client = new DynamoDBClient({ region: process.env.REGION });
 const secretsManager = new AWS.SecretsManager();
-const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration`}).promise(); 
-const PaymentDetailsTableName = `PaymentDetails-4mqwuuijsrbx5p6qtibxxchbsq-dev`;            
+const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration-Master`}).promise(); 
 let HMacPassword,blowfishKey,merchantID;
 const secretValue = JSON.parse(data.SecretString);
-console.log("secretValue : ", secretValue);    
+console.log("secretValue : ", secretValue);   
+const PaymentDetailsTableName = secretValue.DBTable;            
+
 export const handler = async (event) => {
             console.log(`Request EVENT: ${JSON.stringify(event)}`);
            

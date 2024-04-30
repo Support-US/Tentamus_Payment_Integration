@@ -9,14 +9,15 @@ const { HmacSHA256, enc } = pkg;
 const client = new DynamoDBClient({ region: process.env.REGION });
 
 const secretsManager = new AWS.SecretsManager();
-const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration`}).promise(); 
-const PaymentDetailsTableName = `PaymentDetails-4mqwuuijsrbx5p6qtibxxchbsq-dev`;            
+const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration-Master`}).promise(); 
 let HMacPassword,blowfishKey,merchantID,CompanyName;
 const secretValue = JSON.parse(data.SecretString);
 console.log("secretValue : ", secretValue);       
 const notifyURL   =secretValue.APIGatewayURL;
 let TableID,PayId,Status,Code,MerchantID;
 let Headers = secretValue.headers;
+const PaymentDetailsTableName = secretValue.DBTable;            
+
 
 export const handler = async (event) => {
 
