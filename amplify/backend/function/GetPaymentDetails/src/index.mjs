@@ -9,29 +9,29 @@ import { v4 as uuidv4 } from 'uuid';
  
 const secretsManager = new AWS.SecretsManager();
 const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration`}).promise(); 
-const PaymentDetailsTableName = `PaymentDetails-4mqwuuijsrbx5p6qtibxxchbsq-dev`;            
 let HMacPassword,blowfishKey,merchantID,CompanyName;
 const secretValue = JSON.parse(data.SecretString);
 console.log("secretValue : ", secretValue);       
 const notifyURL   =secretValue.APIGatewayURL;
 let Headers = secretValue.headers;
-           
+const PaymentDetailsTableName = secretValue.DBTable;            
+
 export const handler = async (event, context) => {
     
         console.log(`Request EVENT: ${JSON.stringify(event)}`);
         let paymentDetails = JSON.parse(event.body);
         
-        if(paymentDetails.ClientCompanyID == "C1301"){
+        if(paymentDetails.ClientCompanyID ==secretValue.CFLCID){
           HMacPassword = secretValue['Columbia Laboratories HMacPassword'];
           blowfishKey = secretValue['Columbia Laboratories blowfishKey'];
           merchantID  = secretValue['Columbia Laboratories MerchantID'];
         }
-        else if(paymentDetails.ClientCompanyID == "C1303"){
+        else if(paymentDetails.ClientCompanyID == secretValue.TNAVCID){
           HMacPassword = secretValue['Tentamus North America Virginia HMacPassword'];
           blowfishKey = secretValue['Tentamus North America Virginia blowfishKey'];
           merchantID  = secretValue['Tentamus North America Virginia MerchantID'];
         }
-        else if(paymentDetails.ClientCompanyID == "C1302"){
+        else if(paymentDetails.ClientCompanyID == secretValue.AALCID){
           HMacPassword = secretValue['Adamson Analytical Labs HMacPassword'];
           blowfishKey = secretValue['Adamson Analytical Labs blowfishKey'];
           merchantID  = secretValue['Adamson Analytical Labs MerchantID'];
