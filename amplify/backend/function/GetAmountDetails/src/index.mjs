@@ -34,17 +34,17 @@ export const handler = async (event) => {
          console.log("ClientMerchantID",MerchantID);
          
     try{
-         if(MerchantID == "CFL_LAB"){
+         if(MerchantID == secretValue['Columbia Laboratories MerchantID']){
           HMacPassword = secretValue['Columbia Laboratories HMacPassword'];
           blowfishKey = secretValue['Columbia Laboratories blowfishKey'];
           merchantID  = secretValue['Columbia Laboratories MerchantID'];
         }
-        else if(MerchantID == "Tentamus_NA_Virginia"){
+        else if(MerchantID == secretValue['Tentamus North America Virginia MerchantID']){
           HMacPassword = secretValue['Tentamus North America Virginia HMacPassword'];
           blowfishKey = secretValue['Tentamus North America Virginia blowfishKey'];
           merchantID  = secretValue['Tentamus North America Virginia MerchantID'];
         }
-        else if(MerchantID == "Tentamus_Adamson"){
+        else if(MerchantID == secretValue['Adamson Analytical Labs MerchantID']){
           HMacPassword = secretValue['Adamson Analytical Labs HMacPassword'];
           blowfishKey = secretValue['Adamson Analytical Labs blowfishKey'];
           merchantID  = secretValue['Adamson Analytical Labs MerchantID'];

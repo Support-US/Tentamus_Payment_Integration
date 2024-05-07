@@ -51,6 +51,8 @@ const FailurePage = () => {
   const [buttonLoading, setButtonLoading] = useState(false);
   const [showError, setShowError] = useState(false);
 
+  const apiUrl = process.env.REACT_APP_GET_PAYMENT_DETAILS_API;
+
   const location = useLocation();
 
   useEffect(() => {
@@ -70,7 +72,7 @@ const FailurePage = () => {
         const data = { id: transId, payId: payId, mac: mac, code: code, status: status, mid: mid };
 
         try {
-          await axios.post(`https://8gc7cikm63.execute-api.us-east-2.amazonaws.com/dev/items`,
+          await axios.post(apiUrl,
             JSON.stringify(data), {
             headers: {
               'Content-Type': 'application/json'
@@ -161,7 +163,7 @@ const FailurePage = () => {
 
       try {
         const failureresponse = await axios.post(
-          `https://8gc7cikm63.execute-api.us-east-2.amazonaws.com/dev/items`,
+          apiUrl,
           JSON.stringify(data),
           {
             headers: {

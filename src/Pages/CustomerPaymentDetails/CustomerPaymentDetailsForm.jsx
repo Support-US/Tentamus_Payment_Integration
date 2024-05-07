@@ -46,6 +46,8 @@ const CustomerPaymentDetailsForm = () => {
   const [amountInUSD, setAmountInUSD] = useState(0);
   const [countryName, setCountryName] = useState("United States");
 
+  const apiUrl = process.env.REACT_APP_SAVE_PAYMENT_API;
+
   useEffect(() => {
     const usStates = State.getStatesOfCountry('US');
     setStates(usStates.map((state) => ({ name: state.name, isoCode: state.isoCode })));
@@ -313,7 +315,7 @@ const CustomerPaymentDetailsForm = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('https://42cjoeluv3.execute-api.us-east-2.amazonaws.com/dev/paymentDetails',
+      const response = await axios.post(apiUrl,
         JSON.stringify(data), {
         headers: {
           'Content-Type': 'application/json'
