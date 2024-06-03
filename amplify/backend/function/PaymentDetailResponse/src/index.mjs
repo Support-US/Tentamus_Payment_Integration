@@ -4,14 +4,15 @@ import { unmarshall } from '@aws-sdk/util-dynamodb';
 import { DynamoDBClient, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 const secretsManager = new AWS.SecretsManager();
 const client = new DynamoDBClient({ region: process.env.REGION });
-const data = await secretsManager.getSecretValue({ SecretId:`Tentamus_Payment_Integration`}).promise();
+const data = await secretsManager.getSecretValue({ SecretId:`Tentamus_Payment_Integration-Master`}).promise();
 const secretValue = JSON.parse(data.SecretString);
-const PaymentDetailsTableName = secretValue.DBTable;            
+const PaymentDetailsTableName =secretValue.DBTable;
 
 export const handler = async (event) => {   
        
         console.log(`EVENT: ${JSON.stringify(event)}`);
-
+        
+       
     try {
          
         if (event.Records && event.Records.length > 0) {

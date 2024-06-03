@@ -9,31 +9,31 @@ import pkg from 'crypto-js';
 const { HmacSHA256, enc } = pkg;  
 const client = new DynamoDBClient({ region: process.env.REGION });
 const secretsManager = new AWS.SecretsManager();
-const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration`}).promise(); 
+const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration-Master`}).promise(); 
 let HMacPassword,blowfishKey,merchantID;
 const secretValue = JSON.parse(data.SecretString);
-console.log("secretValue : ", secretValue);    
+console.log("secretValue : ", secretValue);   
 const PaymentDetailsTableName = secretValue.DBTable;            
 
 export const handler = async (event) => {
             console.log(`Request EVENT: ${JSON.stringify(event)}`);
            
     try {
-         if(event.queryStringParameters.q == secretValue.CFLCompanyName){
-          HMacPassword = secretValue['Columbia Laboratories HMacPassword'];
-          blowfishKey = secretValue['Columbia Laboratories blowfishKey'];
-          merchantID  = secretValue['Columbia Laboratories MerchantID'];
-        }
-        else if(event.queryStringParameters.q == secretValue.TNAVCompanyName){ 
-          HMacPassword = secretValue['Tentamus North America Virginia HMacPassword'];
-          blowfishKey = secretValue['Tentamus North America Virginia blowfishKey'];
-          merchantID  = secretValue['Tentamus North America Virginia MerchantID'];
-        }
-        else if(event.queryStringParameters.q == secretValue.AALCompanyName){
-          HMacPassword = secretValue['Adamson Analytical Labs HMacPassword'];
-          blowfishKey = secretValue['Adamson Analytical Labs blowfishKey'];
-          merchantID  = secretValue['Adamson Analytical Labs MerchantID'];
-        }
+        if(event.queryStringParameters.q == secretValue.CFLCompanyName){
+            HMacPassword = secretValue['Columbia Laboratories HMacPassword'];
+            blowfishKey = secretValue['Columbia Laboratories blowfishKey'];
+            merchantID  = secretValue['Columbia Laboratories MerchantID'];
+          }
+          else if(event.queryStringParameters.q == secretValue.TNAVCompanyName){ 
+            HMacPassword = secretValue['Tentamus North America Virginia HMacPassword'];
+            blowfishKey = secretValue['Tentamus North America Virginia blowfishKey'];
+            merchantID  = secretValue['Tentamus North America Virginia MerchantID'];
+          }
+          else if(event.queryStringParameters.q == secretValue.AALCompanyName){
+            HMacPassword = secretValue['Adamson Analytical Labs HMacPassword'];
+            blowfishKey = secretValue['Adamson Analytical Labs blowfishKey'];
+            merchantID  = secretValue['Adamson Analytical Labs MerchantID'];
+          }
         else{
           return {
                     statusCode: 200,
@@ -310,6 +310,3 @@ async function UpdateFailurestatus(error,parsedObject,errStatus) {
 
 
 };
-
-   
-

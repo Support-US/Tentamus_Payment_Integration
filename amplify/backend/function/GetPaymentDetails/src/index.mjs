@@ -8,15 +8,14 @@ const client = new DynamoDBClient({ region: "us-east-2" });
 import { v4 as uuidv4 } from 'uuid';
  
 const secretsManager = new AWS.SecretsManager();
-const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration`}).promise(); 
+const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration-Master`}).promise(); 
 let HMacPassword,blowfishKey,merchantID,CompanyName;
 const secretValue = JSON.parse(data.SecretString);
 console.log("secretValue : ", secretValue);       
 const notifyURL   =secretValue.APIGatewayURL;
 const PaymentDetailsTableName = secretValue.DBTable;       
 let Headers = secretValue.headers;
-const PaymentDetailsTableName = secretValue.DBTable;            
-
+           
 export const handler = async (event, context) => {
     
         console.log(`Request EVENT: ${JSON.stringify(event)}`);
@@ -195,8 +194,3 @@ export const handler = async (event, context) => {
           body: JSON.stringify(responseData),
         };
 };
-
-
-
-
-
