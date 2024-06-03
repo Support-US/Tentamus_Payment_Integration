@@ -52,8 +52,6 @@ const FailurePage = () => {
   const [showError, setShowError] = useState(false);
   const apiUrl = process.env.REACT_APP_GET_PAYMENT_DETAILS_API;
 
-  const apiUrl = process.env.REACT_APP_GET_PAYMENT_DETAILS_API;
-
   const location = useLocation();
 
   useEffect(() => {

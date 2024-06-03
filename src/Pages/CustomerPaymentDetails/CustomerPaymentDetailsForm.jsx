@@ -47,8 +47,6 @@ const CustomerPaymentDetailsForm = () => {
   const [countryName, setCountryName] = useState("United States");
   const apiUrl = process.env.REACT_APP_SAVE_PAYMENT_API;
 
-  const apiUrl = process.env.REACT_APP_SAVE_PAYMENT_API;
-
   // let TentamusNorthAmericaVirginiaCompanyDetails = (
   //   <>
   //     <span className='text-base font-semibold'>
