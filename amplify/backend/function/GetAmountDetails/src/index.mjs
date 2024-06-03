@@ -9,7 +9,7 @@ const { HmacSHA256, enc } = pkg;
 const client = new DynamoDBClient({ region: process.env.REGION });
 
 const secretsManager = new AWS.SecretsManager();
-const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration-Master`}).promise(); 
+const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration`}).promise(); 
 let HMacPassword,blowfishKey,merchantID,CompanyName;
 const secretValue = JSON.parse(data.SecretString);
 console.log("secretValue : ", secretValue);       
@@ -34,17 +34,17 @@ export const handler = async (event) => {
          console.log("ClientMerchantID",MerchantID);
          
     try{
-         if(MerchantID == "CFL_LAB"){
+         if(MerchantID == secretValue['Columbia Laboratories MerchantID']){
           HMacPassword = secretValue['Columbia Laboratories HMacPassword'];
           blowfishKey = secretValue['Columbia Laboratories blowfishKey'];
           merchantID  = secretValue['Columbia Laboratories MerchantID'];
         }
-        else if(MerchantID == "Tentamus_NA_Virginia"){
+        else if(MerchantID == secretValue['Tentamus North America Virginia MerchantID']){
           HMacPassword = secretValue['Tentamus North America Virginia HMacPassword'];
           blowfishKey = secretValue['Tentamus North America Virginia blowfishKey'];
           merchantID  = secretValue['Tentamus North America Virginia MerchantID'];
         }
-        else if(MerchantID == "Tentamus_Adamson"){
+        else if(MerchantID == secretValue['Adamson Analytical Labs MerchantID']){
           HMacPassword = secretValue['Adamson Analytical Labs HMacPassword'];
           blowfishKey = secretValue['Adamson Analytical Labs blowfishKey'];
           merchantID  = secretValue['Adamson Analytical Labs MerchantID'];
@@ -108,14 +108,14 @@ export const handler = async (event) => {
                     let createdPaymentdetails = await createPaymentDetails(getData,id);
                     console.log("Response of CreatePaymentHistory : ", createdPaymentdetails);
                     
-                    if(getData.ClientName == "Columbia Laboratories"){
-                      CompanyName = 'Columbia Laboratories';
+                    if(getData.ClientName == secretValue.CFLCompanyName){
+                      CompanyName = secretValue.CFLCompanyName;
                     }
-                    else if(getData.ClientName == "Tentamus North America Virginia"){
-                      CompanyName = 'Tentamus North America Virginia';
+                    else if(getData.ClientName == secretValue.TNAVCompanyName){
+                      CompanyName = secretValue.TNAVCompanyName;
                      
-                    }else if(getData.ClientName == "Adamson Analytical Labs"){
-                      CompanyName = 'Adamson Analytical Labs';
+                    }else if(getData.ClientName == secretValue.AALCompanyName){
+                      CompanyName = secretValue.AALCompanyName;
                     }
                     else{
                       return {

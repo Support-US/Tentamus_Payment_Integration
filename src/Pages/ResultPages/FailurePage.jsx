@@ -52,6 +52,8 @@ const FailurePage = () => {
   const [showError, setShowError] = useState(false);
   const apiUrl = process.env.REACT_APP_GET_PAYMENT_DETAILS_API;
 
+  const apiUrl = process.env.REACT_APP_GET_PAYMENT_DETAILS_API;
+
   const location = useLocation();
 
   useEffect(() => {
@@ -329,7 +331,7 @@ const FailurePage = () => {
               alignItems: 'baseline',
               marginTop: '0.5rem',
               fontWeight: 600,
-              color: '#007640',
+              color: 'var(--primary-color)',
               fontSize: '15px',
             }}>
               {companyName}

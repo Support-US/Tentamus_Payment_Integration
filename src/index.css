@@ -28,11 +28,11 @@ body {
 } */
 
 .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-  border-color: #007640 !important;
+  border-color: var(--primary-color) !important;
 }
 
 .MuiInputLabel-shrink {
-  color: #007640 !important;
+  color: var(--primary-color) !important;
 }
 
 

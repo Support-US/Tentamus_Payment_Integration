@@ -47,6 +47,62 @@ const CustomerPaymentDetailsForm = () => {
   const [countryName, setCountryName] = useState("United States");
   const apiUrl = process.env.REACT_APP_SAVE_PAYMENT_API;
 
+  const apiUrl = process.env.REACT_APP_SAVE_PAYMENT_API;
+
+  // let TentamusNorthAmericaVirginiaCompanyDetails = (
+  //   <>
+  //     <span className='text-base font-semibold'>
+  //       {companyName}
+  //     </span>
+  //     <span>
+  //       10524 Spotsylvania Ave Ste. 102 <br />
+  //       Fredericksburg, VA 22408.
+  //     </span>
+  //     <span>
+  //       (540) 684-9211
+  //     </span>
+  //     <span>
+  //       Billing.fre@tentamus.com
+  //     </span>
+  //   </>
+  // );
+
+  // let AdamsonAnalyticalLaboratoriesCompanyDetails = (
+  //   <>
+  //     <span className='text-base font-semibold'>
+  //       {companyName}
+  //     </span>
+  //     <span>
+  //       220 Crouse Dr. <br />
+  //       Corona, CA 92879.
+  //     </span>
+  //     <span>
+  //       951-549-9657
+  //     </span>
+  //     <span>
+  //       Billing.AAL@tentamus.com
+  //     </span>
+  //   </>
+  // );
+
+  // let ColumbiaFoodLaboratoriesCompanyDetails = (
+  //   <>
+  //     <span className='text-base font-semibold'>
+  //       {companyName}
+  //     </span>
+  //     <span>
+  //       12423 NE Whitaker Way. <br />
+  //       Portland, OR 97230.
+  //     </span>
+  //     <span>
+  //       503.254.1794 x317
+  //     </span>
+  //     <span>
+  //       accountsreceivable.cfl@tentamus.com
+  //     </span>
+  //   </>
+  // );
+
   useEffect(() => {
     const usStates = State.getStatesOfCountry('US');
     setStates(usStates.map((state) => ({ name: state.name, isoCode: state.isoCode })));
@@ -105,6 +161,12 @@ const CustomerPaymentDetailsForm = () => {
   const [clientname, setClientName] = useState("");
   const [clientcompanyid, setClientCompanyId] = useState("");
   const [websiteURL, setWebsiteURL] = useState("");
+  const [companyAddressDetails, setCompanyAddressDetails] = useState({
+    doorNoAndStreet: '',
+    cityAndState: '',
+    phoneNumber: '',
+    email: ''
+  });
 
   useEffect(() => {
     const path = window.location.pathname;
@@ -118,6 +180,7 @@ const CustomerPaymentDetailsForm = () => {
         setClientName("Analytical Food Laboratories");
         setClientCompanyId("C1304");
         setWebsiteURL("https://www.afltexas.com");
+        // setCompanyAddressDetails("Analytical Food Laboratories");
         break;
 
       case 'ColumbiaLaboratories':
@@ -128,6 +191,12 @@ const CustomerPaymentDetailsForm = () => {
         setClientName("Columbia Laboratories");
         setClientCompanyId("C1301");
         setWebsiteURL("https://www.columbialaboratories.com");
+        setCompanyAddressDetails({
+          doorNoAndStreet: '12423 NE Whitaker Way.',
+          cityAndState: 'Portland, OR 97230.',
+          phoneNumber: '503.254.1794 x317',
+          email: 'accountsreceivable.cfl@tentamus.com'
+        });
         break;
 
       case 'TentamusNorthAmericaVirginia':
@@ -138,6 +207,12 @@ const CustomerPaymentDetailsForm = () => {
         setClientName("Tentamus North America Virginia");
         setClientCompanyId("C1303");
         setWebsiteURL("https://www.tentamus-va.com/");
+        setCompanyAddressDetails({
+          doorNoAndStreet: '10524 Spotsylvania Ave Ste. 102',
+          cityAndState: 'Fredericksburg, VA 22408.',
+          phoneNumber: '(540) 684-9211',
+          email: 'Billing.fre@tentamus.com'
+        });
         break;
 
       case 'AdamsonAnalyticalLabs':
@@ -148,9 +223,14 @@ const CustomerPaymentDetailsForm = () => {
         setClientName("Adamson Analytical Labs");
         setClientCompanyId("C1302");
         setWebsiteURL("https://www.adamsonlab.com/");
+        setCompanyAddressDetails({
+          doorNoAndStreet: '220 Crouse Dr.',
+          cityAndState: 'Corona, CA 92879.',
+          phoneNumber: '951-549-9657',
+          email: 'Billing.AAL@tentamus.com'
+        });
         break;
     }
-
   }, []);
 
   const validateFirstName = (value) => {
@@ -359,7 +439,6 @@ const CustomerPaymentDetailsForm = () => {
     }
   }
 
-
   const handleFormSubmit = async (values, { resetForm }) => {
     // console.log("handleFormSubmit", values, textFields);
     // console.log("textFields", textFields);
@@ -457,7 +536,6 @@ const CustomerPaymentDetailsForm = () => {
   const [textFields, setTextFields] = useState(['']);
   const [touchedFields, setTouchedFields] = useState([false]);
 
-
   const handleAddTextField = () => {
     setTextFields([...textFields, '']);
     setTouchedFields([...touchedFields, false]);
@@ -490,8 +568,6 @@ const CustomerPaymentDetailsForm = () => {
     setTouchedFields(updatedTouchedFields);
   };
 
-
-
   return (
     <>
       <div>
@@ -513,15 +589,45 @@ const CustomerPaymentDetailsForm = () => {
                 <form className='form-container'>
                   <Grid>
                     {/* Heading */}
-                    <div className='flex justify-content-center align-items-center gap-3 sm:gap-5' style={{ textAlign: 'center' }}>
-                      {srcLogo && (
-                        <a href={websiteURL} target="_blank" rel="noopener noreferrer">
-                          <img src={srcLogo} style={logoStyle} alt={`${companyName} Logo`} />
-                        </a>
-                      )}
-                      <span style={textStyle} className='text-center'>
-                        {companyName}
-                      </span>
+                    <div
+                      className='ml-4 flex justify-content-center gap-5 align-items-top'
+                      style={{ textAlign: 'center' }}>
+
+                      {/* Logo*/}
+                      <div>
+                        {srcLogo && (
+                          <a href={websiteURL} target="_blank" rel="noopener noreferrer">
+                            <img className='mt-3' src={srcLogo} style={logoStyle} alt={`${companyName} Logo`} />
+                          </a>
+                        )}
+                        {/* <span style={textStyle} className='text-center text-base'>
+                          {companyName}
+                        </span> */}
+                      </div>
+
+                      <div style={{ borderRight: "2px solid var(--primary-color)" }}>
+
+                      </div>
+                      {/* Company details */}
+                      {
+                        <div className='flex flex-column text-left text-sm'>
+                          <span className='text-base font-semibold'>
+                            {companyName}
+                          </span>
+                          <span>
+                            {companyAddressDetails.doorNoAndStreet} <br />
+                            {companyAddressDetails.cityAndState}
+                          </span>
+                          <span>
+                            {companyAddressDetails.phoneNumber}
+                          </span>
+                          <span>
+                            <a href={`mailto:${companyAddressDetails.email}`}>
+                              {companyAddressDetails.email}
+                            </a>
+                          </span>
+                        </div>
+                      }
                     </div>
 
                     <div>

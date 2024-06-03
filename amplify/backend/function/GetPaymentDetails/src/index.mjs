@@ -8,20 +8,21 @@ const client = new DynamoDBClient({ region: "us-east-2" });
 import { v4 as uuidv4 } from 'uuid';
  
 const secretsManager = new AWS.SecretsManager();
-const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration-Master`}).promise(); 
+const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration`}).promise(); 
 let HMacPassword,blowfishKey,merchantID,CompanyName;
 const secretValue = JSON.parse(data.SecretString);
 console.log("secretValue : ", secretValue);       
 const notifyURL   =secretValue.APIGatewayURL;
 const PaymentDetailsTableName = secretValue.DBTable;       
 let Headers = secretValue.headers;
-           
+const PaymentDetailsTableName = secretValue.DBTable;            
+
 export const handler = async (event, context) => {
     
         console.log(`Request EVENT: ${JSON.stringify(event)}`);
         let paymentDetails = JSON.parse(event.body);
         
-        if(paymentDetails.ClientCompanyID == secretValue.CFLCID){
+        if(paymentDetails.ClientCompanyID ==secretValue.CFLCID){
           HMacPassword = secretValue['Columbia Laboratories HMacPassword'];
           blowfishKey = secretValue['Columbia Laboratories blowfishKey'];
           merchantID  = secretValue['Columbia Laboratories MerchantID'];
@@ -52,15 +53,15 @@ export const handler = async (event, context) => {
         console.log("Response of CreatePaymentHistory : ", createdPaymentdetails);
         console.log("Response of paymentDetails : ", paymentDetails);
             
-        if(paymentDetails.ClientName == "Columbia Laboratories"){
-          CompanyName = 'Columbia Laboratories';
+        if(paymentDetails.ClientName == secretValue.CFLCompanyName){
+          CompanyName = secretValue.CFLCompanyName;
          
         }
-        else if(paymentDetails.ClientName == "Tentamus North America Virginia"){
-          CompanyName = 'Tentamus North America Virginia';
+        else if(paymentDetails.ClientName == secretValue.TNAVCompanyName){
+          CompanyName =secretValue.TNAVCompanyName;
          
-        }else if(paymentDetails.ClientName == "Adamson Analytical Labs"){
-          CompanyName = 'Adamson Analytical Labs';
+        }else if(paymentDetails.ClientName == secretValue.AALCompanyName){
+          CompanyName = secretValue.AALCompanyName;
         }
         else{
           return {
