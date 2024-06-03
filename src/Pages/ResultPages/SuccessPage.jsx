@@ -235,7 +235,7 @@ const SuccessPage = () => {
               alignItems: 'baseline',
               marginTop: '0.5rem',
               fontWeight: 600,
-              color: '#007640',
+              color: 'var(--primary-color)',
               fontSize: '15px',
             }}>
               {companyName}

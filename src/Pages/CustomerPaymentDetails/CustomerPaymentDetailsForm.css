@@ -4,7 +4,7 @@
   align-items: baseline;
   /* margin-top: 1.5rem; */
   font-weight: 600;
-  color: #007640;
+  color: var(--primary-color);
   font-size: 22px;
   margin-bottom: 1.5rem;
 }
@@ -16,7 +16,7 @@
   margin-top: 3rem;
   font-weight: 600;
   font-size: 1.4em;
-  color: #007640;
+  color: var(--primary-color);
 }
 
 .success-text {
@@ -26,7 +26,7 @@
   margin-top: 0.5rem;
   font-weight: 800;
   font-size: 2em;
-  color: #007640;
+  color: var(--primary-color);
   margin-bottom: -3rem;
 }
 
@@ -190,7 +190,7 @@
   height: 30px;
   display: inline-block;
   border-width: 2px;
-  border-color: #007640;
+  border-color: var(--primary-color);
   border-top-color: #ffffff3e;
   animation: spin 1s infinite linear;
   border-radius: 100%;
@@ -220,7 +220,7 @@
   stroke-dashoffset: 166;
   stroke-width: 2;
   stroke-miterlimit: 10;
-  stroke: #007640;
+  stroke: var(--primary-color);
   fill: none;
   animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards
 }
@@ -231,10 +231,10 @@
   border-radius: 50%;
   display: block;
   stroke-width: 3;
-  stroke: #007640;
+  stroke: var(--primary-color);
   stroke-miterlimit: 10;
   margin: 10% auto;
-  box-shadow: inset 0px 0px 0px #007640;
+  box-shadow: inset 0px 0px 0px var(--primary-color);
   animation: fill .5s ease-in-out .4s forwards, scale .3s ease-in-out .9s both
 }
 
@@ -265,7 +265,7 @@
 
 @keyframes fill {
   100% {
-    box-shadow: inset 0px 0px 0px 10px #007640;
+    box-shadow: inset 0px 0px 0px 10px var(--primary-color);
   }
 }
 

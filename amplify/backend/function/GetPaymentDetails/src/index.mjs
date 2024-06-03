@@ -52,15 +52,15 @@ export const handler = async (event, context) => {
         console.log("Response of CreatePaymentHistory : ", createdPaymentdetails);
         console.log("Response of paymentDetails : ", paymentDetails);
             
-        if(paymentDetails.ClientName == "Columbia Laboratories"){
-          CompanyName = 'Columbia Laboratories';
+        if(paymentDetails.ClientName == secretValue.CFLCompanyName){
+          CompanyName = secretValue.CFLCompanyName;
          
         }
-        else if(paymentDetails.ClientName == "Tentamus North America Virginia"){
-          CompanyName = 'Tentamus North America Virginia';
+        else if(paymentDetails.ClientName == secretValue.TNAVCompanyName){
+          CompanyName =secretValue.TNAVCompanyName;
          
-        }else if(paymentDetails.ClientName == "Adamson Analytical Labs"){
-          CompanyName = 'Adamson Analytical Labs';
+        }else if(paymentDetails.ClientName == secretValue.AALCompanyName){
+          CompanyName = secretValue.AALCompanyName;
         }
         else{
           return {

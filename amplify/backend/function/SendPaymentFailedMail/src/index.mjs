@@ -24,13 +24,13 @@ export const handler = async (event) => {
                  for (const details of paymentFailedDetails) {
         if (details.ClientCompanyID === secretValue.CFLCID) {
             AdminMail = secretValue['CFL Admin Mail'];
-            ClientName = 'Columbia Laboratories';
+            ClientName = secretValue.CFLCompanyName;
         } else if (details.ClientCompanyID === secretValue.TNAVCID) {
             AdminMail = secretValue['TNAV Admin Mail'];
-            ClientName = 'Tentamus North America Virginia';
+            ClientName = secretValue.TNAVCompanyName;
         } else if (details.ClientCompanyID === secretValue.AALCID) {
             AdminMail = secretValue['AAL Admin Mail'];
-            ClientName='Adamson Analytical Labs';
+            ClientName=secretValue.AALCompanyName;
         } else {
             return {
                 statusCode: 404,
@@ -64,13 +64,13 @@ export const handler = async (event) => {
                  for (const details of paymentFailedDetails) {
         if (details.ClientCompanyID === secretValue.CFLCID) {
             AdminMail = secretValue['CFL Admin Mail'];
-            ClientName = 'Columbia Laboratories';
+            ClientName = secretValue.CFLCompanyName;
         } else if (details.ClientCompanyID === secretValue.TNAVCID) {
             AdminMail = secretValue['TNAV Admin Mail'];
-            ClientName = 'Tentamus North America Virginia';
+            ClientName = secretValue.TNAVCompanyName;
         } else if (details.ClientCompanyID === secretValue.AALCID) {
             AdminMail = secretValue['AAL Admin Mail'];
-            ClientName='Adamson Analytical Labs';
+            ClientName=secretValue.AALCompanyName;
         } else {
             return {
                 statusCode: 404,

@@ -19,17 +19,17 @@ export const handler = async (event) => {
             console.log(`Request EVENT: ${JSON.stringify(event)}`);
            
     try {
-         if(event.queryStringParameters.q == "Columbia Laboratories"){
+         if(event.queryStringParameters.q == secretValue.CFLCompanyName){
           HMacPassword = secretValue['Columbia Laboratories HMacPassword'];
           blowfishKey = secretValue['Columbia Laboratories blowfishKey'];
           merchantID  = secretValue['Columbia Laboratories MerchantID'];
         }
-        else if(event.queryStringParameters.q == "Tentamus North America Virginia"){ 
+        else if(event.queryStringParameters.q == secretValue.TNAVCompanyName){ 
           HMacPassword = secretValue['Tentamus North America Virginia HMacPassword'];
           blowfishKey = secretValue['Tentamus North America Virginia blowfishKey'];
           merchantID  = secretValue['Tentamus North America Virginia MerchantID'];
         }
-        else if(event.queryStringParameters.q == "Adamson Analytical Labs"){
+        else if(event.queryStringParameters.q == secretValue.AALCompanyName){
           HMacPassword = secretValue['Adamson Analytical Labs HMacPassword'];
           blowfishKey = secretValue['Adamson Analytical Labs blowfishKey'];
           merchantID  = secretValue['Adamson Analytical Labs MerchantID'];

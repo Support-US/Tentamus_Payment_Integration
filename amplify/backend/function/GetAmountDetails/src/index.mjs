@@ -108,14 +108,14 @@ export const handler = async (event) => {
                     let createdPaymentdetails = await createPaymentDetails(getData,id);
                     console.log("Response of CreatePaymentHistory : ", createdPaymentdetails);
                     
-                    if(getData.ClientName == "Columbia Laboratories"){
-                      CompanyName = 'Columbia Laboratories';
+                    if(getData.ClientName == secretValue.CFLCompanyName){
+                      CompanyName = secretValue.CFLCompanyName;
                     }
-                    else if(getData.ClientName == "Tentamus North America Virginia"){
-                      CompanyName = 'Tentamus North America Virginia';
+                    else if(getData.ClientName == secretValue.TNAVCompanyName){
+                      CompanyName = secretValue.TNAVCompanyName;
                      
-                    }else if(getData.ClientName == "Adamson Analytical Labs"){
-                      CompanyName = 'Adamson Analytical Labs';
+                    }else if(getData.ClientName == secretValue.AALCompanyName){
+                      CompanyName = secretValue.AALCompanyName;
                     }
                     else{
                       return {
