@@ -286,7 +286,7 @@ const CustomerPaymentDetailsForm = () => {
   }
 
   const postPaymentDetails = async (data, resetForm) => {
-    console.log("data", data);
+    // console.log("data", data);
     setLoading(true);
 
     try {
