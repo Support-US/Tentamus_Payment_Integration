@@ -1,19 +1,27 @@
 version: 1
-applications:
-  - frontend:
-      phases:
-        preBuild:
-          commands:
-            - npm ci
-        build:
-          commands:
-            - npm run build
-      artifacts:
-        baseDirectory: /path/to/build
-        files:
-          - '**/*'
-      cache:
-        paths:
-          - node_modules/**/*
-      container:
-        size: 10
+backend:
+  phases:
+    build:
+      commands:
+        - amplifyPush --simple
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - export NODE_OPTIONS=--max-old-space-size=56332
+        - node -e 'console.log(v8.getHeapStatistics().total_available_size/(1024*1024))' # prints the amount of memory being configured
+        - sudo fallocate -l 4G /swapfile # adds swap space in build container
+        - sudo chmod 600 /swapfile
+        - sudo mkswap /swapfile
+        - sudo swapon /swapfile
+        - sudo swapon -s
+        - sudo free -m
+        - sudo cat /proc/sys/vm/swappiness
+        - npm ci
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: build
+    files:
+      - '**/*'
