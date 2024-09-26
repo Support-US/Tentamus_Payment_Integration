@@ -127,7 +127,9 @@ const SuccessPage = () => {
         }
       }
       else {
-        showToast('Something went wrong. Please contact the admin.', 'error',4000);
+        showToast('Something went wrong. Please contact the admin.', 'error',5000);
+        setLoading(false);
+        setShowError(true);
       }
     }
 
@@ -267,7 +269,7 @@ const SuccessPage = () => {
           <span className='flex flex-column justify-content-center align-items-center h-screen'>
 
             <h1 className='text-2xl font-bold text-center' style={{ color: "#4CAF50" }}>
-              Something went wrong  :( <br /> Please try again
+              Something went wrong. <br /> Please try again
             </h1>
 
             <Button

@@ -1,0 +1,19 @@
+version: 1
+applications:
+  - frontend:
+      phases:
+        preBuild:
+          commands:
+            - npm ci
+        build:
+          commands:
+            - npm run build
+      artifacts:
+        baseDirectory: /path/to/build
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*
+      container:
+        size: 10
