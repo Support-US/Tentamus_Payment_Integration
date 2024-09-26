@@ -390,7 +390,7 @@ const CustomerPaymentDetailsForm = () => {
   }
 
   const postPaymentDetails = async (data, resetForm) => {
-    console.log("data", data);
+    // console.log("data", data);
     setLoading(true);
 
     try {
@@ -400,7 +400,7 @@ const CustomerPaymentDetailsForm = () => {
           'Content-Type': 'application/json'
         },
       });
-      console.log(" API Response:", response)
+      // console.log(" API Response:", response)
 
       // const response = await API.graphql(
       //   {
@@ -445,10 +445,10 @@ const CustomerPaymentDetailsForm = () => {
     // console.log("textFields", textFields);
 
     const currencyDetails = currencyDecimalDigit.currency(values.Currency).decimalDigits;
-    console.log("currencyDetails", currencyDetails);
+    // console.log("currencyDetails", currencyDetails);
 
     const amountEntered = values.Amount;
-    console.log("amountEntered", amountEntered);
+    // console.log("amountEntered", amountEntered);
 
     // Extract the number of decimal digits entered
     const numberOfDecimalsEntered = (amountEntered.toString().split('.')[1] || []).length;
@@ -487,7 +487,7 @@ const CustomerPaymentDetailsForm = () => {
         const seconds = currentDate.getSeconds().toString().padStart(2, '0');
 
         const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`;
-        console.log("formattedDate", formattedDate);
+        // console.log("formattedDate", formattedDate);
 
         const formData = {
           ...values,
@@ -497,7 +497,7 @@ const CustomerPaymentDetailsForm = () => {
           ClientName: clientname,
           ClientCompanyID: clientcompanyid
         }
-        console.log("formData", formData);
+        // console.log("formData", formData);
 
         try {
           // Multiplying amount based on smallest unit of currency
