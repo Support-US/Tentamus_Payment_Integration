@@ -45,7 +45,6 @@ const SuccessPage = () => {
       const status = searchParams.get('Status');
       const mid = searchParams.get('mid');
 
-
       if (transId && payId && mac && code && status && mid) {
 
         const data = { id: transId, payId: payId, mac: mac, code: code, status: status, mid: mid };
@@ -127,6 +126,9 @@ const SuccessPage = () => {
           showToast("Data fetch error, but your transaction was successful.", "error");
         }
       }
+      else {
+        showToast('Something went wrong. Please contact the admin.', 'error',4000);
+      }
     }
 
     fetchData();
@@ -137,10 +139,11 @@ const SuccessPage = () => {
 
   return (
     <>
+      <ToastContainer />
+
       {
         (!loading && paymentDetails.amount !== '') &&
         <>
-          <ToastContainer />
 
           <ConfettiEffect />
 

@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "crypto-js": "^4.2.0",
-    "egoroof-blowfish": "^4.0.1",
-    "getamountdetails": "file:"
+    "egoroof-blowfish": "^4.0.1"
   }
 }

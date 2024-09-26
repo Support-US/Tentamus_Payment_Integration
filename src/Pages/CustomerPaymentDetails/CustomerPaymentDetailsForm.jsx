@@ -36,6 +36,7 @@ const CustomerPaymentDetailsForm = () => {
   const initialValues = useSelector(selectFormData);
   const [paymentDetails, setPaymentDetails] = useState({
     MerchantID: "",
+    PayID:"",
     TransactionID: "",
     CalculatedHMAC: "",
     EncryptedString: "",
@@ -366,7 +367,7 @@ const CustomerPaymentDetailsForm = () => {
   // };
 
   const handleComputopRedirection = (paymentDetails) => {
-    // console.log("handleComputopRedirection", initialValues);
+    console.log("handleComputopRedirection", paymentDetails);
 
     const { MerchantID, EncryptedString, TransactionID, dataLength } = paymentDetails;
     const { FirstName, LastName, Currency, AddressLine1, City, State, PhoneNumber, PostalCode } = initialValues;
@@ -384,7 +385,7 @@ const CustomerPaymentDetailsForm = () => {
               ? 'https://www.tentamus.com/wp-content/uploads/2021/07/tentamus-group-logo.svg'
               : undefined;
 
-    window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataLength}&Data=${EncryptedString}&CustomField1=${CurrencyFormat(amountInUSD)} ${Currency}&CustomField3=${customField3}&CustomField4=${combinedInvoices}&CustomField5=${FirstName} ${LastName}%0A ${AddressLine1}%0A ${City}%0A ${State}%0A ${PostalCode}%0A ${countryName}%0A ${PhoneNumber}&CustomField7=${TransactionID}`;
+    window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&PayID=${TransactionID}&Len=${dataLength}&Data=${EncryptedString}&CustomField1=${CurrencyFormat(amountInUSD)} ${Currency}&CustomField3=${customField3}&CustomField4=${combinedInvoices}&CustomField5=${FirstName} ${LastName}%0A ${AddressLine1}%0A ${City}%0A ${State}%0A ${PostalCode}%0A ${countryName}%0A ${PhoneNumber}&CustomField7=${TransactionID}`;
     // window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataLength}&Data=${EncryptedString}&CustomField1=${CurrencyFormat(amountInUSD)} ${Currency}&CustomField3=https://www.afltexas.com/wp-content/uploads/2022/07/AFL_GroupTag.svg&CustomField4=${combinedInvoices}&CustomField5=${FirstName} ${LastName}%0A ${AddressLine1}%0A ${City}%0A ${State}%0A ${PostalCode}%0A ${countryName}%0A ${PhoneNumber}&CustomField7=${TransactionID}`;
   }
 
@@ -414,6 +415,7 @@ const CustomerPaymentDetailsForm = () => {
       setPaymentDetails(prevState => ({
         ...prevState,
         TransactionID: response.data.TransactionID,
+        PayID:response.data.PayID,
         MerchantID: response.data.MerchantID,
         CalculatedHMAC: response.data.CalculatedHMAC,
         EncryptedString: response.data.EncryptedString,
@@ -645,7 +647,8 @@ const CustomerPaymentDetailsForm = () => {
                             type="text"
                             as={TextField}
                             placeholder={!values.FirstName ? " First Name *" : ""}
-                            label={values.FirstName ? "First Name *" : ""}
+                            label="First Name *"
+                            // label={values.FirstName ? "First Name *" : ""}
                             helperText={(touched.FirstName && errors.FirstName)}
                             error={touched.FirstName && Boolean(errors.FirstName)}
                             value={values.FirstName}
@@ -663,7 +666,8 @@ const CustomerPaymentDetailsForm = () => {
                             type="text"
                             as={TextField}
                             placeholder={!values.LastName ? "Last Name *" : ""}
-                            label={values.LastName ? "Last Name *" : ""}
+                            label="Last Name *"
+                            // label={values.LastName ? "Last Name *" : ""}
                             helperText={(touched.LastName && errors.LastName)}
                             error={touched.LastName && Boolean(errors.LastName)}
                             value={values.LastName}
@@ -681,7 +685,8 @@ const CustomerPaymentDetailsForm = () => {
                             type="text"
                             as={TextField}
                             placeholder={!values.CompanyName ? "Company Name *" : ""}
-                            label={values.CompanyName ? "Company Name *" : ""}
+                            label="Company Name *"
+                            // label={values.CompanyName ? "Company Name *" : ""}
                             helperText={(touched.CompanyName && errors.CompanyName)}
                             error={touched.CompanyName && Boolean(errors.CompanyName)}
                             value={values.CompanyName}
@@ -699,7 +704,8 @@ const CustomerPaymentDetailsForm = () => {
                             type="text"
                             as={TextField}
                             placeholder={!values.Email ? "Email *" : ""}
-                            label={values.Email ? "Email *" : ""}
+                            label="Email *" 
+                            // label={values.Email ? "Email *" : ""}
                             helperText={(touched.Email && errors.Email)}
                             error={touched.Email && Boolean(errors.Email)}
                             value={values.Email}
@@ -717,7 +723,8 @@ const CustomerPaymentDetailsForm = () => {
                             type="text"
                             as={TextField}
                             placeholder={!values.AddressLine1 ? "Address Line1 *" : ""}
-                            label={values.AddressLine1 ? "Address Line1 *" : ""}
+                            label="Address Line1 *"
+                            // label={values.AddressLine1 ? "Address Line1 *" : ""}
                             helperText={(touched.AddressLine1 && errors.AddressLine1)}
                             error={touched.AddressLine1 && Boolean(errors.AddressLine1)}
                             value={values.AddressLine1}
@@ -735,7 +742,8 @@ const CustomerPaymentDetailsForm = () => {
                             type="text"
                             as={TextField}
                             placeholder={!values.AddressLine2 ? "Address Line2" : ""}
-                            label={values.AddressLine2 ? "Address Line2" : ""}
+                            label="Address Line2"
+                            // label={values.AddressLine2 ? "Address Line2" : ""}
                           />
                         </FormControl>
                       </Grid>
@@ -813,7 +821,8 @@ const CustomerPaymentDetailsForm = () => {
                                     <TextField
                                       {...params}
                                       placeholder={!values.State ? "State *" : ""}
-                                      label={values.State ? "State *" : ""}
+                                      label="State *"
+                                      // label={values.State ? "State *" : ""}
                                       variant="outlined"
                                       helperText={form.touched.State && form.errors.State}
                                       error={form.touched.State && Boolean(form.errors.State)}
@@ -836,7 +845,8 @@ const CustomerPaymentDetailsForm = () => {
                             type="text"
                             as={TextField}
                             placeholder={!values.City ? "City" : ""}
-                            label={values.City ? "City" : ""}
+                            label="City"
+                            // label={values.City ? "City" : ""}
                           />
                         </FormControl>
                       </Grid>
@@ -850,7 +860,8 @@ const CustomerPaymentDetailsForm = () => {
                             type="text"
                             as={TextField}
                             placeholder={!values.PostalCode ? "PostalCode *" : ""}
-                            label={values.PostalCode ? "PostalCode *" : ""}
+                            label="PostalCode *"
+                            // label={values.PostalCode ? "PostalCode *" : ""}
                             helperText={(touched.PostalCode && errors.PostalCode)}
                             error={touched.PostalCode && Boolean(errors.PostalCode)}
                             value={values.PostalCode}
@@ -869,7 +880,8 @@ const CustomerPaymentDetailsForm = () => {
                             as={MuiPhoneNumber}
                             variant="outlined"
                             placeholder={!values.PhoneNumber ? "PhoneNumber *" : ""}
-                            label={values.PhoneNumber ? "PhoneNumber *" : ""}
+                            label="PhoneNumber *"
+                            // label={values.PhoneNumber ? "PhoneNumber *" : ""}
                             onChange={(value) => setFieldValue("PhoneNumber", value)}
                             helperText={(touched.PhoneNumber && errors.PhoneNumber)}
                             error={touched.PhoneNumber && Boolean(errors.PhoneNumber)}
@@ -889,7 +901,8 @@ const CustomerPaymentDetailsForm = () => {
                             type="number"
                             as={TextField}
                             placeholder={!values.Amount ? "Amount *" : ""}
-                            label={values.Amount ? "Amount *" : ""}
+                            label="Amount *"
+                            // label={values.Amount ? "Amount *" : ""}
                             helperText={(touched.Amount && errors.Amount)}
                             error={touched.Amount && Boolean(errors.Amount)}
                             value={values.Amount}
@@ -924,7 +937,8 @@ const CustomerPaymentDetailsForm = () => {
                                   <TextField
                                     {...params}
                                     placeholder={!values.Currency ? "Currency *" : ""}
-                                    label={values.Currency ? "Currency *" : ""}
+                                    label="Currency *"
+                                    // label={values.Currency ? "Currency *" : ""}
                                     variant='outlined'
                                     helperText={(touched.Currency && errors.Currency)}
                                     error={touched.Currency && Boolean(errors.Currency)}

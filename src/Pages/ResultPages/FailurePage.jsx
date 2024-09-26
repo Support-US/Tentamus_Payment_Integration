@@ -206,8 +206,10 @@ const FailurePage = () => {
         showToast("Data fetch error", "error");
       }
     }
+    else {
+      showToast('Something went wrong. Please contact the admin.', 'error', 4000);
+    }
   }
-
 
   const handleComputopRedirection = () => {
     const { MerchantID, datalength, encryptedstring, transID, firstname, lastname, addressline1, city, state, postalcode, country, phonenumber, currency } = computopdetails;
@@ -238,10 +240,10 @@ const FailurePage = () => {
 
   return (
     <>
+      <ToastContainer />
       {
         (!loading && paymentDetails.amount !== '') &&
         <>
-          <ToastContainer />
 
           <span className='payment-failure-text'>
             Your payment for {CurrencyFormat(paymentDetails.amount)} {paymentDetails.currency}
