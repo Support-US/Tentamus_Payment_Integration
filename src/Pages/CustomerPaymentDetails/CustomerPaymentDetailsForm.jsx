@@ -36,7 +36,7 @@ const CustomerPaymentDetailsForm = () => {
   const initialValues = useSelector(selectFormData);
   const [paymentDetails, setPaymentDetails] = useState({
     MerchantID: "",
-    PayID:"",
+    PayID: "",
     TransactionID: "",
     CalculatedHMAC: "",
     EncryptedString: "",
@@ -415,7 +415,7 @@ const CustomerPaymentDetailsForm = () => {
       setPaymentDetails(prevState => ({
         ...prevState,
         TransactionID: response.data.TransactionID,
-        PayID:response.data.PayID,
+        PayID: response.data.PayID,
         MerchantID: response.data.MerchantID,
         CalculatedHMAC: response.data.CalculatedHMAC,
         EncryptedString: response.data.EncryptedString,
@@ -704,7 +704,7 @@ const CustomerPaymentDetailsForm = () => {
                             type="text"
                             as={TextField}
                             placeholder={!values.Email ? "Email *" : ""}
-                            label="Email *" 
+                            label="Email *"
                             // label={values.Email ? "Email *" : ""}
                             helperText={(touched.Email && errors.Email)}
                             error={touched.Email && Boolean(errors.Email)}
@@ -743,7 +743,7 @@ const CustomerPaymentDetailsForm = () => {
                             as={TextField}
                             placeholder={!values.AddressLine2 ? "Address Line2" : ""}
                             label="Address Line2"
-                            // label={values.AddressLine2 ? "Address Line2" : ""}
+                          // label={values.AddressLine2 ? "Address Line2" : ""}
                           />
                         </FormControl>
                       </Grid>
@@ -846,7 +846,7 @@ const CustomerPaymentDetailsForm = () => {
                             as={TextField}
                             placeholder={!values.City ? "City" : ""}
                             label="City"
-                            // label={values.City ? "City" : ""}
+                          // label={values.City ? "City" : ""}
                           />
                         </FormControl>
                       </Grid>

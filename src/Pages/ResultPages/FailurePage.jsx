@@ -66,7 +66,6 @@ const FailurePage = () => {
       const status = searchParams.get('Status');
       const mid = searchParams.get('mid');
 
-
       if (transId && payId && mac && code && status && mid) {
 
         const data = { id: transId, payId: payId, mac: mac, code: code, status: status, mid: mid };
@@ -124,17 +123,18 @@ const FailurePage = () => {
             .catch(error => {
               setLoading(false);
               setShowError(true);
+              showToast("Data fetch error, but your transaction was successful.", "error",5000);
             })
         }
         catch (error) {
           setLoading(false);
           setShowError(true);
           console.log("fetchPaymentDetails error", error);
-          showToast("Data fetch error", "error");
+          showToast("Data fetch error, but your transaction was successful.", "error",5000);
         }
       }
       else {
-        showToast('Something went wrong. Please contact the admin.', 'error', 5000);
+        showToast("Data fetch error, but your transaction was successful.", "error",5000);
         setLoading(false);
         setShowError(true);
       }

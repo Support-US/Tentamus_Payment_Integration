@@ -117,17 +117,18 @@ const SuccessPage = () => {
             .catch(error => {
               setLoading(false);
               setShowError(true);
+              showToast("Data fetch error, but your transaction was successful.", "error", 5000);
             })
         }
         catch (error) {
           setLoading(false);
           setShowError(true);
           console.log("fetchPaymentDetails error", error);
-          showToast("Data fetch error, but your transaction was successful.", "error");
+          showToast("Data fetch error, but your transaction was successful.", "error", 5000);
         }
       }
       else {
-        showToast('Something went wrong. Please contact the admin.', 'error',5000);
+        showToast('Data fetch error, but your transaction was successful.', 'error',5000);
         setLoading(false);
         setShowError(true);
       }
