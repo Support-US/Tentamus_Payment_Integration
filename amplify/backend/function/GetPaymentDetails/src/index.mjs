@@ -49,8 +49,8 @@ export const handler = async (event, context) => {
   }
 
   let createdPaymentdetails = await createPaymentDetails(paymentDetails);
-  console.log("Response of CreatePaymentHistory : ", createdPaymentdetails);
-  console.log("Response of paymentDetails : ", paymentDetails);
+  console.log("Response of CreatePaymentHistory : ", JSON.stringify(createdPaymentdetails));
+  // console.log("Response of paymentDetails : ", paymentDetails);
 
   if (paymentDetails.ClientName == secretValue.CFLCompanyName) {
     CompanyName = secretValue.CFLCompanyName;
@@ -74,12 +74,10 @@ export const handler = async (event, context) => {
     };
   }
   // Calculate the HMAC
-  let calculatedHMAC = await generateHMAC(createdPaymentdetails, merchantID, paymentDetails.Amount, paymentDetails.Currency, HMacPassword);
+  let calculatedHMAC = await generateHMAC(createdPaymentdetails.ClientName, merchantID, paymentDetails.Amount, paymentDetails.Currency, HMacPassword);
   console.log("calculatedHMAC :", calculatedHMAC);
 
-  let test = "INV20240925";
-  let orderDesc = `test:0000 ${test}, INV20240926`;
-  let dataToEncrypt = `MerchantID=${merchantID}&TransID=${createdPaymentdetails}&RefNr=${test}&OrderDesc=${orderDesc}&Currency=${paymentDetails.Currency}&Amount=${paymentDetails.Amount}&MAC=${calculatedHMAC}&URLNotify=${notifyURL}?q=${CompanyName}&URLSuccess=${paymentDetails.SuccessURL}&URLFailure=${paymentDetails.FailureURL}`;
+  let dataToEncrypt = `MerchantID=${merchantID}&TransID=${createdPaymentdetails.ClientName}&RefNr=${createdPaymentdetails.id}&UserData=${createdPaymentdetails.InvoiceNumbers}&Currency=${paymentDetails.Currency}&Amount=${paymentDetails.Amount}&MAC=${calculatedHMAC}&URLNotify=${notifyURL}?q=${CompanyName}&URLSuccess=${paymentDetails.SuccessURL}&URLFailure=${paymentDetails.FailureURL}`;
   console.log("dataToEncrypt :", dataToEncrypt);
   // Encrypt the string
   let EncryptedString = await BlowfishEncryption(dataToEncrypt, blowfishKey,);
@@ -88,7 +86,7 @@ export const handler = async (event, context) => {
     EncryptedString: EncryptedString,
     Length: EncryptedString.length,
     MerchantID: merchantID,
-    TransactionID: createdPaymentdetails
+    TransactionID: createdPaymentdetails.id
   };
 
   async function createPaymentDetails() {
@@ -150,7 +148,17 @@ export const handler = async (event, context) => {
 
       console.log("After Created Response ID : ", id);
 
-      return id;
+// Now if you need to extract and format InvoiceNumbers as a comma-separated string:
+const invoiceNumbersArray = paymentDetails.InvoiceNumbers.map(item => item.InvoiceNo);
+const invoiceNumbersString = invoiceNumbersArray.join(',');
+
+      // Return the required fields  
+      return {
+        InvoiceNumbers: invoiceNumbersString,  // Return invoices array/map as it is
+        id: id,
+        ClientName: paymentDetails.CompanyName
+      };
+
     }
     catch (err) {
       console.error("Create a PaymentDetails in Dynamodb : ", err);

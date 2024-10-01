@@ -59,7 +59,7 @@ const FailurePage = () => {
     async function fetchData() {
       setLoading(true);
       const searchParams = new URLSearchParams(location.search);
-      const transId = searchParams.get('TransID');
+      const transId = searchParams.get('refnr');
       const payId = searchParams.get('PayID');
       const mac = searchParams.get('MAC');
       const code = searchParams.get('Code');
@@ -123,18 +123,18 @@ const FailurePage = () => {
             .catch(error => {
               setLoading(false);
               setShowError(true);
-              showToast("Data fetch error, but your transaction was successful.", "error",5000);
+              showToast("Data fetch error, but your transaction was successful.", "error", 5000);
             })
         }
         catch (error) {
           setLoading(false);
           setShowError(true);
           console.log("fetchPaymentDetails error", error);
-          showToast("Data fetch error, but your transaction was successful.", "error",5000);
+          showToast("Data fetch error, but your transaction was successful.", "error", 5000);
         }
       }
       else {
-        showToast("Data fetch error, but your transaction was successful.", "error",5000);
+        showToast("Data fetch error, but your transaction was successful.", "error", 5000);
         setLoading(false);
         setShowError(true);
       }
@@ -212,7 +212,7 @@ const FailurePage = () => {
       }
     }
     else {
-      showToast('Something went wrong. Please contact the admin.', 'error',4000);
+      showToast('Something went wrong. Please contact the admin.', 'error', 4000);
     }
   }
 
@@ -249,11 +249,17 @@ const FailurePage = () => {
       {
         (!loading && paymentDetails.amount !== '') &&
         <>
+          {
+            (paymentDetails.currency && paymentDetails.amount) ?
 
-          <span className='payment-failure-text'>
-            Your payment for {CurrencyFormat(paymentDetails.amount)} {paymentDetails.currency}
-          </span>
-          <span className='failure-text'> Failed!</span >
+              <span className='payment-failure-text'>
+                Your payment for {CurrencyFormat(paymentDetails.amount)} {paymentDetails.currency}
+              </span>
+              :
+              <>
+                <span className='failure-text'> Failed!</span>
+              </>
+          }
 
           <div className="wrapper">
             <svg className="crossmark addClass" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52" width="100" height="100">
@@ -379,7 +385,7 @@ const FailurePage = () => {
               className='mt-3'
               // size='small'
               style={{ textTransform: 'none', fontWeight: 600 }}
-              onClick={() => window.location.href = "/"}>
+              onClick={() => window.location.href = `/${sessionStorage.getItem('clientName')}`}>
               Go to Home
             </Button>
           </span>

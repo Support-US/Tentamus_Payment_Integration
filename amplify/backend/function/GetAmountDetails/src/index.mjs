@@ -14,7 +14,7 @@ let HMacPassword,blowfishKey,merchantID,CompanyName;
 const secretValue = JSON.parse(data.SecretString);
 console.log("secretValue : ", secretValue);       
 const notifyURL   =secretValue.APIGatewayURL;
-let TableID,PayId,Status,Code,MerchantID;
+let TableID,PayId,Status,Code,MerchantID,CompanyId;
 let Headers = secretValue.headers;
 const PaymentDetailsTableName = secretValue.DBTable;            
 
@@ -24,7 +24,7 @@ export const handler = async (event) => {
     console.log(`EVENT: ${JSON.stringify(event)}`);
     
     const body = JSON.parse(event.body);  
-        
+          CompanyId=body.companyName;
           TableID =body.id;
           PayId =body.payId ;
           Status =body.status;
@@ -62,7 +62,7 @@ export const handler = async (event) => {
         }
         
          // Calculate the HMAC
-        const calculatedHMAC =await RetrygenerateHMAC(PayId ,TableID, merchantID , Status ,Code,HMacPassword);
+        const calculatedHMAC =await RetrygenerateHMAC(PayId ,CompanyId, merchantID , Status ,Code,HMacPassword);
         console.log("calculatedHMAC :", calculatedHMAC);
         const Hmac = body.mac;
         console.log("Hmac :", Hmac);

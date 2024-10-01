@@ -38,16 +38,17 @@ const SuccessPage = () => {
     const fetchData = async () => {
       setLoading(true);
       const searchParams = new URLSearchParams(location.search);
-      const transId = searchParams.get('TransID');
+      const transId = searchParams.get('refnr');
       const payId = searchParams.get('PayID');
       const mac = searchParams.get('MAC');
       const code = searchParams.get('Code');
       const status = searchParams.get('Status');
       const mid = searchParams.get('mid');
+      const companyName = searchParams.get('TransID');
 
       if (transId && payId && mac && code && status && mid) {
 
-        const data = { id: transId, payId: payId, mac: mac, code: code, status: status, mid: mid };
+        const data = { id: transId, payId: payId, mac: mac, code: code, status: status, mid: mid, companyName: companyName };
 
         try {
           await axios.post(apiUrl,
@@ -128,7 +129,7 @@ const SuccessPage = () => {
         }
       }
       else {
-        showToast('Data fetch error, but your transaction was successful.', 'error',5000);
+        showToast('Data fetch error, but your transaction was successful.', 'error', 5000);
         setLoading(false);
         setShowError(true);
       }
@@ -149,10 +150,20 @@ const SuccessPage = () => {
         <>
 
           <ConfettiEffect />
-
-          <span className='payment-text'>
-            Your payment for {CurrencyFormat(paymentDetails.amount)} {paymentDetails.currency}
-          </span>
+          {
+            (paymentDetails.currency && paymentDetails.amount) ?
+              <>
+                <span className='payment-text'>
+                  Your payment for {CurrencyFormat(paymentDetails.amount)} {paymentDetails.currency}
+                </span>
+              </>
+              :
+              <>
+                <span className='payment-text'>
+                  Your payment
+                </span>
+              </>
+          }
 
           <span className='success-text'> Successful.</span>
 

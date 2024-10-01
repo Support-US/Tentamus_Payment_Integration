@@ -171,6 +171,7 @@ const CustomerPaymentDetailsForm = () => {
   useEffect(() => {
     const path = window.location.pathname;
     const companyNameParam = path.split("/")[1];
+    sessionStorage.setItem('clientName', companyNameParam);
 
     switch (companyNameParam) {
       case 'AnalyticalFoodLaboratories':
