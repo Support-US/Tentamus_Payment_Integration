@@ -9,6 +9,7 @@
     "@types/aws-lambda": "^8.10.92"
   },
   "dependencies": {
+    "computoppaygatewebhook": "file:",
     "crypto-js": "^4.2.0",
     "egoroof-blowfish": "^4.0.1"
   }

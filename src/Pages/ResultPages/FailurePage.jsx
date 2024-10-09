@@ -65,10 +65,11 @@ const FailurePage = () => {
       const code = searchParams.get('Code');
       const status = searchParams.get('Status');
       const mid = searchParams.get('mid');
+      const companyName = searchParams.get('TransID');
 
       if (transId && payId && mac && code && status && mid) {
 
-        const data = { id: transId, payId: payId, mac: mac, code: code, status: status, mid: mid };
+        const data = { id: transId, payId: payId, mac: mac, code: code, status: status, mid: mid, companyName: companyName };
 
         try {
           await axios.post(apiUrl,
