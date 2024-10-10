@@ -37,17 +37,17 @@ const SuccessPage = () => {
     const fetchData = async () => {
       setLoading(true);
       const searchParams = new URLSearchParams(location.search);
-      const transId = searchParams.get('TransID');
+      const transId = searchParams.get('refnr');
       const payId = searchParams.get('PayID');
       const mac = searchParams.get('MAC');
       const code = searchParams.get('Code');
       const status = searchParams.get('Status');
       const mid = searchParams.get('mid');
-
+      const companyName = searchParams.get('TransID');
 
       if (transId && payId && mac && code && status && mid) {
 
-        const data = { id: transId, payId: payId, mac: mac, code: code, status: status, mid: mid };
+        const data = { id: transId, payId: payId, mac: mac, code: code, status: status, mid: mid, companyName: companyName };
 
         try {
           await axios.post(apiUrl,
@@ -59,7 +59,7 @@ const SuccessPage = () => {
 
             .then(response => {
               const responseData = response.data;
-              // console.log("responseData", responseData);
+              console.log("responseData", responseData);
 
               setPaymentDetails({
                 merchantID: searchParams.get('mid'),
@@ -117,14 +117,20 @@ const SuccessPage = () => {
             .catch(error => {
               setLoading(false);
               setShowError(true);
+              showToast("Data fetch error, but your transaction was successful.", "error", 5000);
             })
         }
         catch (error) {
           setLoading(false);
           setShowError(true);
           console.log("fetchPaymentDetails error", error);
-          showToast("Data fetch error, but your transaction was successful.", "error");
+          showToast("Data fetch error, but your transaction was successful.", "error", 5000);
         }
+      }
+      else {
+        showToast('Data fetch error, but your transaction was successful.', 'error', 5000);
+        setLoading(false);
+        setShowError(true);
       }
     }
 
@@ -136,16 +142,27 @@ const SuccessPage = () => {
 
   return (
     <>
+      <ToastContainer />
+
       {
         (!loading && paymentDetails.amount !== '') &&
         <>
-          <ToastContainer />
 
           <ConfettiEffect />
-
-          <span className='payment-text'>
-            Your payment for {CurrencyFormat(paymentDetails.amount)} {paymentDetails.currency}
-          </span>
+          {
+            (paymentDetails.currency && paymentDetails.amount) ?
+              <>
+                <span className='payment-text'>
+                  Your payment for {CurrencyFormat(paymentDetails.amount)} {paymentDetails.currency}
+                </span>
+              </>
+              :
+              <>
+                <span className='payment-text'>
+                  Your payment
+                </span>
+              </>
+          }
 
           <span className='success-text'> Successful.</span>
 
@@ -263,7 +280,7 @@ const SuccessPage = () => {
           <span className='flex flex-column justify-content-center align-items-center h-screen'>
 
             <h1 className='text-2xl font-bold text-center' style={{ color: "#4CAF50" }}>
-              Something went wrong  :( <br /> Please try again
+              Something went wrong. <br /> Please try again
             </h1>
 
             <Button

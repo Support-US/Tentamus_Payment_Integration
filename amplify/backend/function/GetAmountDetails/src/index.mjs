@@ -14,7 +14,7 @@ let HMacPassword,blowfishKey,merchantID,CompanyName;
 const secretValue = JSON.parse(data.SecretString);
 console.log("secretValue : ", secretValue);       
 const notifyURL   =secretValue.APIGatewayURL;
-let TableID,PayId,Status,Code,MerchantID;
+let TableID,PayId,Status,Code,MerchantID,CompanyId;
 let Headers = secretValue.headers;
 const PaymentDetailsTableName = secretValue.DBTable;            
 
@@ -24,7 +24,7 @@ export const handler = async (event) => {
     console.log(`EVENT: ${JSON.stringify(event)}`);
     
     const body = JSON.parse(event.body);  
-        
+          CompanyId=body.companyName;
           TableID =body.id;
           PayId =body.payId ;
           Status =body.status;
@@ -34,21 +34,21 @@ export const handler = async (event) => {
          console.log("ClientMerchantID",MerchantID);
          
     try{
-      if(MerchantID == secretValue['Columbia Laboratories MerchantID']){
-        HMacPassword = secretValue['Columbia Laboratories HMacPassword'];
-        blowfishKey = secretValue['Columbia Laboratories blowfishKey'];
-        merchantID  = secretValue['Columbia Laboratories MerchantID'];
-      }
-      else if(MerchantID == secretValue['Tentamus North America Virginia MerchantID']){
-        HMacPassword = secretValue['Tentamus North America Virginia HMacPassword'];
-        blowfishKey = secretValue['Tentamus North America Virginia blowfishKey'];
-        merchantID  = secretValue['Tentamus North America Virginia MerchantID'];
-      }
-      else if(MerchantID == secretValue['Adamson Analytical Labs MerchantID']){
-        HMacPassword = secretValue['Adamson Analytical Labs HMacPassword'];
-        blowfishKey = secretValue['Adamson Analytical Labs blowfishKey'];
-        merchantID  = secretValue['Adamson Analytical Labs MerchantID'];
-      }
+         if(MerchantID == secretValue['Columbia Laboratories MerchantID']){
+          HMacPassword = secretValue['Columbia Laboratories HMacPassword'];
+          blowfishKey = secretValue['Columbia Laboratories blowfishKey'];
+          merchantID  = secretValue['Columbia Laboratories MerchantID'];
+        }
+        else if(MerchantID == secretValue['Tentamus North America Virginia MerchantID']){
+          HMacPassword = secretValue['Tentamus North America Virginia HMacPassword'];
+          blowfishKey = secretValue['Tentamus North America Virginia blowfishKey'];
+          merchantID  = secretValue['Tentamus North America Virginia MerchantID'];
+        }
+        else if(MerchantID == secretValue['Adamson Analytical Labs MerchantID']){
+          HMacPassword = secretValue['Adamson Analytical Labs HMacPassword'];
+          blowfishKey = secretValue['Adamson Analytical Labs blowfishKey'];
+          merchantID  = secretValue['Adamson Analytical Labs MerchantID'];
+        }
         else{
           return {
                                 statusCode: 200,
@@ -62,7 +62,7 @@ export const handler = async (event) => {
         }
         
          // Calculate the HMAC
-        const calculatedHMAC =await RetrygenerateHMAC(PayId ,TableID, merchantID , Status ,Code,HMacPassword);
+        const calculatedHMAC =await RetrygenerateHMAC(PayId ,CompanyId, merchantID , Status ,Code,HMacPassword);
         console.log("calculatedHMAC :", calculatedHMAC);
         const Hmac = body.mac;
         console.log("Hmac :", Hmac);
@@ -103,7 +103,11 @@ export const handler = async (event) => {
                      console.log("GetDBData :", GetDBData);
                      
                      let getData = unmarshall(GetDBData);
-                     console.log("getData",getData );   
+                     console.log("getData",getData );  
+                     
+                     let invoice = await collectInvoiceNumbers(getData.InvoiceNumbers);
+                     
+                    console.log(invoice);
                     
                     let createdPaymentdetails = await createPaymentDetails(getData,id);
                     console.log("Response of CreatePaymentHistory : ", createdPaymentdetails);
@@ -111,7 +115,7 @@ export const handler = async (event) => {
                     if(getData.ClientName == secretValue.CFLCompanyName){
                       CompanyName = secretValue.CFLCompanyName;
                     }
-                    else if(getData.ClientName == secretValue.TNAVCompanyName){
+                    else if(getData.ClientName == secretValue.TNAVCompanyName){  
                       CompanyName = secretValue.TNAVCompanyName;
                      
                     }else if(getData.ClientName == secretValue.AALCompanyName){
@@ -127,7 +131,7 @@ export const handler = async (event) => {
                                                      },
                                                 body: "Data not Found",
                                };
-                    }
+                    } 
                     // Parse CurrencyDecimalDigit as an integer
                     const decimalDigits = Number(getData.CurrencyDecimalDigit);
                     console.log("decimalDigits",decimalDigits);
@@ -138,11 +142,13 @@ export const handler = async (event) => {
                     console.log("multipliedAmount",multipliedAmount);
                     
                     // Calculate the HMAC
-                    let calculatedHMAC =await generateHMAC(createdPaymentdetails,merchantID,multipliedAmount, getData.Currency,HMacPassword);
+                    let calculatedHMAC =await generateHMAC(CompanyId,merchantID,multipliedAmount, getData.Currency,HMacPassword);
                     console.log("calculatedHMAC :", calculatedHMAC);
                      
-                    let dataToEncrypt = `MerchantID=${merchantID}&TransID=${createdPaymentdetails}&Currency=${getData.Currency}&Amount=${multipliedAmount}&MAC=${calculatedHMAC}&URLNotify=${notifyURL}?q=${CompanyName}&URLSuccess=${getData.SuccessURL}&URLFailure=${getData.FailureURL}`;
+                    let dataToEncrypt = `MerchantID=${merchantID}&TransID=${CompanyId}&RefNr=${getData.id}&UserData=${invoice}&Currency=${getData.Currency}&Amount=${multipliedAmount}&MAC=${calculatedHMAC}&URLNotify=${notifyURL}?q=${CompanyName}&URLSuccess=${getData.SuccessURL}&URLFailure=${getData.FailureURL}`;
                     console.log("dataToEncrypt :", dataToEncrypt);
+                    
+    
                     // Encrypt the string
                     let EncryptedString  = await  BlowfishEncryption(dataToEncrypt, blowfishKey,);
                     console.log("EncryptedString for Response :",EncryptedString);
@@ -153,6 +159,7 @@ export const handler = async (event) => {
                       Amount: getData.Amount,
                       Currency:getData.Currency,
                       ClientName:getData.ClientName,  
+                      CompanyName:getData.CompanyName,
                       PhoneNumber:getData.PhoneNumber,
                       City:getData.City,
                       Country:getData.Country,
@@ -224,7 +231,7 @@ export const handler = async (event) => {
     
         async function RetrygenerateHMAC(PayID,transID, merchantID, Status, code, hmacPassword){
             const message = `${PayID}*${transID}*${merchantID}*${Status}*${code}`;
-            // console.log("Message", message, "secretKey", hmacPassword);
+            console.log("Message", message, "secretKey", hmacPassword);
 
             const hash = HmacSHA256(message, hmacPassword);
             const hashInHex = hash.toString(enc.Hex);
@@ -313,7 +320,7 @@ export const handler = async (event) => {
                   
                   console.log("After Created Response ID : ",id);
         
-                    return id;
+                    return createdDynamoDBData;
                     }
                 catch(err){
                     console.error("Create a PaymentDetails in Dynamodb : ",err);
@@ -349,5 +356,32 @@ export const handler = async (event) => {
         
             return encodedText;
         } 
+        
+         async function collectInvoiceNumbers(invoiceData) {
+                  let result = [];
+                
+                  if (Array.isArray(invoiceData)) {
+                    // If it's an array, loop over the array
+                    invoiceData.forEach(invoice => {
+                      for (let key in invoice) {
+                        if (invoice.hasOwnProperty(key)) {
+                          result.push(invoice[key]);
+                        }
+                      }
+                    });
+                  } else {
+                    // If it's an object, loop over the object
+                    for (let key in invoiceData) {
+                      if (invoiceData.hasOwnProperty(key)) {
+                        result.push(invoiceData[key]);
+                      }
+                    }
+                  }
+                
+                  // Join all collected invoice numbers with commas
+                  return result.join(',');
+}
+
+
 };
 

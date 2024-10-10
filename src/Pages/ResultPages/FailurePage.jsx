@@ -58,17 +58,17 @@ const FailurePage = () => {
     async function fetchData() {
       setLoading(true);
       const searchParams = new URLSearchParams(location.search);
-      const transId = searchParams.get('TransID');
+      const transId = searchParams.get('refnr');
       const payId = searchParams.get('PayID');
       const mac = searchParams.get('MAC');
       const code = searchParams.get('Code');
       const status = searchParams.get('Status');
       const mid = searchParams.get('mid');
-
+      const companyName = searchParams.get('TransID');
 
       if (transId && payId && mac && code && status && mid) {
 
-        const data = { id: transId, payId: payId, mac: mac, code: code, status: status, mid: mid };
+        const data = { id: transId, payId: payId, mac: mac, code: code, status: status, mid: mid, companyName: companyName };
 
         try {
           await axios.post(apiUrl,
@@ -79,7 +79,7 @@ const FailurePage = () => {
           })
             .then(response => {
               const responseData = response.data;
-              // console.log("responseData", responseData);
+              console.log("responseData", responseData);
 
               setPaymentDetails({
                 description: searchParams.get('Description'),
@@ -123,14 +123,21 @@ const FailurePage = () => {
             .catch(error => {
               setLoading(false);
               setShowError(true);
+              showToast("Data fetch error, but your transaction was successful.", "error", 5000);
+              console.log("fetchPaymentDetails error", error);
             })
         }
         catch (error) {
           setLoading(false);
           setShowError(true);
           console.log("fetchPaymentDetails error", error);
-          showToast("Data fetch error", "error");
+          showToast("Data fetch error, but your transaction was successful.", "error", 5000);
         }
+      }
+      else {
+        showToast("Data fetch error, but your transaction was successful.", "error", 5000);
+        setLoading(false);
+        setShowError(true);
       }
     }
     fetchData();
@@ -145,16 +152,17 @@ const FailurePage = () => {
   const getformdetails = async () => {
     setButtonLoading(true);
     const searchParams = new URLSearchParams(location.search);
-    const transId = searchParams.get('TransID');
+    const transId = searchParams.get('refnr');
     const payId = searchParams.get('PayID');
     const mac = searchParams.get('MAC');
     const code = searchParams.get('Code');
     const status = searchParams.get('Status');
     const mid = searchParams.get('mid');
+    const companyName = searchParams.get('TransID');
 
     if (transId && payId && mac && code && status && mid) {
 
-      const data = { id: transId, payId: payId, mac: mac, code: code, status: status, mid: mid };
+      const data = { id: transId, payId: payId, mac: mac, code: code, status: status, mid: mid, companyName: companyName };
 
       const customHeaders = {
         'X-Retry': 'true'
@@ -196,6 +204,7 @@ const FailurePage = () => {
             setButtonLoading(false);
           })
           .catch(error => {
+            showToast('Something went wrong. Please contact the admin.', 'error', 4000);
             setButtonLoading(false);
             setShowError(true);
           })
@@ -205,8 +214,10 @@ const FailurePage = () => {
         showToast("Data fetch error", "error");
       }
     }
+    else {
+      showToast('Something went wrong. Please contact the admin.', 'error', 4000);
+    }
   }
-
 
   const handleComputopRedirection = () => {
     const { MerchantID, datalength, encryptedstring, transID, firstname, lastname, addressline1, city, state, postalcode, country, phonenumber, currency } = computopdetails;
@@ -237,27 +248,37 @@ const FailurePage = () => {
 
   return (
     <>
+      <ToastContainer />
       {
         (!loading && paymentDetails.amount !== '') &&
         <>
-          <ToastContainer />
+          {
+            (paymentDetails.currency && paymentDetails.amount) ?
 
-          <span className='payment-failure-text'>
-            Your payment for {CurrencyFormat(paymentDetails.amount)} {paymentDetails.currency}
-          </span>
-          <span className='failure-text'> Failed!</span >
+              <span className='payment-failure-text'>
+                Your payment for {CurrencyFormat(paymentDetails.amount)} {paymentDetails.currency}
+              </span>
+              :
+              <>
+                <span className='payment-text'>
+                  Your payment
+                </span>
+              </>
+          }
+          <span className='failure-text'> Failed!</span>
 
-          <div className="wrapper">
-            <svg className="crossmark addClass" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52" width="100" height="100">
-              <circle className="crossmark__circle animateElement" cx="26" cy="26" r="25" fill="none" />
-              <path className="cross__path cross__path--right animateElement" fill="none" d="M16,16 l20,20" />
-              <path className="cross__path cross__path--left animateElement" fill="none" d="M16,36 l20,-20" />
-            </svg>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '40vh' }}>
+            <div className="wrapper">
+              <svg className="crossmark addClass" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52" width="100" height="100">
+                <circle className="crossmark__circle animateElement" cx="26" cy="26" r="25" fill="none" />
+                <path className="cross__path cross__path--right animateElement" fill="none" d="M16,16 l20,20" />
+                <path className="cross__path cross__path--left animateElement" fill="none" d="M16,36 l20,-20" />
+              </svg>
+            </div>
           </div>
 
-
           <div className='flex justify-content-center gap-2'
-            style={{ color: "var(--primary-color)", marginTop: "-12rem", marginBottom: "2rem", marginLeft: "10rem" }}
+            style={{ color: "var(--primary-color)", marginTop: "-2rem", marginBottom: "2rem", marginLeft: "10rem" }}
           >
 
             <table>
@@ -362,7 +383,7 @@ const FailurePage = () => {
           <span className='flex flex-column justify-content-center align-items-center h-screen'>
 
             <h1 className='text-2xl font-bold text-center' style={{ color: "#4CAF50" }}>
-              Something went wrong :( <br /> Please try again
+              Something went wrong. <br /> Please try again
             </h1>
 
             <Button
@@ -371,7 +392,7 @@ const FailurePage = () => {
               className='mt-3'
               // size='small'
               style={{ textTransform: 'none', fontWeight: 600 }}
-              onClick={() => window.location.href = "/"}>
+              onClick={() => window.location.href = `/${sessionStorage.getItem('clientName')}`}>
               Go to Home
             </Button>
           </span>

@@ -7,7 +7,6 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Layout from './Layout/Layout';
 import SuccessPage from './Pages/ResultPages/SuccessPage';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import ErrorPage from './Pages/ErrorPage/ErrorPage';
 
 Amplify.configure(awsExports)
 
@@ -53,10 +52,6 @@ function App() {
         {
           path: "/error",
           element: <FailurePage />,
-        },
-        {
-          path: "*",
-          element: <ErrorPage />,
         }
       ]
     }

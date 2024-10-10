@@ -63,7 +63,7 @@ export const handler = async (event) => {
         
         
         //Get ObjectID
-        const getObjectID =await GetObjectid(parsedObject.TransID);
+        const getObjectID =await GetObjectid(parsedObject.refnr);
         console.log("getObjectID :", getObjectID);
         
         if (Hmac.trim() === calculatedHMAC.trim()) {
@@ -245,7 +245,7 @@ async function UpdatePaymentDetailsID(parsedObject) {
     const params = {
         TableName: PaymentDetailsTableName,
         Key: {
-            id: { S: parsedObject.TransID },
+            id: { S: parsedObject.refnr },
         },
         UpdateExpression: "SET PaymentId = :newPaymentId, PaymentStatus = :newStatus,AfterPaymentSAPstatus = :newStatusMessage,Description = :newDescription",
         ExpressionAttributeValues: {
@@ -269,7 +269,7 @@ async function UpdateFailurestatus(error,parsedObject,errStatus) {
          params = {
         TableName: PaymentDetailsTableName,
         Key: {
-            id: { S: parsedObject.TransID },
+            id: { S: parsedObject.refnr },
         },
         UpdateExpression: "SET PaymentStatus = :newStatus, AfterPaymentSAPstatus = :newStatusMessage,SAPErrorMessage = :newErrorMessage",
         ExpressionAttributeValues: {
@@ -284,7 +284,7 @@ async function UpdateFailurestatus(error,parsedObject,errStatus) {
      params = {
         TableName: PaymentDetailsTableName,
         Key: {
-            id: { S: parsedObject.TransID },
+            id: { S: parsedObject.refnr },
         },
         UpdateExpression: "SET PaymentStatus = :newStatus, AfterPaymentSAPstatus = :newStatusMessage,SAPErrorMessage = :newErrorMessage",
         ExpressionAttributeValues: {
