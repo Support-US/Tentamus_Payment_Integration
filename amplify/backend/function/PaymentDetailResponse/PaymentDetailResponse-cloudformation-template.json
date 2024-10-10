@@ -16,13 +16,13 @@
     "s3Key": {
       "Type": "String"
     },
-    "apitentamuspaymentintegrationGraphQLAPIIdOutput": {
+    "apiTentamusPaymentIntegrationGraphQLAPIIdOutput": {
       "Type": "String",
-      "Default": "apitentamuspaymentintegrationGraphQLAPIIdOutput"
+      "Default": "apiTentamusPaymentIntegrationGraphQLAPIIdOutput"
     },
-    "apitentamuspaymentintegrationGraphQLAPIEndpointOutput": {
+    "apiTentamusPaymentIntegrationGraphQLAPIEndpointOutput": {
       "Type": "String",
-      "Default": "apitentamuspaymentintegrationGraphQLAPIEndpointOutput"
+      "Default": "apiTentamusPaymentIntegrationGraphQLAPIEndpointOutput"
     }
   },
   "Conditions": {
@@ -99,12 +99,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "tentamuspaymentintegLambdaRole7a6e0555",
+            "tentamuspaymentintegLambdaRolec20c7f83",
             {
               "Fn::Join": [
                 "",
                 [
-                  "tentamuspaymentintegLambdaRole7a6e0555",
+                  "tentamuspaymentintegLambdaRolec20c7f83",
                   "-",
                   {
                     "Ref": "env"
@@ -200,7 +200,7 @@
               ],
               "Resource": {
                 "Fn::ImportValue": {
-                  "Fn::Sub": "${apitentamuspaymentintegrationGraphQLAPIIdOutput}:GetAtt:PaymentDetailsTable:StreamArn"
+                  "Fn::Sub": "${apiTentamusPaymentIntegrationGraphQLAPIIdOutput}:GetAtt:PaymentDetailsTable:StreamArn"
                 }
               }
             }
@@ -219,7 +219,7 @@
         "Enabled": true,
         "EventSourceArn": {
           "Fn::ImportValue": {
-            "Fn::Sub": "${apitentamuspaymentintegrationGraphQLAPIIdOutput}:GetAtt:PaymentDetailsTable:StreamArn"
+            "Fn::Sub": "${apiTentamusPaymentIntegrationGraphQLAPIIdOutput}:GetAtt:PaymentDetailsTable:StreamArn"
           }
         },
         "FunctionName": {

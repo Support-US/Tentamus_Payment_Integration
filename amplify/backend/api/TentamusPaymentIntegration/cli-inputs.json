@@ -1,12 +1,12 @@
 {
   "version": 1,
   "serviceConfiguration": {
-    "apiName": "tentamuspaymentintegration",
+    "apiName": "TentamusPaymentIntegration",
     "serviceName": "AppSync",
     "defaultAuthType": {
       "mode": "API_KEY",
       "expirationTime": 365,
-      "apiKeyExpirationDate": "2025-10-10T07:32:03.825Z",
+      "apiKeyExpirationDate": "2025-10-10T09:55:00.001Z",
       "keyDescription": "new"
     }
   }

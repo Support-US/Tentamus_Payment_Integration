@@ -14,6 +14,24 @@
       "providerPlugin": "awscloudformation",
       "service": "API Gateway"
     },
+    "TentamusPaymentIntegration": {
+      "dependsOn": [],
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [],
+          "defaultAuthentication": {
+            "apiKeyConfig": {
+              "apiKeyExpirationDate": "2025-10-10T09:55:00.001Z",
+              "apiKeyExpirationDays": 365,
+              "description": "new"
+            },
+            "authenticationType": "API_KEY"
+          }
+        }
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync"
+    },
     "Webhook": {
       "dependsOn": [
         {
@@ -41,24 +59,6 @@
       ],
       "providerPlugin": "awscloudformation",
       "service": "API Gateway"
-    },
-    "tentamuspaymentintegration": {
-      "dependsOn": [],
-      "output": {
-        "authConfig": {
-          "additionalAuthenticationProviders": [],
-          "defaultAuthentication": {
-            "apiKeyConfig": {
-              "apiKeyExpirationDate": "2025-10-10T07:32:03.825Z",
-              "apiKeyExpirationDays": 365,
-              "description": "new"
-            },
-            "authenticationType": "API_KEY"
-          }
-        }
-      },
-      "providerPlugin": "awscloudformation",
-      "service": "AppSync"
     }
   },
   "auth": {},
@@ -90,7 +90,7 @@
             "GraphQLAPIEndpointOutput"
           ],
           "category": "api",
-          "resourceName": "tentamuspaymentintegration"
+          "resourceName": "TentamusPaymentIntegration"
         }
       ],
       "providerPlugin": "awscloudformation",
