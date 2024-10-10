@@ -367,7 +367,7 @@ const CustomerPaymentDetailsForm = () => {
   // };
 
   const handleComputopRedirection = (paymentDetails) => {
-    console.log("handleComputopRedirection", paymentDetails);
+    // console.log("handleComputopRedirection", paymentDetails);
 
     const { MerchantID, EncryptedString, TransactionID, dataLength } = paymentDetails;
     const { FirstName, LastName, Currency, AddressLine1, City, State, PhoneNumber, PostalCode } = initialValues;
