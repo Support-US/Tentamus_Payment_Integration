@@ -1,12 +1,4 @@
 {
   "lambdaLayers": [],
-  "permissions": {
-    "api": {
-      "TentamusPaymentIntegration": [
-        "Query",
-        "Mutation",
-        "Subscription"
-      ]
-    }
-  }
+  "permissions": {}
 }

@@ -1,5 +1,5 @@
 {
-  "AppSyncApiName": "TentamusPaymentIntegration",
+  "AppSyncApiName": "tentamuspaymentintegration",
   "DynamoDBBillingMode": "PAY_PER_REQUEST",
   "DynamoDBEnableServerSideEncryption": false
 }
