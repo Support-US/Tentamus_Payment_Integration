@@ -503,7 +503,7 @@ const CustomerPaymentDetailsForm = () => {
           // Multiplying amount based on smallest unit of currency
           const currencyDetails = currencyDecimalDigit.currency(values.Currency);
           const factor = Math.pow(10, currencyDetails.decimalDigits);
-          const multipliedAmount = formData.Amount * factor;
+          const multipliedAmount = Math.round(formData.Amount * factor);
 
           setAmountInUSD(formData.Amount);
 
@@ -1038,7 +1038,7 @@ const CustomerPaymentDetailsForm = () => {
 
                       {/* Submit Button */}
                       <Grid item xs={12} sm={12} container justifyContent="flex-end">
-                        <div className='field-container' style={{ display: 'flex', gap: '10px' }}>
+                        <div className='field-container mb-2' style={{ display: 'flex', gap: '10px' }}>
                           <FormControl>
                             <Button
                               variant="outlined"
