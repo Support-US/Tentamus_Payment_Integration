@@ -262,17 +262,16 @@ const CustomerPaymentDetailsForm = () => {
 
   const validateCompanyName = (value) => {
     let error;
-    // const lettersOnlyRegex = /^[a-zA-Z]+$/;
     const lettersOnlyRegex = /^[a-zA-Z\s]+$/;
 
     if (!value || value.trim().length === 0) {
       error = "Field is required";
+    } else if (value.includes("&") || value.includes("=")) {
+      error = "Company name cannot contain '&' or '=' characters";
     }
-    // else if (!lettersOnlyRegex.test(value)) {
-    //   error = " Enter a valid name with only letters"
-    // }
     return error;
-  }
+  };
+
 
   const validateEmail = (value) => {
     let error;
