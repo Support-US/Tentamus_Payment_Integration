@@ -930,7 +930,7 @@ const CustomerPaymentDetailsForm = () => {
                             <div>
                               <span className="text-sm font-medium">{" + 3% fee"}
                                 {/* Info Icon with Tooltip */}
-                                <Tooltip title="3% fee for payment gateway" arrow>
+                                <Tooltip title="card processing fee" arrow>
                                   <IconButton>
                                     <Info className='text-sm' />
                                   </IconButton>
