@@ -202,6 +202,7 @@ export const handler = async (event) => {
             const title = `${getDBData.ClientName} Payment Confirmation`;
             const PaymentStatus = isPaymentSuccess ? 'Payment successful' : 'Payment failed';
             const lastFourDigits = paymentDetails.PCNr.slice(-4);
+            const maskedpan = paymentDetails.maskedpan.slice(-4);
 
             const params = {
                 Destination: { ToAddresses: [getDBData.Email] },
@@ -252,7 +253,7 @@ export const handler = async (event) => {
             </div>
             <div style="margin-bottom: 10px;">
                 <strong style="display: inline-block; width: 150px;">Payment Method:</strong>
-                <span>${paymentDetails.CCBrand} xxxxxxxxxxxx${lastFourDigits}</span>
+                <span>${paymentDetails.CCBrand} xxxxxxxxxxxx${maskedpan}</span>
             </div>
             <div style="margin-bottom: 10px;">
                 <strong style="display: inline-block; width: 150px;">Name:</strong>
@@ -286,8 +287,8 @@ export const handler = async (event) => {
                         Data: title,
                     },
                 },
-                // Source: 'noreply-awssupport@nipurnait.com', // Replace with your verified SES email
-                Source: 'AccountsReceivable.CFL@tentamus.com', // Replace with your verified SES email
+                Source: 'noreply-awssupport@nipurnait.com', // Replace with your verified SES email
+                // Source: 'AccountsReceivable.CFL@tentamus.com', // Replace with your verified SES email
             };
 
             // Send the email using SES
@@ -449,13 +450,12 @@ export const handler = async (event) => {
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit',
-            hour12: true, // Use 24-hour format
+            hour12: true, // Use 12-hour format
         };
 
         // Format the date dynamically to PST
         return new Intl.DateTimeFormat('en-US', options).format(currentUTCDate);
     }
-
 
 };
 

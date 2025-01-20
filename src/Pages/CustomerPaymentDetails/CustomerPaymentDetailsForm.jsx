@@ -445,6 +445,9 @@ const CustomerPaymentDetailsForm = () => {
     // console.log("handleFormSubmit", values, textFields);
     // console.log("textFields", textFields);
 
+    // Remove special characters &, =, ,, and ' from CompanyName
+    values.CompanyName = values.CompanyName.replace(/[&=,'"`]/g, '').trim();
+
     const currencyDetails = currencyDecimalDigit.currency(values.Currency).decimalDigits;
     // console.log("currencyDetails", currencyDetails);
 

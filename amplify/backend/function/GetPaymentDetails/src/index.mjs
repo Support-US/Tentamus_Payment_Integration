@@ -73,6 +73,7 @@ export const handler = async (event, context) => {
       body: "Data not Found",
     };
   }
+
   // Calculate the HMAC
   let calculatedHMAC = await generateHMAC(createdPaymentdetails.ClientName, merchantID, paymentDetails.Amount, paymentDetails.Currency, HMacPassword);
   console.log("calculatedHMAC :", calculatedHMAC);
@@ -85,7 +86,7 @@ export const handler = async (event, context) => {
   let responseData = {
     EncryptedString: EncryptedString,
     Length: EncryptedString.length,
-    MerchantID: merchantID,
+    MerchantID: merchantID, 
     TransactionID: createdPaymentdetails.id
   };
 
@@ -106,6 +107,8 @@ export const handler = async (event, context) => {
       const factor = Math.pow(10, paymentDetails.CurrencyDecimalDigit);
       const amount = (paymentDetails.Amount / factor).toString();
       console.log('Calculated Amount:', amount);
+      // Trim the CompanyName to remove extra spaces before calling generateHMAC
+      let trimmedCompanyName = paymentDetails.CompanyName.trim();
 
       let createdDynamoDBData = await client.send(
         new PutItemCommand({
@@ -114,7 +117,7 @@ export const handler = async (event, context) => {
             id: { S: id },
             FirstName: { S: paymentDetails.FirstName },
             LastName: { S: paymentDetails.LastName },
-            CompanyName: { S: paymentDetails.CompanyName },
+            CompanyName: { S: trimmedCompanyName },
             Email: { S: paymentDetails.Email },
             AddressLine1: { S: paymentDetails.AddressLine1 },
             AddressLine2: { S: paymentDetails.AddressLine2 },
@@ -148,15 +151,15 @@ export const handler = async (event, context) => {
 
       console.log("After Created Response ID : ", id);
 
-// Now if you need to extract and format InvoiceNumbers as a comma-separated string:
-const invoiceNumbersArray = paymentDetails.InvoiceNumbers.map(item => item.InvoiceNo);
-const invoiceNumbersString = invoiceNumbersArray.join(',');
+      // Now if you need to extract and format InvoiceNumbers as a comma-separated string:
+      const invoiceNumbersArray = paymentDetails.InvoiceNumbers.map(item => item.InvoiceNo);
+      const invoiceNumbersString = invoiceNumbersArray.join(',');
 
       // Return the required fields  
       return {
         InvoiceNumbers: invoiceNumbersString,  // Return invoices array/map as it is
         id: id,
-        ClientName: paymentDetails.CompanyName
+        ClientName: trimmedCompanyName
       };
 
     }

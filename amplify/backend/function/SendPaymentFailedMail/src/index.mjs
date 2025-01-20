@@ -6,80 +6,86 @@ const dynamoDB = new AWS.DynamoDB.DocumentClient({ region: process.env.REGION })
 const client = new DynamoDBClient({ region: process.env.REGION });
 
 const secretsManager = new AWS.SecretsManager();
-const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration`}).promise();
+const data = await secretsManager.getSecretValue({ SecretId: `Tentamus_Payment_Integration` }).promise();
 let AdminMail;
 let ClientName;
 const secretValue = JSON.parse(data.SecretString);
 // console.log("secretValue : ", secretValue);   
-const PaymentDetailsTableName = secretValue.DBTable;            
+const PaymentDetailsTableName = secretValue.DBTable;
 
 export const handler = async (event) => {
     console.log(`Request EVENT: ${JSON.stringify(event)}`);
 
     try {
         const paymentFailedDetails = await getPaymentFailedDetails();
-        console.log("paymentFailedDetails : ", paymentFailedDetails); 
+        console.log("paymentFailedDetails : ", paymentFailedDetails);
         if (paymentFailedDetails.length != 0) {
             try {
-                 for (const details of paymentFailedDetails) {
-        if (details.ClientCompanyID === secretValue.CFLCID) {
-            AdminMail = secretValue['CFL Admin Mail'];
-            ClientName = secretValue.CFLCompanyName;
-        } else if (details.ClientCompanyID === secretValue.TNAVCID) {
-            AdminMail = secretValue['TNAV Admin Mail'];
-            ClientName = secretValue.TNAVCompanyName;
-        } else if (details.ClientCompanyID === secretValue.AALCID) {
-            AdminMail = secretValue['AAL Admin Mail'];
-            ClientName=secretValue.AALCompanyName;
-        } else {
-            return {
-                statusCode: 404,
-                body: "Data Not Found"
-            };
-        }}
-                const sendEmailResponse = await sendPaymentFailedEmail(paymentFailedDetails,AdminMail,ClientName);
+                for (const details of paymentFailedDetails) {
+                    if (details.ClientCompanyID === secretValue.CFLCID) {
+                        AdminMail = secretValue['CFL Admin Mail'].split(','); // Creates a flat array
+                        ClientName = secretValue.CFLCompanyName;
+                    } else if (details.ClientCompanyID === secretValue.TNAVCID) {
+                        AdminMail = secretValue['TNAV Admin Mail'];
+                        ClientName = secretValue.TNAVCompanyName;
+                    } else if (details.ClientCompanyID === secretValue.AALCID) {
+                        AdminMail = secretValue['AAL Admin Mail'];
+                        ClientName = secretValue.AALCompanyName;
+                    } else {
+                        return {
+                            statusCode: 404,
+                            body: "Data Not Found"
+                        };
+                    }
+                }
+                const sendEmailResponse = await sendPaymentFailedEmail(paymentFailedDetails, AdminMail, ClientName);
                 console.log(`Email sent to Response:`, sendEmailResponse);
-    
-    
+
+
                 // update mailsent status
                 const UpdateMailStatus = await UpdateMailStatustoDB(sendEmailResponse);
                 console.log(`Successfully Update MailStatus to DB: `, UpdateMailStatus);
-    
+
             } catch (error) {
                 console.error(`Error sending email `, error);
                 return error;
             }
         }
-        else{
+        else {
             console.log("No payment failed details in the database.");
         }
 
-        
+
 
         const sapUpdationFailedDetails = await getSAPUpdationFailedDetails();
         console.log("SAPUpdationFailedDetails :", sapUpdationFailedDetails);
 
         if (sapUpdationFailedDetails.length != 0) {
             try {
-                 for (const details of paymentFailedDetails) {
-        if (details.ClientCompanyID === secretValue.CFLCID) {
-            AdminMail = secretValue['CFL Admin Mail'];
-            ClientName = secretValue.CFLCompanyName;
-        } else if (details.ClientCompanyID === secretValue.TNAVCID) {
-            AdminMail = secretValue['TNAV Admin Mail'];
-            ClientName = secretValue.TNAVCompanyName;
-        } else if (details.ClientCompanyID === secretValue.AALCID) {
-            AdminMail = secretValue['AAL Admin Mail'];
-            ClientName=secretValue.AALCompanyName;
-        } else {
-            return {
-                statusCode: 404,
-                body: "Data Not Found"
-            };
-        }}
-                const sapUpdateEmailResponse = await sendSAPUpdateFailedEmail(sapUpdationFailedDetails,AdminMail,ClientName);
+                for (const details of paymentFailedDetails) {
+                    if (details.ClientCompanyID === secretValue.CFLCID) {
+                        AdminMail = secretValue['CFL Admin Mail'];
+                        ClientName = secretValue.CFLCompanyName;
+
+                        // Split the multiple emails into an array for CFL company
+                        AdminMail = AdminMail.split(',');
+
+                    } else if (details.ClientCompanyID === secretValue.TNAVCID) {
+                        AdminMail = secretValue['TNAV Admin Mail'];
+                        ClientName = secretValue.TNAVCompanyName;
+                    } else if (details.ClientCompanyID === secretValue.AALCID) {
+                        AdminMail = secretValue['AAL Admin Mail'];
+                        ClientName = secretValue.AALCompanyName;
+                    } else {
+                        return {
+                            statusCode: 404,
+                            body: "Data Not Found"
+                        };
+                    }
+                }
+                const sapUpdateEmailResponse = await sendSAPUpdateFailedEmail(sapUpdationFailedDetails, AdminMail, ClientName);
                 console.log(`SAP Update Email sent to Response:`, sapUpdateEmailResponse);
-        
+
                 // update mailsent status
                 const SAPUpdateMailStatus = await UpdateSAPMailStatustoDB(sapUpdateEmailResponse);
                 console.log(`Successfully Update SAPMailStatus to DB: `, SAPUpdateMailStatus);
@@ -89,8 +95,8 @@ export const handler = async (event) => {
                 return error;
             }
         }
-        else{
-             console.log("No SAP Updation failed details in the database.");
+        else {
+            console.log("No SAP Updation failed details in the database.");
         }
 
         return { statusCode: 200, body: 'Emails sent successfully.' };
@@ -138,8 +144,8 @@ export const handler = async (event) => {
                 FirstName: item.FirstName,
                 LastName: item.LastName,
                 createdAt: item.createdAt,
-                ClientCompanyID:item.ClientCompanyID,
-                ClientName:item.ClientName
+                ClientCompanyID: item.ClientCompanyID,
+                ClientName: item.ClientName
 
             }));
 
@@ -186,8 +192,8 @@ export const handler = async (event) => {
                 createdAt: item.createdAt,
                 AfterPaymentSAPstatus: item.AfterPaymentSAPstatus,
                 BeforePaymentSAPstatus: item.BeforePaymentSAPstatus,
-                ClientCompanyID:item.ClientCompanyID,
-                ClientName:item.ClientName
+                ClientCompanyID: item.ClientCompanyID,
+                ClientName: item.ClientName
 
             }));
             return SApUpdationFailedDetails;
@@ -197,36 +203,37 @@ export const handler = async (event) => {
         }
     }
 
-    async function sendPaymentFailedEmail(paymentFailedDetails, AdminMail,ClientName) {
-    console.log('paymentFailedDetails:', paymentFailedDetails);
-    try {
-        // Group transactions by ClientName
-        const transactionsByCompany = paymentFailedDetails.reduce((acc, curr) => {
-            if (!acc[curr.ClientName]) {
-                acc[curr.ClientName] = [];
-            }
-            acc[curr.ClientName].push(curr);
-            return acc;
-        }, {});
+    async function sendPaymentFailedEmail(paymentFailedDetails, AdminMail, ClientName) {
+        console.log('paymentFailedDetails:', paymentFailedDetails);
+        console.log(`AdminMail:`, AdminMail);
+        try {
+            // Group transactions by ClientName
+            const transactionsByCompany = paymentFailedDetails.reduce((acc, curr) => {
+                if (!acc[curr.ClientName]) {
+                    acc[curr.ClientName] = [];
+                }
+                acc[curr.ClientName].push(curr);
+                return acc;
+            }, {});
 
-        // Iterate through each company and send an email
-        const emailsSent = [];
-        for (const [company, transactions] of Object.entries(transactionsByCompany)) {
-            const transactionList = transactions.map(({ id, Description, createdAt }, index) =>
-                `<tr style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: ${index % 2 === 0 ? '#f8f9fa' : '#e2e6ea'};">
+            // Iterate through each company and send an email
+            const emailsSent = [];
+            for (const [company, transactions] of Object.entries(transactionsByCompany)) {
+                const transactionList = transactions.map(({ id, Description, createdAt }, index) =>
+                    `<tr style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: ${index % 2 === 0 ? '#f8f9fa' : '#e2e6ea'};">
                     <td style="padding: 12px;">${createdAt}</td>
                     <td style="padding: 12px;">${Description}</td>
                     <td style="padding: 12px;">${id}</td>
                 </tr>`
-            ).join('');
+                ).join('');
 
-            const params = {
-                Destination: { ToAddresses: [AdminMail] },
-                Message: {
-                    Body: {
-                        Html: {
-                            Charset: 'UTF-8',
-                            Data: `
+                const params = {
+                    Destination: { ToAddresses: AdminMail },
+                    Message: {
+                        Body: {
+                            Html: {
+                                Charset: 'UTF-8',
+                                Data: `
                                 <html lang="en">
                                     <head>
                                         <meta charset="UTF-8">
@@ -265,60 +272,60 @@ export const handler = async (event) => {
                                     </body>
                                 </html>
                             `,
+                            },
+                        },
+                        Subject: {
+                            Charset: 'UTF-8',
+                            Data: 'Computop Failed Payment Transactions',
                         },
                     },
-                    Subject: {
-                        Charset: 'UTF-8',
-                        Data: 'Computop Failed Payment Transactions',
-                    },
-                },
-                Source: 'noreply-awssupport@nipurnait.com',
-            };
+                    Source: 'noreply-awssupport@nipurnait.com',
+                };
 
-            console.log("Email Params : ", params);
+                console.log("Email Params : ", JSON.stringify(params));
 
-            const response = await sesClient.send(new SendEmailCommand(params));
-            emailsSent.push({ company,id: transactions[0].id, statusCode: response.$metadata.httpStatusCode });
+                const response = await sesClient.send(new SendEmailCommand(params));
+                emailsSent.push({ company, id: transactions[0].id, statusCode: response.$metadata.httpStatusCode });
+            }
+
+            console.log('All summary emails sent successfully.');
+            return emailsSent;
+        } catch (error) {
+            console.error('Error sending summary emails:', error);
+            throw error;
         }
-
-        console.log('All summary emails sent successfully.');
-        return emailsSent;
-    } catch (error) {
-        console.error('Error sending summary emails:', error);
-        throw error;
     }
-}
-    
+
     async function sendSAPUpdateFailedEmail(sapUpdationFailedDetails, AdminMail, ClientName) {
         console.log('sapUpdationFailedDetails:', sapUpdationFailedDetails);
-    try {
-        // Group transactions by ClientName
-        const transactionsByCompany = sapUpdationFailedDetails.reduce((acc, curr) => {
-            if (!acc[curr.ClientName]) {
-                acc[curr.ClientName] = [];
-            }
-            acc[curr.ClientName].push(curr);
-            return acc;
-        }, {});
+        try {
+            // Group transactions by ClientName
+            const transactionsByCompany = sapUpdationFailedDetails.reduce((acc, curr) => {
+                if (!acc[curr.ClientName]) {
+                    acc[curr.ClientName] = [];
+                }
+                acc[curr.ClientName].push(curr);
+                return acc;
+            }, {});
 
-        // Iterate through each company and send an email
-        const emailsSent = [];
-        for (const [company, transactions] of Object.entries(transactionsByCompany)) {
-            const transactionList = transactions.map(({ id, FailureReason, createdAt }, index) =>
-                `<tr style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: ${index % 2 === 0 ? '#f8f9fa' : '#e2e6ea'};">
+            // Iterate through each company and send an email
+            const emailsSent = [];
+            for (const [company, transactions] of Object.entries(transactionsByCompany)) {
+                const transactionList = transactions.map(({ id, FailureReason, createdAt }, index) =>
+                    `<tr style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6; background-color: ${index % 2 === 0 ? '#f8f9fa' : '#e2e6ea'};">
                     <td style="padding: 12px;">${createdAt}</td>
                     <td style="padding: 12px;">${FailureReason}</td>
                     <td style="padding: 12px;">${id}</td>
                 </tr>`
-            ).join('');
+                ).join('');
 
-            const params = {
-                Destination: { ToAddresses: [AdminMail] },
-                Message: {
-                    Body: {
-                        Html: {
-                            Charset: 'UTF-8',
-                            Data: `<html lang="en">
+                const params = {
+                    Destination: { ToAddresses: [AdminMail] },
+                    Message: {
+                        Body: {
+                            Html: {
+                                Charset: 'UTF-8',
+                                Data: `<html lang="en">
                                       <head>
                                         <meta charset="UTF-8" />
                                         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -361,30 +368,29 @@ export const handler = async (event) => {
                                       </body>
                                     </html>
                                   `,
+                            },
+                        },
+                        Subject: {
+                            Charset: 'UTF-8',
+                            Data: 'Payment Update Failed in SAP System',
                         },
                     },
-                    Subject: {
-                        Charset: 'UTF-8',
-                        Data: 'Payment Update Failed in SAP System',
-                    },
-                },
-                Source: 'noreply-awssupport@nipurnait.com',  
-            };
+                    Source: 'noreply-awssupport@nipurnait.com',
+                };
 
-            console.log("Email Params : ", params);
+                console.log("Email Params : ", params);
 
-            const response = await sesClient.send(new SendEmailCommand(params));
-            emailsSent.push({ company,id: transactions[0].id, statusCode: response.$metadata.httpStatusCode });
+                const response = await sesClient.send(new SendEmailCommand(params));
+                emailsSent.push({ company, id: transactions[0].id, statusCode: response.$metadata.httpStatusCode });
+            }
+
+            console.log("All SAP emails sent successfully.");
+            return emailsSent;
+        } catch (error) {
+            console.error("Error processing SAP Updation Failed details:", error);
+            throw error;
         }
-
-        console.log("All SAP emails sent successfully.");
-        return emailsSent;
-    } catch (error) {
-        console.error("Error processing SAP Updation Failed details:", error);
-        throw error;
     }
-}
-
 
     async function UpdateMailStatustoDB(sendEmailResponse) {
         for (let i = 0; i < sendEmailResponse.length; i++) {
