@@ -264,10 +264,14 @@ const CustomerPaymentDetailsForm = () => {
 
   const validateCompanyName = (value) => {
     let error;
-    const lettersOnlyRegex = /^[a-zA-Z\s]+$/;
+
+    // Allow alphanumeric characters and spaces
+    const alphanumericWithSpacesRegex = /^[a-zA-Z0-9\s]+$/;
 
     if (!value || value.trim().length === 0) {
       error = "Field is required";
+    } else if (!alphanumericWithSpacesRegex.test(value)) {
+      error = "Company name can only contain alphanumeric characters and spaces";
     } else if (value.includes("&") || value.includes("=")) {
       error = "Company name cannot contain '&' or '=' characters";
     }
@@ -368,7 +372,7 @@ const CustomerPaymentDetailsForm = () => {
   // };
 
   const handleComputopRedirection = (paymentDetails) => {
-    console.log("handleComputopRedirection", paymentDetails);
+    // console.log("handleComputopRedirection", paymentDetails);
 
     const { MerchantID, EncryptedString, TransactionID, dataLength } = paymentDetails;
     const { FirstName, LastName, Currency, AddressLine1, City, State, PhoneNumber, PostalCode } = initialValues;
@@ -691,8 +695,11 @@ const CustomerPaymentDetailsForm = () => {
                             as={TextField}
                             placeholder={!values.CompanyName ? "Company Name *" : ""}
                             label="Company Name *"
-                            // label={values.CompanyName ? "Company Name *" : ""}
-                            helperText={(touched.CompanyName && errors.CompanyName)}
+                            helperText={
+                              touched.CompanyName && errors.CompanyName
+                                ? errors.CompanyName
+                                : "This field accepts alphanumeric characters and spaces only."
+                            }
                             error={touched.CompanyName && Boolean(errors.CompanyName)}
                             value={values.CompanyName}
                             validate={validateCompanyName}
