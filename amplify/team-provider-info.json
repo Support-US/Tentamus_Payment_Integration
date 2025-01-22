@@ -23,7 +23,7 @@
         },
         "GetPaymentDetails": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-master-e1056-deployment",
-          "s3Key": "amplify-builds/GetPaymentDetails-36576643424758322b52-build.zip"
+          "s3Key": "amplify-builds/GetPaymentDetails-55706d6e59773579505a-build.zip"
         },
         "PaymentDetailResponse": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-master-e1056-deployment",
@@ -31,7 +31,7 @@
         },
         "SendPaymentFailedMail": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-master-e1056-deployment",
-          "s3Key": "amplify-builds/SendPaymentFailedMail-7568364657486e716857-build.zip"
+          "s3Key": "amplify-builds/SendPaymentFailedMail-666d436566467963364f-build.zip"
         }
       }
     }

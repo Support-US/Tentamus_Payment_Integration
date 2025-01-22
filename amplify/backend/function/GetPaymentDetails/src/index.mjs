@@ -3,19 +3,19 @@ import { Blowfish } from 'egoroof-blowfish';
 import { Buffer } from 'buffer';
 import pkg from 'crypto-js';
 const { HmacSHA256, enc } = pkg;
-import { DynamoDBClient,PutItemCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 const client = new DynamoDBClient({ region: "us-east-2" });
 import { v4 as uuidv4 } from 'uuid';
- 
+
 const secretsManager = new AWS.SecretsManager();
-const data = await secretsManager.getSecretValue({SecretId: `Tentamus_Payment_Integration-Master`}).promise(); 
-let HMacPassword,blowfishKey,merchantID,CompanyName;
+const data = await secretsManager.getSecretValue({ SecretId: `Tentamus_Payment_Integration-Master` }).promise();
+let HMacPassword, blowfishKey, merchantID, CompanyName;
 const secretValue = JSON.parse(data.SecretString);
-console.log("secretValue : ", secretValue);       
-const notifyURL   =secretValue.APIGatewayURL;
-const PaymentDetailsTableName = secretValue.DBTable;       
+console.log("secretValue : ", secretValue);
+const notifyURL = secretValue.APIGatewayURL;
+const PaymentDetailsTableName = secretValue.DBTable;
 let Headers = secretValue.headers;
-           
+
 
 export const handler = async (event, context) => {
 
@@ -97,20 +97,20 @@ export const handler = async (event, context) => {
         const timestamp = Date.now().toString(); // Get current timestamp as string
         const randomNumbers = Math.random().toString().slice(2, 12); // Generate random numbers
         const combined = `${timestamp}${randomNumbers}`; // Combine both
-      
+
         // Insert hyphen to mimic UUID pattern
         const formattedUUID = combined.slice(0, 8) + '-' +
-                              combined.slice(8, 12) + '-' +
-                              combined.slice(12, 16) + '-' +
-                              combined.slice(16, 20) + '-' +
-                              combined.slice(20, 32);
-        
+          combined.slice(8, 12) + '-' +
+          combined.slice(12, 16) + '-' +
+          combined.slice(16, 20) + '-' +
+          combined.slice(20, 32);
+
         return formattedUUID;
       }
-      
+
       let id = generateNumericUUID();
       console.log("Auto Generate Numeric UUID with Hyphen: ", id);
-      
+
 
       console.log("paymentDetails.InvoiceNumbers :", paymentDetails.InvoiceNumbers);
       const invoices = paymentDetails.InvoiceNumbers.map((item, index) => {
@@ -123,6 +123,8 @@ export const handler = async (event, context) => {
       const factor = Math.pow(10, paymentDetails.CurrencyDecimalDigit);
       const amount = (paymentDetails.Amount / factor).toString();
       console.log('Calculated Amount:', amount);
+      // Trim the CompanyName to remove extra spaces before calling generateHMAC
+      let trimmedCompanyName = paymentDetails.CompanyName.trim();
 
       let createdDynamoDBData = await client.send(
         new PutItemCommand({
@@ -131,7 +133,7 @@ export const handler = async (event, context) => {
             id: { S: id },
             FirstName: { S: paymentDetails.FirstName },
             LastName: { S: paymentDetails.LastName },
-            CompanyName: { S: paymentDetails.CompanyName },
+            CompanyName: { S: trimmedCompanyName },
             Email: { S: paymentDetails.Email },
             AddressLine1: { S: paymentDetails.AddressLine1 },
             AddressLine2: { S: paymentDetails.AddressLine2 },
@@ -165,15 +167,15 @@ export const handler = async (event, context) => {
 
       console.log("After Created Response ID : ", id);
 
-// Now if you need to extract and format InvoiceNumbers as a comma-separated string:
-const invoiceNumbersArray = paymentDetails.InvoiceNumbers.map(item => item.InvoiceNo);
-const invoiceNumbersString = invoiceNumbersArray.join(',');
+      // Now if you need to extract and format InvoiceNumbers as a comma-separated string:
+      const invoiceNumbersArray = paymentDetails.InvoiceNumbers.map(item => item.InvoiceNo);
+      const invoiceNumbersString = invoiceNumbersArray.join(',');
 
       // Return the required fields  
       return {
         InvoiceNumbers: invoiceNumbersString,  // Return invoices array/map as it is
         id: id,
-        ClientName: paymentDetails.CompanyName
+        ClientName: trimmedCompanyName
       };
 
     }

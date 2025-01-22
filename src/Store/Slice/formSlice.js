@@ -15,6 +15,7 @@ const initialState = {
         PostalCode: "",
         PhoneNumber: "+1",
         Amount: "",
+        TotalAmount: "",
         Currency: "USD",
         PaymentStatus: "In Progress",
         SuccessURL: `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}/success`,

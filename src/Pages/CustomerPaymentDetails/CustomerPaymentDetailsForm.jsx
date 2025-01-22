@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, TextField, FormControl, Autocomplete, IconButton, Button } from '@mui/material';
+import { Grid, TextField, FormControl, Autocomplete, IconButton, Button, Tooltip } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { Field, Formik } from 'formik';
@@ -22,6 +22,7 @@ import AFLLogo from "../../images/AFL_Logo.png";
 import CFLLogo from "../../images/CFL_Logo.png";
 import AdamsonLogo from "../../images/AdamsonLogo.png";
 import TentamusLogo from "../../images/tentamus.png";
+import { Info } from '@mui/icons-material';
 
 const currencyDecimalDigit = require('@mreduar/iso-4217-currencies');
 
@@ -262,10 +263,14 @@ const CustomerPaymentDetailsForm = () => {
 
   const validateCompanyName = (value) => {
     let error;
-    const lettersOnlyRegex = /^[a-zA-Z\s]+$/;
+
+    // Allow alphanumeric characters and spaces
+    const alphanumericWithSpacesRegex = /^[a-zA-Z0-9\s]+$/;
 
     if (!value || value.trim().length === 0) {
       error = "Field is required";
+    } else if (!alphanumericWithSpacesRegex.test(value)) {
+      error = "Company name can only contain alphanumeric characters and spaces";
     } else if (value.includes("&") || value.includes("=")) {
       error = "Company name cannot contain '&' or '=' characters";
     }
@@ -391,7 +396,7 @@ const CustomerPaymentDetailsForm = () => {
   const postPaymentDetails = async (data, resetForm) => {
     // console.log("data", data);
     setLoading(true);
-
+    // debugger;
     try {
       const response = await axios.post(apiUrl,
         JSON.stringify(data), {
@@ -443,10 +448,13 @@ const CustomerPaymentDetailsForm = () => {
     // console.log("handleFormSubmit", values, textFields);
     // console.log("textFields", textFields);
 
+    // Remove special characters &, =, ,, and ' from CompanyName
+    values.CompanyName = values.CompanyName.replace(/[&=,'"`]/g, '').trim();
+
     const currencyDetails = currencyDecimalDigit.currency(values.Currency).decimalDigits;
     // console.log("currencyDetails", currencyDetails);
 
-    const amountEntered = values.Amount;
+    const amountEntered = values.TotalAmount;
     // console.log("amountEntered", amountEntered);
 
     // Extract the number of decimal digits entered
@@ -502,9 +510,10 @@ const CustomerPaymentDetailsForm = () => {
           // Multiplying amount based on smallest unit of currency
           const currencyDetails = currencyDecimalDigit.currency(values.Currency);
           const factor = Math.pow(10, currencyDetails.decimalDigits);
-          const multipliedAmount = Math.round(formData.Amount * factor);
+          const multipliedAmount = Math.round(formData.TotalAmount * factor);
+          // const multipliedAmount = Math.round(formData.Amount * factor);
 
-          setAmountInUSD(formData.Amount);
+          setAmountInUSD(formData.TotalAmount);
 
           // Updating initialvalues
           const updatedFormData = {
@@ -685,8 +694,11 @@ const CustomerPaymentDetailsForm = () => {
                             as={TextField}
                             placeholder={!values.CompanyName ? "Company Name *" : ""}
                             label="Company Name *"
-                            // label={values.CompanyName ? "Company Name *" : ""}
-                            helperText={(touched.CompanyName && errors.CompanyName)}
+                            helperText={
+                              touched.CompanyName && errors.CompanyName
+                                ? errors.CompanyName
+                                : "This field accepts alphanumeric characters and spaces only."
+                            }
                             error={touched.CompanyName && Boolean(errors.CompanyName)}
                             value={values.CompanyName}
                             validate={validateCompanyName}
@@ -893,22 +905,68 @@ const CustomerPaymentDetailsForm = () => {
 
                       {/* Amount */}
                       <Grid item xs={6}>
-                        <FormControl fullWidth>
-                          <Field
-                            size="small"
-                            name="Amount"
-                            type="number"
-                            as={TextField}
-                            placeholder={!values.Amount ? "Amount *" : ""}
-                            label="Amount *"
-                            // label={values.Amount ? "Amount *" : ""}
-                            helperText={(touched.Amount && errors.Amount)}
-                            error={touched.Amount && Boolean(errors.Amount)}
-                            value={values.Amount}
-                            validate={validateAmount}
-                          />
-                        </FormControl>
+                        <div className="flex flex-wrap gap-1">
+
+                          {/* Amount Input */}
+                          <div className="flex-1">
+                            <FormControl>
+                              <Field
+                                size="small"
+                                name="Amount"
+                                type="number"
+                                as={TextField}
+                                placeholder={!values.Amount ? "Amount *" : ""}
+                                label="Amount *"
+                                helperText={touched.Amount && errors.Amount}
+                                error={touched.Amount && Boolean(errors.Amount)}
+                                value={values.Amount}
+                                validate={validateAmount}
+                                onChange={(e) => {
+                                  const amount = e.target.value;
+                                  // Set the Amount value in Formik
+                                  setFieldValue('Amount', amount);
+
+                                  // Calculate the total with the 3% fee
+                                  const total = amount ? (Math.round(parseFloat(amount) * 1.03 * 100) / 100).toFixed(2) : ''; // Amount + 3% fee rounded up
+                                  setFieldValue('TotalAmount', total); // Set the calculated total in the Formik state
+                                }}
+                              />
+                            </FormControl>
+                          </div>
+
+                          {/* Fee Display with Info Icon and Tooltip */}
+                          <div className=" text-center my-auto">
+                            <div>
+                              <span className="text-sm font-medium">{" + 3% fee"}
+                                {/* Info Icon with Tooltip */}
+                                <Tooltip title="card processing fee" arrow>
+                                  <IconButton>
+                                    <Info className='text-sm' />
+                                  </IconButton>
+                                </Tooltip>
+                                {"= "}
+                              </span>
+
+                            </div>
+                          </div>
+
+                          <div className="flex-1">
+                            <FormControl
+                            >
+                              <Field
+                                size="small"
+                                name="TotalAmount"
+                                type="number"
+                                as={TextField}
+                                value={values.TotalAmount || ''}
+                                disabled
+                              />
+                            </FormControl>
+                          </div>
+
+                        </div>
                       </Grid>
+
 
                       {/* Currency */}
                       <Grid item xs={6}>
