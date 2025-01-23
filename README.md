@@ -18,7 +18,7 @@ npm install
 
 # hosted URL
 
-https://development.d389b8rydflvtl.amplifyapp.com/
+https://master.d389b8rydflvtl.amplifyapp.com/
 
 # Backend Pull commands
 

@@ -19,7 +19,7 @@
         },
         "GetAmountDetails": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-master-e1056-deployment",
-          "s3Key": "amplify-builds/GetAmountDetails-473847513166654f6762-build.zip"
+          "s3Key": "amplify-builds/GetAmountDetails-536c6a2f464b49323567-build.zip"
         },
         "GetPaymentDetails": {
           "deploymentBucketName": "amplify-tentamuspaymentinteg-master-e1056-deployment",
