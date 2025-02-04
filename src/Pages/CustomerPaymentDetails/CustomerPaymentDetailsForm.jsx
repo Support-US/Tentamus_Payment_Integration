@@ -511,7 +511,8 @@ const CustomerPaymentDetailsForm = () => {
           // Multiplying amount based on smallest unit of currency
           const currencyDetails = currencyDecimalDigit.currency(values.Currency);
           const factor = Math.pow(10, currencyDetails.decimalDigits);
-          const multipliedAmount = Math.round(formData.Amount * factor);
+          const multipliedAmount = Math.round(formData.TotalAmount * factor);
+          // const multipliedAmount = Math.round(formData.Amount * factor);
 
           setAmountInUSD(formData.TotalAmount);
           // setAmountInUSD(formData.Amount);
