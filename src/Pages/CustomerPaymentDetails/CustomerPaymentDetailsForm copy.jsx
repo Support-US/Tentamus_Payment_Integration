@@ -43,7 +43,6 @@ const CustomerPaymentDetailsForm = () => {
     EncryptedString: "",
     dataLength: ""
   });
-  const [cardDetails, setCardDetails] = useState(null);
   const [combinedInvoices, setCombinedInvoices] = useState("");
   const [loading, setLoading] = useState(false);
   const [amountInUSD, setAmountInUSD] = useState(0);
@@ -373,11 +372,12 @@ const CustomerPaymentDetailsForm = () => {
   // };
 
   const handleComputopRedirection = (paymentDetails) => {
-    setLoading(false);
     // console.log("handleComputopRedirection", paymentDetails);
 
     const { MerchantID, EncryptedString, TransactionID, dataLength } = paymentDetails;
     const { FirstName, LastName, Currency, AddressLine1, City, State, PhoneNumber, PostalCode } = initialValues;
+    // const backgroundURL = 'https://www.tentamus.com/wp-content/uploads/2021/03/about_us_tentamus_fahnen_IMG_0722-2799x1679.jpg';
+    setLoading(false);
 
     const customField3 =
       companyName === 'Analytical Food Laboratories'
@@ -390,31 +390,9 @@ const CustomerPaymentDetailsForm = () => {
               ? 'https://www.tentamus.com/wp-content/uploads/2021/07/tentamus-group-logo.svg'
               : undefined;
 
-    let paymentUrl = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataLength}&Data=${EncryptedString}&CustomField1=${CurrencyFormat(amountInUSD)} ${Currency}&CustomField3=${customField3}&CustomField4=${combinedInvoices}&CustomField5=${FirstName} ${LastName}%0A ${AddressLine1}%0A ${City}%0A ${State}%0A ${PostalCode}%0A ${countryName}%0A ${PhoneNumber}&CustomField7=${TransactionID}`;
-
-    // 🔹 Handling card details
-    // 🔹 If we have stored card details, prefill the payment form
-    if (cardDetails !== null) {
-      const cardObject = {
-        expiryDate: cardDetails.expiryDate,
-        cardholderName: cardDetails.cardholderName,
-        number: cardDetails.number,
-        brand: cardDetails.brand
-      };
-
-      // 🔹 Base64 encode the card object
-      console.log("before encode", cardObject);
-      const encodedCardObject = btoa(JSON.stringify(cardObject));
-      console.log("after encode", encodedCardObject);
-
-      // 🔹 Add pre-filled card data to Computop URL
-      paymentUrl += `&Card=${encodedCardObject}`;
-    }
-
-    // 🔹 Redirect user to Computop
-    window.location.href = paymentUrl;
-  };
-
+    window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataLength}&Data=${EncryptedString}&CustomField1=${CurrencyFormat(amountInUSD)} ${Currency}&CustomField3=${customField3}&CustomField4=${combinedInvoices}&CustomField5=${FirstName} ${LastName}%0A ${AddressLine1}%0A ${City}%0A ${State}%0A ${PostalCode}%0A ${countryName}%0A ${PhoneNumber}&CustomField7=${TransactionID}`;
+    // window.location.href = `https://www.computop-paygate.com/payssl.aspx?MerchantID=${MerchantID}&Len=${dataLength}&Data=${EncryptedString}&CustomField1=${CurrencyFormat(amountInUSD)} ${Currency}&CustomField3=https://www.afltexas.com/wp-content/uploads/2022/07/AFL_GroupTag.svg&CustomField4=${combinedInvoices}&CustomField5=${FirstName} ${LastName}%0A ${AddressLine1}%0A ${City}%0A ${State}%0A ${PostalCode}%0A ${countryName}%0A ${PhoneNumber}&CustomField7=${TransactionID}`;
+  }
 
   const postPaymentDetails = async (data, resetForm) => {
     // console.log("data", data);
@@ -446,12 +424,8 @@ const CustomerPaymentDetailsForm = () => {
         MerchantID: response.data.MerchantID,
         CalculatedHMAC: response.data.CalculatedHMAC,
         EncryptedString: response.data.EncryptedString,
-        dataLength: response.data.Length
+        dataLength: response.data.Length,
       }));
-
-      if (response.data.CardDetails !== null) {
-        setCardDetails(response.data.CardDetails);
-      }
 
       resetForm();
       setTextFields(['']);
