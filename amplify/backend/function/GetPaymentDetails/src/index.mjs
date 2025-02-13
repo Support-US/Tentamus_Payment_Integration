@@ -3,9 +3,10 @@ import { Blowfish } from 'egoroof-blowfish';
 import { Buffer } from 'buffer';
 import pkg from 'crypto-js';
 const { HmacSHA256, enc } = pkg;
-import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, PutItemCommand, QueryCommand } from "@aws-sdk/client-dynamodb";
 const client = new DynamoDBClient({ region: "us-east-2" });
 import { v4 as uuidv4 } from 'uuid';
+
 
 const secretsManager = new AWS.SecretsManager();
 const data = await secretsManager.getSecretValue({ SecretId: `Tentamus_Payment_Integration` }).promise();
@@ -55,8 +56,7 @@ export const handler = async (event, context) => {
   if (paymentDetails.ClientName == secretValue.CFLCompanyName) {
     CompanyName = secretValue.CFLCompanyName;
 
-  }
-  else if (paymentDetails.ClientName == secretValue.TNAVCompanyName) {
+  } else if (paymentDetails.ClientName == secretValue.TNAVCompanyName) {
     CompanyName = secretValue.TNAVCompanyName;
 
   } else if (paymentDetails.ClientName == secretValue.AALCompanyName) {
@@ -76,19 +76,51 @@ export const handler = async (event, context) => {
 
   // Calculate the HMAC
   let calculatedHMAC = await generateHMAC(createdPaymentdetails.ClientName, merchantID, paymentDetails.Amount, paymentDetails.Currency, HMacPassword);
-  console.log("calculatedHMAC :", calculatedHMAC);
+  // console.log("calculatedHMAC :", calculatedHMAC);
 
-  let dataToEncrypt = `MerchantID=${merchantID}&TransID=${createdPaymentdetails.ClientName}&RefNr=${createdPaymentdetails.id}&UserData=${createdPaymentdetails.InvoiceNumbers}&Currency=${paymentDetails.Currency}&Amount=${paymentDetails.Amount}&MAC=${calculatedHMAC}&URLNotify=${notifyURL}?q=${CompanyName}&URLSuccess=${paymentDetails.SuccessURL}&URLFailure=${paymentDetails.FailureURL}`;
+  let GetCardDetails = await GetCardDetailsFromDB(paymentDetails.Email);
+  // console.log("GetCardDetails :", GetCardDetails);
+
+  // card Data
+  const cardDetails = {
+    cardholderName: GetCardDetails.cardholderName,
+    number: GetCardDetails.number,
+    expiryDate: GetCardDetails.expiryDate,
+    brand: GetCardDetails.brand
+  };
+  console.log("cardDetails :", cardDetails);
+
+  // Convert & Print Base64
+  let base64Result = await convertToBase64(cardDetails);
+  console.log("Base64 Encoded Card Details:", base64Result);
+
+  // let base64Result ="eyJjYXJkaG9sZGVyTmFtZSI6IllhSmFuZyIsIm51bWJlciI6IjAwMjI1ODk1MDAxNjMxMTEiLCJleHBpcnlEYXRlIjoiMjAyNzAyIiwiYnJhbmQiOiJWSVNBIn0=";
+
+  let dataToEncrypt = `MerchantID=${merchantID}&TransID=${createdPaymentdetails.ClientName}&RefNr=${createdPaymentdetails.id}&UserData=${createdPaymentdetails.InvoiceNumbers}&Currency=${paymentDetails.Currency}&Amount=${paymentDetails.Amount}&MAC=${calculatedHMAC}&URLNotify=${notifyURL}?q=${CompanyName}&URLSuccess=${paymentDetails.SuccessURL}&URLFailure=${paymentDetails.FailureURL}&Card=${base64Result}`;
   console.log("dataToEncrypt :", dataToEncrypt);
+
   // Encrypt the string
   let EncryptedString = await BlowfishEncryption(dataToEncrypt, blowfishKey,);
-  console.log("EncryptedString for Response :", EncryptedString);
+  // console.log("EncryptedString for Response :", EncryptedString);
+
+
   let responseData = {
     EncryptedString: EncryptedString,
     Length: EncryptedString.length,
-    MerchantID: merchantID, 
-    TransactionID: createdPaymentdetails.id
+    MerchantID: merchantID,
+    TransactionID: createdPaymentdetails.id,
   };
+
+  console.log("responseData :", responseData);
+
+
+  async function convertToBase64(data) {
+    const jsonString = JSON.stringify(data);
+    console.log("data :", data);
+
+    const base64String = Buffer.from(jsonString, "utf-8").toString("base64"); // Standard Base64 encoding with padding
+    return base64String;
+  }
 
   async function createPaymentDetails() {
 
@@ -159,7 +191,8 @@ export const handler = async (event, context) => {
       return {
         InvoiceNumbers: invoiceNumbersString,  // Return invoices array/map as it is
         id: id,
-        ClientName: trimmedCompanyName
+        ClientName: trimmedCompanyName,
+        Email: paymentDetails.Email
       };
 
     }
@@ -197,6 +230,43 @@ export const handler = async (event, context) => {
 
     return encodedText;
   }
+
+  async function GetCardDetailsFromDB(email) {
+    const params = {
+      TableName: PaymentDetailsTableName,
+      IndexName: "UserByEmail",
+      KeyConditionExpression: "Email = :email",
+      ExpressionAttributeValues: {
+        ":email": { S: email }
+      }
+    };
+
+    try {
+      const command = new QueryCommand(params);
+      const result = await client.send(command);
+      // console.log("Query Result:", JSON.stringify(result, null, 2));
+
+      if (!result.Items || result.Items.length === 0) {
+        console.log("No CardDetails found for email:", email);
+        return null;
+      }
+
+      // ✅ Extract all CardDetails from items where it exists
+      const cardDetailsList = result.Items
+        .filter(item => item.CardDetails) // Ensure CardDetails exists
+        .map(item => JSON.parse(item.CardDetails.S));
+
+      console.log("CardDetails Retrieved:", JSON.stringify(cardDetailsList, null, 2));
+
+      return cardDetailsList.length > 0 ? cardDetailsList[0] : null;
+
+    } catch (error) {
+      console.error("Error retrieving CardDetails:", error);
+      return null;
+    }
+  }
+
+
   return {
     statusCode: 200,
     //  Uncomment below to enable CORS requests

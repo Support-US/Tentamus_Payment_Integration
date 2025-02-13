@@ -1,12 +1,18 @@
 # This "input" configures a global authorization rule to enable public access to
 # all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
 
-type PaymentDetails @model {
+type PaymentDetails
+  @model
+  @auth(
+    rules: [
+      { allow: public, provider: apiKey, operations: [read, create, update] }
+    ]
+  ) {
   id: ID!
   FirstName: String!
   LastName: String!
   CompanyName: String!
-  Email: String!
+  Email: String! @index(name: "UserByEmail", queryField: "listPaymentsByEmail", sortKeyFields: ["createdAt"])
   AddressLine1: String!
   AddressLine2: String
   Country: String!
@@ -30,4 +36,6 @@ type PaymentDetails @model {
   SAPMailStatus: String
   ClientName: String
   ClientCompanyID: String
+  CardDetails: AWSJSON
 }
+

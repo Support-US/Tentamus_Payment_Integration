@@ -1,7 +1,7 @@
 import AWS from 'aws-sdk';
 import { Blowfish } from 'egoroof-blowfish';
 import { Buffer } from 'buffer';
-import { DynamoDBClient, UpdateItemCommand, GetItemCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, QueryCommand, UpdateItemCommand, GetItemCommand } from "@aws-sdk/client-dynamodb";
 import { unmarshall } from '@aws-sdk/util-dynamodb';
 
 import axios from 'axios';
@@ -61,6 +61,7 @@ export const handler = async (event) => {
         // Calculate the HMAC
         const calculatedHMAC = await generateHMAC(parsedObject.PayID, parsedObject.TransID, merchantID, parsedObject.Status, parsedObject.Code, HMacPassword);
         console.log("calculatedHMAC :", calculatedHMAC);
+
         const Hmac = parsedObject.MAC;
         console.log("Hmac :", Hmac);
 
@@ -335,7 +336,7 @@ export const handler = async (event) => {
                 const responseData = response.results;
 
                 if (response.status === 204) {
-                    const updatedResponse = await UpdatePaymentDetailsID(parsedObject);
+                    const updatedResponse = await UpdatePaymentDetailsID(parsedObject, getDBData);
                     console.log("updatedResponse :", updatedResponse);
                     return {
                         statusCode: 204,
@@ -369,26 +370,80 @@ export const handler = async (event) => {
         }
     }
 
-    async function UpdatePaymentDetailsID(parsedObject) {
+    async function UpdatePaymentDetailsID(parsedObject, getDBData) {
+        if (!PaymentDetailsTableName) {
+            console.error("🚨 Error: PaymentDetailsTableName is not set.");
+            throw new Error("PaymentDetailsTableName is required but is undefined or null.");
+        }
+
         const params = {
             TableName: PaymentDetailsTableName,
             Key: {
                 id: { S: parsedObject.refnr },
             },
-            UpdateExpression: "SET PaymentId = :newPaymentId, PaymentStatus = :newStatus,AfterPaymentSAPstatus = :newStatusMessage,Description = :newDescription",
+            UpdateExpression: "SET PaymentId = :newPaymentId, PaymentStatus = :newStatus, AfterPaymentSAPstatus = :newStatusMessage, Description = :newDescription",
             ExpressionAttributeValues: {
                 ":newPaymentId": { S: parsedObject.PayID },
                 ":newStatus": { S: parsedObject.Status === 'OK' ? 'Success' : 'Failed' },
                 ":newStatusMessage": { S: "Success" },
-                ":newDescription": { S: parsedObject.Description },
+                ":newDescription": { S: parsedObject.Description }
             },
             ReturnValues: "ALL_NEW",
         };
 
-        const command = new UpdateItemCommand(params);
-        const DBResponse = await client.send(command);
-        console.log("DBResponse :", DBResponse);
-        return DBResponse;
+        if (parsedObject.prefill === "on") {
+            console.log("prefill is on");
+
+            try {
+                const existingCardQuery = new QueryCommand({
+                    TableName: PaymentDetailsTableName, // ✅ Ensure this is not null
+                    IndexName: "UserByEmail",
+                    KeyConditionExpression: "Email = :email",
+                    ExpressionAttributeValues: {
+                        ":email": { S: getDBData.Email }
+                    }
+                });
+
+                // console.log("Querying existing card details with params:", JSON.stringify(existingCardQuery.input, null, 2));
+
+                const existingCardResult = await client.send(existingCardQuery);
+                // console.log("Existing Card Query Result:", JSON.stringify(existingCardResult, null, 2));
+
+                const existingCardDetailsList = existingCardResult.Items
+                    .filter(item => item.CardDetails)
+                    .map(item => JSON.parse(item.CardDetails.S));
+
+                const existingCard = existingCardDetailsList.length > 0 ? existingCardDetailsList[0] : null;
+                console.log("Existing Card Details:", existingCard);
+
+                if (!existingCard) {
+                    let newCardDetails = JSON.stringify({
+                        cardholderName: parsedObject.TransID,
+                        number: parsedObject.PCNr,
+                        maskedpan: parsedObject.maskedpan,
+                        expiryDate: parsedObject.CCExpiry,
+                        brand: parsedObject.CCBrand
+                    });
+
+                    params.UpdateExpression += ", CardDetails = :newCardDetails";
+                    params.ExpressionAttributeValues[":newCardDetails"] = { S: newCardDetails };
+                } else {
+                    console.log("Card details already exist for this email. Skipping update.");
+                }
+            } catch (queryError) {
+                console.error("Error querying existing card details:", queryError);
+            }
+        }
+
+        try {
+            const command = new UpdateItemCommand(params);
+            const DBResponse = await client.send(command);
+            console.log("DBResponse:", JSON.stringify(DBResponse, null, 2));
+            return DBResponse;
+        } catch (updateError) {
+            console.error("Error updating payment details:", updateError);
+            throw updateError;
+        }
     }
 
     async function UpdateFailurestatus(error, parsedObject, errStatus) {
@@ -458,6 +513,7 @@ export const handler = async (event) => {
     }
 
 };
+
 
 
 
