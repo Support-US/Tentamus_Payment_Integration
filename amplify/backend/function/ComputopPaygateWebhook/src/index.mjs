@@ -1,7 +1,7 @@
 import AWS from 'aws-sdk';
 import { Blowfish } from 'egoroof-blowfish';
 import { Buffer } from 'buffer';
-import { DynamoDBClient, QueryCommand, UpdateItemCommand, GetItemCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, PutItemCommand, UpdateItemCommand, GetItemCommand } from "@aws-sdk/client-dynamodb";
 import { unmarshall } from '@aws-sdk/util-dynamodb';
 
 import axios from 'axios';
@@ -14,6 +14,8 @@ let HMacPassword, blowfishKey, merchantID;
 const secretValue = JSON.parse(data.SecretString);
 console.log("secretValue : ", secretValue);
 const PaymentDetailsTableName = secretValue.DBTable;
+const CardDetailsTableName = secretValue.CardDetailsDBTable
+
 
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 const sesClient = new SESClient({ region: process.env.REGION });
@@ -77,6 +79,11 @@ export const handler = async (event) => {
 
             let response = await CreateData(parsedObject, getObjectID);
             console.log("response :", response);
+
+            if (parsedObject.prefill == "on") {
+                let updateCardDetailstoDB = await CreateUserCardDetails(parsedObject, getObjectID);
+                console.log("updateCardDetails :", updateCardDetailstoDB);
+            }
 
             return {
                 statusCode: 200,
@@ -381,59 +388,16 @@ export const handler = async (event) => {
             Key: {
                 id: { S: parsedObject.refnr },
             },
-            UpdateExpression: "SET PaymentId = :newPaymentId, PaymentStatus = :newStatus, AfterPaymentSAPstatus = :newStatusMessage, Description = :newDescription",
+            UpdateExpression: "SET PaymentId = :newPaymentId, PaymentStatus = :newStatus, AfterPaymentSAPstatus = :newStatusMessage, Description = :newDescription, MaskedCardNumber = :newmaskedpan",
             ExpressionAttributeValues: {
                 ":newPaymentId": { S: parsedObject.PayID },
                 ":newStatus": { S: parsedObject.Status === 'OK' ? 'Success' : 'Failed' },
                 ":newStatusMessage": { S: "Success" },
-                ":newDescription": { S: parsedObject.Description }
+                ":newDescription": { S: parsedObject.Description },
+                ":newmaskedpan": { S: parsedObject.maskedpan }
             },
             ReturnValues: "ALL_NEW",
         };
-
-        if (parsedObject.prefill === "on") {
-            console.log("prefill is on");
-
-            try {
-                const existingCardQuery = new QueryCommand({
-                    TableName: PaymentDetailsTableName, // ✅ Ensure this is not null
-                    IndexName: "UserByEmail",
-                    KeyConditionExpression: "Email = :email",
-                    ExpressionAttributeValues: {
-                        ":email": { S: getDBData.Email }
-                    }
-                });
-
-                // console.log("Querying existing card details with params:", JSON.stringify(existingCardQuery.input, null, 2));
-
-                const existingCardResult = await client.send(existingCardQuery);
-                // console.log("Existing Card Query Result:", JSON.stringify(existingCardResult, null, 2));
-
-                const existingCardDetailsList = existingCardResult.Items
-                    .filter(item => item.CardDetails)
-                    .map(item => JSON.parse(item.CardDetails.S));
-
-                const existingCard = existingCardDetailsList.length > 0 ? existingCardDetailsList[0] : null;
-                console.log("Existing Card Details:", existingCard);
-
-                if (!existingCard) {
-                    let newCardDetails = JSON.stringify({
-                        cardholderName: parsedObject.TransID,
-                        number: parsedObject.PCNr,
-                        maskedpan: parsedObject.maskedpan,
-                        expiryDate: parsedObject.CCExpiry,
-                        brand: parsedObject.CCBrand
-                    });
-
-                    params.UpdateExpression += ", CardDetails = :newCardDetails";
-                    params.ExpressionAttributeValues[":newCardDetails"] = { S: newCardDetails };
-                } else {
-                    console.log("Card details already exist for this email. Skipping update.");
-                }
-            } catch (queryError) {
-                console.error("Error querying existing card details:", queryError);
-            }
-        }
 
         try {
             const command = new UpdateItemCommand(params);
@@ -488,6 +452,42 @@ export const handler = async (event) => {
         } catch (error) {
             console.error("Error updating status:", error);
             throw error;
+        }
+    }
+
+    async function CreateUserCardDetails(parsedObject, getObjectID) {
+        // ✅ Unmarshall DynamoDB object
+        const getDBData = unmarshall(getObjectID);
+        console.log("✅ Unmarshalled Data:", getDBData);
+    
+        // ✅ Format item with proper DynamoDB types
+        const params = {
+            TableName: "UserCardDetails-efwm7znsivbl7dglzebpkxq2da-dev",
+            Item: {
+                id: { S: getDBData.Email },
+                Email: { S: getDBData.Email },  // ✅ Partition Key (ID)
+                cardHolderName: { S: parsedObject.CardHolder },
+                cardBrand: { S: parsedObject.CCBrand },
+                expiryDate: { S: parsedObject.CCExpiry },
+                pcnrNumber: { S: parsedObject.PCNr },
+                createdAt: { S: new Date().toISOString() },  // ✅ Sort Key
+                updatedAt: { S: new Date().toISOString() },
+            },
+            // ConditionExpression: "attribute_not_exists(pcnrNumber)"
+        };
+    
+        try {
+            const command = new PutItemCommand(params);
+            await client.send(command);
+            console.log("✅ UserCardDetails created successfully:", JSON.stringify(params.Item, null, 2));
+            return params.Item;
+        } catch (error) {
+            if (error.name === "ConditionalCheckFailedException") {
+                console.error("⚠️ Error: Email already exists!");
+            } else {
+                console.error("❌ Error creating UserCardDetails:", error);
+            }
+            return null;
         }
     }
 

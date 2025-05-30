@@ -23,6 +23,7 @@ export const onCreatePaymentDetails = /* GraphQL */ `
       InvoiceNumbers
       PaymentId
       createdAt
+      updatedAt
       PaymentStatus
       CurrencyDecimalDigit
       BeforePaymentSAPstatus
@@ -34,7 +35,7 @@ export const onCreatePaymentDetails = /* GraphQL */ `
       SAPMailStatus
       ClientName
       ClientCompanyID
-      updatedAt
+      MaskedCardNumber
       __typename
     }
   }
@@ -61,6 +62,7 @@ export const onUpdatePaymentDetails = /* GraphQL */ `
       InvoiceNumbers
       PaymentId
       createdAt
+      updatedAt
       PaymentStatus
       CurrencyDecimalDigit
       BeforePaymentSAPstatus
@@ -72,7 +74,7 @@ export const onUpdatePaymentDetails = /* GraphQL */ `
       SAPMailStatus
       ClientName
       ClientCompanyID
-      updatedAt
+      MaskedCardNumber
       __typename
     }
   }
@@ -99,6 +101,7 @@ export const onDeletePaymentDetails = /* GraphQL */ `
       InvoiceNumbers
       PaymentId
       createdAt
+      updatedAt
       PaymentStatus
       CurrencyDecimalDigit
       BeforePaymentSAPstatus
@@ -110,6 +113,57 @@ export const onDeletePaymentDetails = /* GraphQL */ `
       SAPMailStatus
       ClientName
       ClientCompanyID
+      MaskedCardNumber
+      __typename
+    }
+  }
+`;
+export const onCreateUserCardDetails = /* GraphQL */ `
+  subscription OnCreateUserCardDetails(
+    $filter: ModelSubscriptionUserCardDetailsFilterInput
+  ) {
+    onCreateUserCardDetails(filter: $filter) {
+      id
+      Email
+      cardHolderName
+      cardBrand
+      expiryDate
+      pcnrNumber
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onUpdateUserCardDetails = /* GraphQL */ `
+  subscription OnUpdateUserCardDetails(
+    $filter: ModelSubscriptionUserCardDetailsFilterInput
+  ) {
+    onUpdateUserCardDetails(filter: $filter) {
+      id
+      Email
+      cardHolderName
+      cardBrand
+      expiryDate
+      pcnrNumber
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onDeleteUserCardDetails = /* GraphQL */ `
+  subscription OnDeleteUserCardDetails(
+    $filter: ModelSubscriptionUserCardDetailsFilterInput
+  ) {
+    onDeleteUserCardDetails(filter: $filter) {
+      id
+      Email
+      cardHolderName
+      cardBrand
+      expiryDate
+      pcnrNumber
+      createdAt
       updatedAt
       __typename
     }

@@ -1,42 +1,83 @@
 {
-  "dev": {
+  "masters": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-tentamuspaymentinteg-dev-82313-authRole",
-      "UnauthRoleArn": "arn:aws:iam::988839728996:role/amplify-tentamuspaymentinteg-dev-82313-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::988839728996:role/amplify-tentamuspaymentinteg-dev-82313-authRole",
-      "Region": "us-east-2",
-      "DeploymentBucketName": "amplify-tentamuspaymentinteg-dev-82313-deployment",
-      "UnauthRoleName": "amplify-tentamuspaymentinteg-dev-82313-unauthRole",
-      "StackName": "amplify-tentamuspaymentinteg-dev-82313",
-      "StackId": "arn:aws:cloudformation:us-east-2:988839728996:stack/amplify-tentamuspaymentinteg-dev-82313/a21efb20-c7ed-11ee-b44d-0a7291448be1",
-      "AmplifyAppId": "d389b8rydflvtl"
+      "AuthRoleName": "amplify-tentamuspaymentinteg-masters-5c3e2-authRole",
+      "UnauthRoleArn": "arn:aws:iam::621072894679:role/amplify-tentamuspaymentinteg-masters-5c3e2-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::621072894679:role/amplify-tentamuspaymentinteg-masters-5c3e2-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-tentamuspaymentinteg-masters-5c3e2-deployment",
+      "UnauthRoleName": "amplify-tentamuspaymentinteg-masters-5c3e2-unauthRole",
+      "StackName": "amplify-tentamuspaymentinteg-masters-5c3e2",
+      "StackId": "arn:aws:cloudformation:us-east-1:621072894679:stack/amplify-tentamuspaymentinteg-masters-5c3e2/b3530e20-3d78-11f0-ba9e-0e74d718cccb",
+      "AmplifyAppId": "d2rixlzghj5t20"
     },
     "categories": {
       "function": {
-        "ComputopWebhook": {
-          "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-82313-deployment",
-          "s3Key": "amplify-builds/ComputopWebhook-574d57466643786f4276-build.zip"
-        },
-        "GetPaymentDetails": {
-          "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-82313-deployment",
-          "s3Key": "amplify-builds/GetPaymentDetails-34516f437546504b7135-build.zip"
-        },
-        "PaymentDetailResponse": {
-          "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-82313-deployment",
-          "s3Key": "amplify-builds/PaymentDetailResponse-304e7372414c48345a32-build.zip"
-        },
         "ComputopPaygateWebhook": {
-          "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-82313-deployment",
-          "s3Key": "amplify-builds/ComputopPaygateWebhook-34655968754b2f443631-build.zip"
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-masters-5c3e2-deployment",
+          "s3Key": "amplify-builds/ComputopPaygateWebhook-4450346a57596f6e5346-build.zip"
         },
         "GetAmountDetails": {
-          "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-82313-deployment",
-          "s3Key": "amplify-builds/GetAmountDetails-6c736974624a744e465a-build.zip"
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-masters-5c3e2-deployment",
+          "s3Key": "amplify-builds/GetAmountDetails-536c6a2f464b49323567-build.zip"
+        },
+        "GetPaymentDetails": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-masters-5c3e2-deployment",
+          "s3Key": "amplify-builds/GetPaymentDetails-55706d6e59773579505a-build.zip"
+        },
+        "PaymentDetailResponse": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-masters-5c3e2-deployment",
+          "s3Key": "amplify-builds/PaymentDetailResponse-7a622b37554a73386d32-build.zip"
         },
         "SendPaymentFailedMail": {
-          "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-82313-deployment",
-          "s3Key": "amplify-builds/SendPaymentFailedMail-6c535433774943657457-build.zip"
-        }
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-masters-5c3e2-deployment",
+          "s3Key": "amplify-builds/SendPaymentFailedMail-666d436566467963364f-build.zip"
+        },
+        "TentamusPaymentIntegration": {}
+      }
+    }
+  },
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-tentamuspaymentinteg-dev-8cdbe-authRole",
+      "UnauthRoleArn": "arn:aws:iam::621072894679:role/amplify-tentamuspaymentinteg-dev-8cdbe-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::621072894679:role/amplify-tentamuspaymentinteg-dev-8cdbe-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-tentamuspaymentinteg-dev-8cdbe-deployment",
+      "UnauthRoleName": "amplify-tentamuspaymentinteg-dev-8cdbe-unauthRole",
+      "StackName": "amplify-tentamuspaymentinteg-dev-8cdbe",
+      "StackId": "arn:aws:cloudformation:us-east-1:621072894679:stack/amplify-tentamuspaymentinteg-dev-8cdbe/d45553d0-3d82-11f0-b738-0affce134e5d",
+      "AmplifyAppId": "d2rixlzghj5t20"
+    },
+    "categories": {
+      "function": {
+        "ComputopPaygateWebhook": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-8cdbe-deployment",
+          "s3Key": "amplify-builds/ComputopPaygateWebhook-57323153502f6d764f51-build.zip"
+        },
+        "GetAmountDetails": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-8cdbe-deployment",
+          "s3Key": "amplify-builds/GetAmountDetails-336768595245484c7235-build.zip"
+        },
+        "GetPaymentDetails": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-8cdbe-deployment",
+          "s3Key": "amplify-builds/GetPaymentDetails-35694734474c696d466d-build.zip"
+        },
+        "PaymentDetailResponse": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-8cdbe-deployment",
+          "s3Key": "amplify-builds/PaymentDetailResponse-536332386351534a414b-build.zip"
+        },
+        "SendPaymentFailedMail": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-dev-8cdbe-deployment",
+          "s3Key": "amplify-builds/SendPaymentFailedMail-31413150776a6d38566c-build.zip"
+        },
+        "TentamusPaymentIntegration": {}
+      },
+      "api": {
+        "APIauthorization": {},
+        "TentamusPaymentIntegration": {},
+        "Webhook": {},
+        "getAmountAPI": {}
       }
     }
   }

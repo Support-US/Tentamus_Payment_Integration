@@ -24,6 +24,7 @@ export const createPaymentDetails = /* GraphQL */ `
       InvoiceNumbers
       PaymentId
       createdAt
+      updatedAt
       PaymentStatus
       CurrencyDecimalDigit
       BeforePaymentSAPstatus
@@ -35,7 +36,7 @@ export const createPaymentDetails = /* GraphQL */ `
       SAPMailStatus
       ClientName
       ClientCompanyID
-      updatedAt
+      MaskedCardNumber
       __typename
     }
   }
@@ -63,6 +64,7 @@ export const updatePaymentDetails = /* GraphQL */ `
       InvoiceNumbers
       PaymentId
       createdAt
+      updatedAt
       PaymentStatus
       CurrencyDecimalDigit
       BeforePaymentSAPstatus
@@ -74,7 +76,7 @@ export const updatePaymentDetails = /* GraphQL */ `
       SAPMailStatus
       ClientName
       ClientCompanyID
-      updatedAt
+      MaskedCardNumber
       __typename
     }
   }
@@ -102,6 +104,7 @@ export const deletePaymentDetails = /* GraphQL */ `
       InvoiceNumbers
       PaymentId
       createdAt
+      updatedAt
       PaymentStatus
       CurrencyDecimalDigit
       BeforePaymentSAPstatus
@@ -113,6 +116,60 @@ export const deletePaymentDetails = /* GraphQL */ `
       SAPMailStatus
       ClientName
       ClientCompanyID
+      MaskedCardNumber
+      __typename
+    }
+  }
+`;
+export const createUserCardDetails = /* GraphQL */ `
+  mutation CreateUserCardDetails(
+    $input: CreateUserCardDetailsInput!
+    $condition: ModelUserCardDetailsConditionInput
+  ) {
+    createUserCardDetails(input: $input, condition: $condition) {
+      id
+      Email
+      cardHolderName
+      cardBrand
+      expiryDate
+      pcnrNumber
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const updateUserCardDetails = /* GraphQL */ `
+  mutation UpdateUserCardDetails(
+    $input: UpdateUserCardDetailsInput!
+    $condition: ModelUserCardDetailsConditionInput
+  ) {
+    updateUserCardDetails(input: $input, condition: $condition) {
+      id
+      Email
+      cardHolderName
+      cardBrand
+      expiryDate
+      pcnrNumber
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const deleteUserCardDetails = /* GraphQL */ `
+  mutation DeleteUserCardDetails(
+    $input: DeleteUserCardDetailsInput!
+    $condition: ModelUserCardDetailsConditionInput
+  ) {
+    deleteUserCardDetails(input: $input, condition: $condition) {
+      id
+      Email
+      cardHolderName
+      cardBrand
+      expiryDate
+      pcnrNumber
+      createdAt
       updatedAt
       __typename
     }

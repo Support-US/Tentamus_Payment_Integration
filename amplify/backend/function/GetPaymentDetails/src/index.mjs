@@ -3,9 +3,11 @@ import { Blowfish } from 'egoroof-blowfish';
 import { Buffer } from 'buffer';
 import pkg from 'crypto-js';
 const { HmacSHA256, enc } = pkg;
-import { DynamoDBClient, PutItemCommand, QueryCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, PutItemCommand, QueryCommand, GetItemCommand } from "@aws-sdk/client-dynamodb";
 const client = new DynamoDBClient({ region: "us-east-2" });
 import { v4 as uuidv4 } from 'uuid';
+import { unmarshall } from '@aws-sdk/util-dynamodb';
+
 
 
 const secretsManager = new AWS.SecretsManager();
@@ -16,6 +18,8 @@ console.log("secretValue : ", secretValue);
 const notifyURL = secretValue.APIGatewayURL;
 let Headers = secretValue.headers;
 const PaymentDetailsTableName = secretValue.DBTable;
+const CardDetailsTableName = secretValue.CardDetailsDBTable
+  ;
 
 export const handler = async (event, context) => {
 
@@ -78,25 +82,45 @@ export const handler = async (event, context) => {
   let calculatedHMAC = await generateHMAC(createdPaymentdetails.ClientName, merchantID, paymentDetails.Amount, paymentDetails.Currency, HMacPassword);
   // console.log("calculatedHMAC :", calculatedHMAC);
 
+
+  // let dataToEncrypt = `MerchantID=${merchantID}&TransID=${createdPaymentdetails.ClientName}&RefNr=${createdPaymentdetails.id}&UserData=${createdPaymentdetails.InvoiceNumbers}&Currency=${paymentDetails.Currency}&Amount=${paymentDetails.Amount}&MAC=${calculatedHMAC}&URLNotify=${notifyURL}?q=${CompanyName}&URLSuccess=${paymentDetails.SuccessURL}&URLFailure=${paymentDetails.FailureURL}`;
+  // console.log("dataToEncrypt :", dataToEncrypt);
+
+
   let GetCardDetails = await GetCardDetailsFromDB(paymentDetails.Email);
   // console.log("GetCardDetails :", GetCardDetails);
 
-  // card Data
-  const cardDetails = {
-    cardholderName: GetCardDetails.cardholderName,
-    number: GetCardDetails.number,
-    expiryDate: GetCardDetails.expiryDate,
-    brand: GetCardDetails.brand
-  };
-  console.log("cardDetails :", cardDetails);
+  let base64Result = "";
+  let cardDetails = null;
 
-  // Convert & Print Base64
-  let base64Result = await convertToBase64(cardDetails);
-  console.log("Base64 Encoded Card Details:", base64Result);
+  if (GetCardDetails) {
+    const getDBData = unmarshall(GetCardDetails);
+        console.log("✅ Unmarshalled Data:", getDBData);
 
-  // let base64Result ="eyJjYXJkaG9sZGVyTmFtZSI6IllhSmFuZyIsIm51bWJlciI6IjAwMjI1ODk1MDAxNjMxMTEiLCJleHBpcnlEYXRlIjoiMjAyNzAyIiwiYnJhbmQiOiJWSVNBIn0=";
+    // card Data
+    cardDetails = {
+      cardholderName: getDBData.cardHolderName,
+      number: getDBData.pcnrNumber,
+      expiryDate: getDBData.expiryDate, 
+      brand: getDBData.cardBrand
+    };
 
-  let dataToEncrypt = `MerchantID=${merchantID}&TransID=${createdPaymentdetails.ClientName}&RefNr=${createdPaymentdetails.id}&UserData=${createdPaymentdetails.InvoiceNumbers}&Currency=${paymentDetails.Currency}&Amount=${paymentDetails.Amount}&MAC=${calculatedHMAC}&URLNotify=${notifyURL}?q=${CompanyName}&URLSuccess=${paymentDetails.SuccessURL}&URLFailure=${paymentDetails.FailureURL}&Card=${base64Result}`;
+    console.log("cardDetails :", cardDetails);
+
+    // Convert & Print Base64
+    base64Result = await convertToBase64(cardDetails);
+    console.log("Base64 Encoded Card Details:", base64Result);
+  }
+
+  // Construct dataToEncrypt without Card if no card details
+  let dataToEncrypt = `MerchantID=${merchantID}&TransID=${createdPaymentdetails.ClientName}`;
+
+  if (base64Result) {
+    dataToEncrypt += `&Card=${base64Result}`;
+  }
+
+  dataToEncrypt += `&RefNr=${createdPaymentdetails.id}&UserData=${createdPaymentdetails.InvoiceNumbers}&Currency=${paymentDetails.Currency}&Amount=${paymentDetails.Amount}&MAC=${calculatedHMAC}&URLNotify=${notifyURL}?q=${CompanyName}&URLSuccess=${paymentDetails.SuccessURL}&URLFailure=${paymentDetails.FailureURL}&OrderDesc=test:0000`
+
   console.log("dataToEncrypt :", dataToEncrypt);
 
   // Encrypt the string
@@ -232,40 +256,34 @@ export const handler = async (event, context) => {
   }
 
   async function GetCardDetailsFromDB(email) {
+    console.log("📧 Fetching Card Details for Email:", email);
+
     const params = {
-      TableName: PaymentDetailsTableName,
-      IndexName: "UserByEmail",
-      KeyConditionExpression: "Email = :email",
-      ExpressionAttributeValues: {
-        ":email": { S: email }
-      }
+      TableName: CardDetailsTableName,  // Ensure this matches your actual table name
+      Key: {
+        id: { S: email },
+      },
+
     };
 
+    console.log("📌 Query Parameters:", JSON.stringify(params, null, 2));
+
     try {
-      const command = new QueryCommand(params);
-      const result = await client.send(command);
-      // console.log("Query Result:", JSON.stringify(result, null, 2));
+      const command = new GetItemCommand(params);
+      const response = await client.send(command);
 
-      if (!result.Items || result.Items.length === 0) {
-        console.log("No CardDetails found for email:", email);
-        return null;
-      }
+      // Access the retrieved item from response.Item
+      const item = response.Item;
 
-      // ✅ Extract all CardDetails from items where it exists
-      const cardDetailsList = result.Items
-        .filter(item => item.CardDetails) // Ensure CardDetails exists
-        .map(item => JSON.parse(item.CardDetails.S));
-
-      console.log("CardDetails Retrieved:", JSON.stringify(cardDetailsList, null, 2));
-
-      return cardDetailsList.length > 0 ? cardDetailsList[0] : null;
+      // Handle the retrieved item as needed
+      console.log('CardDetails Retrieved:', item);
+      return item;
 
     } catch (error) {
-      console.error("Error retrieving CardDetails:", error);
+      console.error("❌ Error retrieving CardDetails:", error);
       return null;
     }
   }
-
 
   return {
     statusCode: 200,

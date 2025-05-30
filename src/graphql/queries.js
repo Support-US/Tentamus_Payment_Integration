@@ -21,6 +21,7 @@ export const getPaymentDetails = /* GraphQL */ `
       InvoiceNumbers
       PaymentId
       createdAt
+      updatedAt
       PaymentStatus
       CurrencyDecimalDigit
       BeforePaymentSAPstatus
@@ -32,7 +33,7 @@ export const getPaymentDetails = /* GraphQL */ `
       SAPMailStatus
       ClientName
       ClientCompanyID
-      updatedAt
+      MaskedCardNumber
       __typename
     }
   }
@@ -62,6 +63,7 @@ export const listPaymentDetails = /* GraphQL */ `
         InvoiceNumbers
         PaymentId
         createdAt
+        updatedAt
         PaymentStatus
         CurrencyDecimalDigit
         BeforePaymentSAPstatus
@@ -73,6 +75,77 @@ export const listPaymentDetails = /* GraphQL */ `
         SAPMailStatus
         ClientName
         ClientCompanyID
+        MaskedCardNumber
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
+export const getUserCardDetails = /* GraphQL */ `
+  query GetUserCardDetails($id: ID!) {
+    getUserCardDetails(id: $id) {
+      id
+      Email
+      cardHolderName
+      cardBrand
+      expiryDate
+      pcnrNumber
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const listUserCardDetails = /* GraphQL */ `
+  query ListUserCardDetails(
+    $filter: ModelUserCardDetailsFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listUserCardDetails(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        Email
+        cardHolderName
+        cardBrand
+        expiryDate
+        pcnrNumber
+        createdAt
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
+export const listCardsByEmail = /* GraphQL */ `
+  query ListCardsByEmail(
+    $Email: ID!
+    $createdAt: ModelStringKeyConditionInput
+    $sortDirection: ModelSortDirection
+    $filter: ModelUserCardDetailsFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listCardsByEmail(
+      Email: $Email
+      createdAt: $createdAt
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        Email
+        cardHolderName
+        cardBrand
+        expiryDate
+        pcnrNumber
+        createdAt
         updatedAt
         __typename
       }

@@ -21,9 +21,9 @@
           "additionalAuthenticationProviders": [],
           "defaultAuthentication": {
             "apiKeyConfig": {
-              "apiKeyExpirationDate": "2025-09-26T09:08:47.380Z",
+              "apiKeyExpirationDate": "2025-10-10T09:55:00.001Z",
               "apiKeyExpirationDays": 365,
-              "description": "Development key test"
+              "description": "new"
             },
             "authenticationType": "API_KEY"
           }
@@ -65,49 +65,19 @@
   "function": {
     "ComputopPaygateWebhook": {
       "build": true,
-      "dependsOn": [
-        {
-          "attributes": [
-            "GraphQLAPIIdOutput",
-            "GraphQLAPIEndpointOutput",
-            "GraphQLAPIKeyOutput"
-          ],
-          "category": "api",
-          "resourceName": "TentamusPaymentIntegration"
-        }
-      ],
+      "dependsOn": [],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
     "GetAmountDetails": {
       "build": true,
-      "dependsOn": [
-        {
-          "attributes": [
-            "GraphQLAPIIdOutput",
-            "GraphQLAPIEndpointOutput",
-            "GraphQLAPIKeyOutput"
-          ],
-          "category": "api",
-          "resourceName": "TentamusPaymentIntegration"
-        }
-      ],
+      "dependsOn": [],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
     "GetPaymentDetails": {
       "build": true,
-      "dependsOn": [
-        {
-          "attributes": [
-            "GraphQLAPIIdOutput",
-            "GraphQLAPIEndpointOutput",
-            "GraphQLAPIKeyOutput"
-          ],
-          "category": "api",
-          "resourceName": "TentamusPaymentIntegration"
-        }
-      ],
+      "dependsOn": [],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
@@ -117,8 +87,7 @@
         {
           "attributes": [
             "GraphQLAPIIdOutput",
-            "GraphQLAPIEndpointOutput",
-            "GraphQLAPIKeyOutput"
+            "GraphQLAPIEndpointOutput"
           ],
           "category": "api",
           "resourceName": "TentamusPaymentIntegration"
@@ -129,17 +98,7 @@
     },
     "SendPaymentFailedMail": {
       "build": true,
-      "dependsOn": [
-        {
-          "attributes": [
-            "GraphQLAPIIdOutput",
-            "GraphQLAPIEndpointOutput",
-            "GraphQLAPIKeyOutput"
-          ],
-          "category": "api",
-          "resourceName": "TentamusPaymentIntegration"
-        }
-      ],
+      "dependsOn": [],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     }
@@ -158,22 +117,6 @@
         {
           "category": "function",
           "resourceName": "ComputopPaygateWebhook"
-        }
-      ]
-    },
-    "AMPLIFY_function_ComputopWebhook_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "ComputopWebhook"
-        }
-      ]
-    },
-    "AMPLIFY_function_ComputopWebhook_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "ComputopWebhook"
         }
       ]
     },
