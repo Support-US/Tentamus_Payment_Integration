@@ -1,0 +1,39 @@
+{
+  "master": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-tentamuspaymentinteg-master-e1056-authRole",
+      "UnauthRoleArn": "arn:aws:iam::988839728996:role/amplify-tentamuspaymentinteg-master-e1056-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::988839728996:role/amplify-tentamuspaymentinteg-master-e1056-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-tentamuspaymentinteg-master-e1056-deployment",
+      "UnauthRoleName": "amplify-tentamuspaymentinteg-master-e1056-unauthRole",
+      "StackName": "amplify-tentamuspaymentinteg-master-e1056",
+      "StackId": "arn:aws:cloudformation:us-east-2:988839728996:stack/amplify-tentamuspaymentinteg-master-e1056/9d719390-0220-11ef-b04a-0676f0a1b0b7",
+      "AmplifyAppId": "d389b8rydflvtl"
+    },
+    "categories": {
+      "function": {
+        "ComputopPaygateWebhook": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-master-e1056-deployment",
+          "s3Key": "amplify-builds/ComputopPaygateWebhook-4450346a57596f6e5346-build.zip"
+        },
+        "GetAmountDetails": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-master-e1056-deployment",
+          "s3Key": "amplify-builds/GetAmountDetails-536c6a2f464b49323567-build.zip"
+        },
+        "GetPaymentDetails": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-master-e1056-deployment",
+          "s3Key": "amplify-builds/GetPaymentDetails-55706d6e59773579505a-build.zip"
+        },
+        "PaymentDetailResponse": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-master-e1056-deployment",
+          "s3Key": "amplify-builds/PaymentDetailResponse-7a622b37554a73386d32-build.zip"
+        },
+        "SendPaymentFailedMail": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-master-e1056-deployment",
+          "s3Key": "amplify-builds/SendPaymentFailedMail-666d436566467963364f-build.zip"
+        }
+      }
+    }
+  }
+}

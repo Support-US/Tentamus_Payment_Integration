@@ -55,6 +55,7 @@ export default function PaymentDetailsCreateForm(props) {
     SAPMailStatus: "",
     ClientName: "",
     ClientCompanyID: "",
+    CardDetails: "",
   };
   const [FirstName, setFirstName] = React.useState(initialValues.FirstName);
   const [LastName, setLastName] = React.useState(initialValues.LastName);
@@ -113,6 +114,9 @@ export default function PaymentDetailsCreateForm(props) {
   const [ClientCompanyID, setClientCompanyID] = React.useState(
     initialValues.ClientCompanyID
   );
+  const [CardDetails, setCardDetails] = React.useState(
+    initialValues.CardDetails
+  );
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setFirstName(initialValues.FirstName);
@@ -142,6 +146,7 @@ export default function PaymentDetailsCreateForm(props) {
     setSAPMailStatus(initialValues.SAPMailStatus);
     setClientName(initialValues.ClientName);
     setClientCompanyID(initialValues.ClientCompanyID);
+    setCardDetails(initialValues.CardDetails);
     setErrors({});
   };
   const validations = {
@@ -172,6 +177,7 @@ export default function PaymentDetailsCreateForm(props) {
     SAPMailStatus: [],
     ClientName: [],
     ClientCompanyID: [],
+    CardDetails: [{ type: "JSON" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -226,6 +232,7 @@ export default function PaymentDetailsCreateForm(props) {
           SAPMailStatus,
           ClientName,
           ClientCompanyID,
+          CardDetails,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -315,6 +322,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.FirstName ?? value;
@@ -365,6 +373,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.LastName ?? value;
@@ -415,6 +424,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.CompanyName ?? value;
@@ -465,6 +475,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.Email ?? value;
@@ -515,6 +526,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.AddressLine1 ?? value;
@@ -565,6 +577,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.AddressLine2 ?? value;
@@ -615,6 +628,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.Country ?? value;
@@ -665,6 +679,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.State ?? value;
@@ -715,6 +730,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.City ?? value;
@@ -765,6 +781,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.PostalCode ?? value;
@@ -815,6 +832,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.PhoneNumber ?? value;
@@ -865,6 +883,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.Amount ?? value;
@@ -915,6 +934,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.Currency ?? value;
@@ -964,6 +984,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.InvoiceNumbers ?? value;
@@ -1014,6 +1035,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.PaymentId ?? value;
@@ -1064,6 +1086,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.createdAt ?? value;
@@ -1114,6 +1137,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.PaymentStatus ?? value;
@@ -1164,6 +1188,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.CurrencyDecimalDigit ?? value;
@@ -1216,6 +1241,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.BeforePaymentSAPstatus ?? value;
@@ -1268,6 +1294,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.AfterPaymentSAPstatus ?? value;
@@ -1320,6 +1347,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.SAPErrorMessage ?? value;
@@ -1370,6 +1398,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.SAPObjectID ?? value;
@@ -1420,6 +1449,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.Description ?? value;
@@ -1470,6 +1500,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.PaymentMailStatus ?? value;
@@ -1522,6 +1553,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus: value,
               ClientName,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.SAPMailStatus ?? value;
@@ -1572,6 +1604,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName: value,
               ClientCompanyID,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.ClientName ?? value;
@@ -1622,6 +1655,7 @@ export default function PaymentDetailsCreateForm(props) {
               SAPMailStatus,
               ClientName,
               ClientCompanyID: value,
+              CardDetails,
             };
             const result = onChange(modelFields);
             value = result?.ClientCompanyID ?? value;
@@ -1636,6 +1670,56 @@ export default function PaymentDetailsCreateForm(props) {
         hasError={errors.ClientCompanyID?.hasError}
         {...getOverrideProps(overrides, "ClientCompanyID")}
       ></TextField>
+      <TextAreaField
+        label="Card details"
+        isRequired={false}
+        isReadOnly={false}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              FirstName,
+              LastName,
+              CompanyName,
+              Email,
+              AddressLine1,
+              AddressLine2,
+              Country,
+              State,
+              City,
+              PostalCode,
+              PhoneNumber,
+              Amount,
+              Currency,
+              InvoiceNumbers,
+              PaymentId,
+              createdAt,
+              PaymentStatus,
+              CurrencyDecimalDigit,
+              BeforePaymentSAPstatus,
+              AfterPaymentSAPstatus,
+              SAPErrorMessage,
+              SAPObjectID,
+              Description,
+              PaymentMailStatus,
+              SAPMailStatus,
+              ClientName,
+              ClientCompanyID,
+              CardDetails: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.CardDetails ?? value;
+          }
+          if (errors.CardDetails?.hasError) {
+            runValidationTasks("CardDetails", value);
+          }
+          setCardDetails(value);
+        }}
+        onBlur={() => runValidationTasks("CardDetails", CardDetails)}
+        errorMessage={errors.CardDetails?.errorMessage}
+        hasError={errors.CardDetails?.hasError}
+        {...getOverrideProps(overrides, "CardDetails")}
+      ></TextAreaField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}
