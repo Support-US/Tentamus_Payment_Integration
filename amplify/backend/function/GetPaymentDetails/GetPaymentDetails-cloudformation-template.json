@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "{\"createdOn\":\"Linux\",\"createdBy\":\"AmplifyAdmin\",\"createdWith\":\"12.11.1-rc.6c2e90b1b22907f.0\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
+  "Description": "{\"createdOn\":\"Windows\",\"createdBy\":\"Amplify\",\"createdWith\":\"13.0.1\",\"stackType\":\"function-Lambda\",\"metadata\":{\"whyContinueWithGen1\":\"\"}}",
   "Parameters": {
     "CloudWatchRule": {
       "Type": "String",
@@ -180,7 +180,7 @@
                 "secretsmanager:*"
               ],
               "Resource": [
-                "arn:aws:secretsmanager:us-east-1:621072894679:secret:*"
+                "arn:aws:secretsmanager:us-east-2:988839728996:secret:*"
               ]
             },
             {
@@ -189,7 +189,7 @@
                 "dynamodb:*"
               ],
               "Resource": [
-                "arn:aws:dynamodb:us-east-1:621072894679:table/*"
+                "arn:aws:dynamodb:us-east-2:988839728996:table/*"
               ]
             }
           ]

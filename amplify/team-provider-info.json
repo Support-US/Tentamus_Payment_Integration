@@ -13,12 +13,33 @@
     },
     "categories": {
       "function": {
-        "ComputopPaygateWebhook": {},
-        "GetAmountDetails": {},
-        "GetPaymentDetails": {},
-        "PaymentDetailResponse": {},
-        "SendPaymentFailedMail": {},
+        "ComputopPaygateWebhook": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-masters-5c3e2-deployment",
+          "s3Key": "amplify-builds/ComputopPaygateWebhook-4450346a57596f6e5346-build.zip"
+        },
+        "GetAmountDetails": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-masters-5c3e2-deployment",
+          "s3Key": "amplify-builds/GetAmountDetails-536c6a2f464b49323567-build.zip"
+        },
+        "GetPaymentDetails": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-masters-5c3e2-deployment",
+          "s3Key": "amplify-builds/GetPaymentDetails-55706d6e59773579505a-build.zip"
+        },
+        "PaymentDetailResponse": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-masters-5c3e2-deployment",
+          "s3Key": "amplify-builds/PaymentDetailResponse-7a622b37554a73386d32-build.zip"
+        },
+        "SendPaymentFailedMail": {
+          "deploymentBucketName": "amplify-tentamuspaymentinteg-masters-5c3e2-deployment",
+          "s3Key": "amplify-builds/SendPaymentFailedMail-666d436566467963364f-build.zip"
+        },
         "TentamusPaymentIntegration": {}
+      },
+      "api": {
+        "APIauthorization": {},
+        "TentamusPaymentIntegration": {},
+        "Webhook": {},
+        "getAmountAPI": {}
       }
     }
   },
