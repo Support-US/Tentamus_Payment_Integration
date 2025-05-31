@@ -10,7 +10,7 @@ const { HmacSHA256, enc } = pkg;
 const client = new DynamoDBClient({ region: process.env.REGION });
 const secretsManager = new AWS.SecretsManager();
 const data = await secretsManager.getSecretValue({ SecretId: `Tentamus_Payment_Integration` }).promise();
-let HMacPassword, blowfishKey, merchantID;
+let HMacPassword, blowfishKey, merchantID, SesSourceMail;
 const secretValue = JSON.parse(data.SecretString);
 console.log("secretValue : ", secretValue);
 const PaymentDetailsTableName = secretValue.DBTable;
@@ -28,16 +28,19 @@ export const handler = async (event) => {
             HMacPassword = secretValue['Columbia Laboratories HMacPassword'];
             blowfishKey = secretValue['Columbia Laboratories blowfishKey'];
             merchantID = secretValue['Columbia Laboratories MerchantID'];
+            SesSourceMail = secretValue.SESsourcemail;
         }
         else if (event.queryStringParameters.q == secretValue.TNAVCompanyName) {
             HMacPassword = secretValue['Tentamus North America Virginia HMacPassword'];
             blowfishKey = secretValue['Tentamus North America Virginia blowfishKey'];
             merchantID = secretValue['Tentamus North America Virginia MerchantID'];
+            SesSourceMail = secretValue.SESsourcemail;
         }
         else if (event.queryStringParameters.q == secretValue.AALCompanyName) {
             HMacPassword = secretValue['Adamson Analytical Labs HMacPassword'];
             blowfishKey = secretValue['Adamson Analytical Labs blowfishKey'];
             merchantID = secretValue['Adamson Analytical Labs MerchantID'];
+            SesSourceMail = secretValue.SESsourcemail;
         }
         else {
             return {
@@ -74,7 +77,7 @@ export const handler = async (event) => {
 
         if (Hmac.trim() === calculatedHMAC.trim()) {
 
-            let SendMail = await sendPaymentEmail(parsedObject, getObjectID);
+            let SendMail = await sendPaymentEmail(parsedObject, getObjectID, SesSourceMail);
             console.log("SendMail response :", SendMail);
 
             let response = await CreateData(parsedObject, getObjectID);
@@ -189,7 +192,7 @@ export const handler = async (event) => {
         }
     }
 
-    async function sendPaymentEmail(paymentDetails, getObjectID) {
+    async function sendPaymentEmail(paymentDetails, getObjectID, SesSourceMail) {
         const getDBData = unmarshall(getObjectID);
         console.log('getDBData', getDBData);
 
@@ -295,8 +298,7 @@ export const handler = async (event) => {
                         Data: title,
                     },
                 },
-                Source: 'noreply-awssupport@nipurnait.com', // Replace with your verified SES email
-                // Source: 'AccountsReceivable.CFL@tentamus.com', // Replace with your verified SES email
+                Source: SesSourceMail,
             };
 
             // Send the email using SES
@@ -459,10 +461,10 @@ export const handler = async (event) => {
         // ✅ Unmarshall DynamoDB object
         const getDBData = unmarshall(getObjectID);
         console.log("✅ Unmarshalled Data:", getDBData);
-    
+
         // ✅ Format item with proper DynamoDB types
         const params = {
-            TableName: "UserCardDetails-efwm7znsivbl7dglzebpkxq2da-dev",
+            TableName: CardDetailsTableName,
             Item: {
                 id: { S: getDBData.Email },
                 Email: { S: getDBData.Email },  // ✅ Partition Key (ID)
@@ -475,7 +477,7 @@ export const handler = async (event) => {
             },
             // ConditionExpression: "attribute_not_exists(pcnrNumber)"
         };
-    
+
         try {
             const command = new PutItemCommand(params);
             await client.send(command);
