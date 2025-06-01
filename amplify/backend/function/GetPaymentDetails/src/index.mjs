@@ -4,7 +4,7 @@ import { Buffer } from 'buffer';
 import pkg from 'crypto-js';
 const { HmacSHA256, enc } = pkg;
 import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
-const client = new DynamoDBClient({ region: "us-east-2" });
+const client = new DynamoDBClient({ region: "us-east-1" });
 import { v4 as uuidv4 } from 'uuid';
 
 const secretsManager = new AWS.SecretsManager();

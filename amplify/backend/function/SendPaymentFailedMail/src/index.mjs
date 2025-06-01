@@ -7,8 +7,7 @@ const client = new DynamoDBClient({ region: process.env.REGION });
 
 const secretsManager = new AWS.SecretsManager();
 const data = await secretsManager.getSecretValue({ SecretId: `Tentamus_Payment_Integration-Master` }).promise();
-let AdminMail;
-let ClientName;
+let AdminMail, ClientName, SesSourceMail;
 const secretValue = JSON.parse(data.SecretString);
 // console.log("secretValue : ", secretValue);     
 const PaymentDetailsTableName = secretValue.DBTable;
@@ -25,12 +24,18 @@ export const handler = async (event) => {
                     if (details.ClientCompanyID === secretValue.CFLCID) {
                         AdminMail = secretValue['CFL Admin Mail'];
                         ClientName = secretValue.CFLCompanyName;
+                        SesSourceMail = secretValue.SESsourcemail;
+
                     } else if (details.ClientCompanyID === secretValue.TNAVCID) {
                         AdminMail = secretValue['TNAV Admin Mail'];
                         ClientName = secretValue.TNAVCompanyName;
+                        SesSourceMail = secretValue.SESsourcemail;
+
                     } else if (details.ClientCompanyID === secretValue.AALCID) {
                         AdminMail = secretValue['AAL Admin Mail'];
                         ClientName = secretValue.AALCompanyName;
+                        SesSourceMail = secretValue.SESsourcemail;
+
                     } else {
                         return {
                             statusCode: 404,
@@ -38,7 +43,7 @@ export const handler = async (event) => {
                         };
                     }
                 }
-                const sendEmailResponse = await sendPaymentFailedEmail(paymentFailedDetails, AdminMail, ClientName);
+                const sendEmailResponse = await sendPaymentFailedEmail(paymentFailedDetails, AdminMail, ClientName, SesSourceMail);
                 console.log(`Email sent to Response:`, sendEmailResponse);
 
 
@@ -64,14 +69,20 @@ export const handler = async (event) => {
             try {
                 for (const details of paymentFailedDetails) {
                     if (details.ClientCompanyID === secretValue.CFLCID) {
-                        AdminMail = secretValue['CFL Admin Mail'].split(','); 
+                        AdminMail = secretValue['CFL Admin Mail'].split(',');
                         ClientName = secretValue.CFLCompanyName;
+                        SesSourceMail = secretValue.SESsourcemail;
+
                     } else if (details.ClientCompanyID === secretValue.TNAVCID) {
                         AdminMail = secretValue['TNAV Admin Mail'];
                         ClientName = secretValue.TNAVCompanyName;
+                        SesSourceMail = secretValue.SESsourcemail;
+
                     } else if (details.ClientCompanyID === secretValue.AALCID) {
                         AdminMail = secretValue['AAL Admin Mail'];
                         ClientName = secretValue.AALCompanyName;
+                        SesSourceMail = secretValue.SESsourcemail;
+
                     } else {
                         return {
                             statusCode: 404,
@@ -79,7 +90,7 @@ export const handler = async (event) => {
                         };
                     }
                 }
-                const sapUpdateEmailResponse = await sendSAPUpdateFailedEmail(sapUpdationFailedDetails, AdminMail, ClientName);
+                const sapUpdateEmailResponse = await sendSAPUpdateFailedEmail(sapUpdationFailedDetails, AdminMail, ClientName, SesSourceMail);
                 console.log(`SAP Update Email sent to Response:`, sapUpdateEmailResponse);
 
                 // update mailsent status
@@ -199,7 +210,7 @@ export const handler = async (event) => {
         }
     }
 
-    async function sendPaymentFailedEmail(paymentFailedDetails, AdminMail, ClientName) {
+    async function sendPaymentFailedEmail(paymentFailedDetails, AdminMail, ClientName, SesSourceMail) {
         console.log('paymentFailedDetails:', paymentFailedDetails);
         try {
             // Group transactions by ClientName
@@ -274,7 +285,7 @@ export const handler = async (event) => {
                             Data: 'Computop Failed Payment Transactions',
                         },
                     },
-                    Source: 'noreply-awssupport@nipurnait.com',
+                    Source: SesSourceMail,
                 };
 
                 console.log("Email Params : ", params);
@@ -291,7 +302,7 @@ export const handler = async (event) => {
         }
     }
 
-    async function sendSAPUpdateFailedEmail(sapUpdationFailedDetails, AdminMail, ClientName) {
+    async function sendSAPUpdateFailedEmail(sapUpdationFailedDetails, AdminMail, ClientName, SesSourceMail) {
         console.log('sapUpdationFailedDetails:', sapUpdationFailedDetails);
         try {
             // Group transactions by ClientName
@@ -370,7 +381,7 @@ export const handler = async (event) => {
                             Data: 'Payment Update Failed in SAP System',
                         },
                     },
-                    Source: 'noreply-awssupport@nipurnait.com',
+                    Source: SesSourceMail,
                 };
 
                 console.log("Email Params : ", params);
